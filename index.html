@@ -213,7 +213,7 @@
 
     /* SEARCH SECTION — continúa el degradé del hero */
     .search-section {
-      position: relative; overflow: hidden;
+      position: relative; overflow: visible;
       background: #1a2a10;
       padding: 52px 56px 72px;
     }
@@ -862,9 +862,12 @@
 <!-- PROPIEDADES -->
 <section class="propiedades-section" id="propiedades">
   <div class="propiedades-inner">
-    <div class="propiedades-header">
-      <p class="section-eyebrow">Disponibles ahora</p>
-      <h2 class="section-title" style="margin-bottom:0">Propiedades</h2>
+    <div class="propiedades-header" style="display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:16px; margin-bottom:48px;">
+      <div>
+        <p class="section-eyebrow" id="propiedades-eyebrow">Disponibles ahora</p>
+        <h2 class="section-title" style="margin-bottom:0" id="propiedades-titulo">Propiedades destacadas</h2>
+      </div>
+      <button id="btn-ver-todas" onclick="window.verTodasPropiedades()" style="background:none; border:1.5px solid var(--verde); color:var(--verde); font-family:var(--font-body); font-size:12px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; padding:10px 22px; border-radius:3px; cursor:pointer; transition:background 0.2s, color 0.2s;">Ver todas →</button>
     </div>
     <div class="propiedades-loading" id="propiedades-loading">Cargando propiedades…</div>
     <div class="propiedades-grid" id="propiedades-grid"></div>
@@ -906,66 +909,6 @@
   </div>
 </div>
 
-<!-- PROPIEDADES DESTACADAS -->
-<section class="props-section" id="propiedades">
-  <div class="props-header">
-    <p class="section-eyebrow">En oferta</p>
-    <h2 class="section-title">Propiedades destacadas</h2>
-  </div>
-  <div class="props-grid">
-    <div class="prop-card">
-      <div class="prop-img-ph"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
-      <span class="prop-badge">Lote</span>
-      <div class="prop-body">
-        <h3 class="prop-title">Lote costa de lago — Loteo Araucarias</h3>
-        <div class="prop-meta">
-          <span class="prop-meta-item">m²: <strong>4.999 m²</strong></span>
-          <span class="prop-meta-item">Zona: <strong>Villa La Angostura</strong></span>
-        </div>
-        <p class="prop-price">U$S 750.000</p>
-        <div class="prop-footer">
-          <span class="prop-code">LO-615</span>
-          <a href="#" class="prop-link">Ver propiedad →</a>
-        </div>
-      </div>
-    </div>
-    <div class="prop-card">
-      <div class="prop-img-ph"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
-      <span class="prop-badge">Casa</span>
-      <div class="prop-body">
-        <h3 class="prop-title">Casa en barrio privado con vista al lago</h3>
-        <div class="prop-meta">
-          <span class="prop-meta-item">m²: <strong>180 m²</strong></span>
-          <span class="prop-meta-item">Zona: <strong>Neuquén Capital</strong></span>
-        </div>
-        <p class="prop-price">U$S 320.000</p>
-        <div class="prop-footer">
-          <span class="prop-code">CS-032</span>
-          <a href="#" class="prop-link">Ver propiedad →</a>
-        </div>
-      </div>
-    </div>
-    <div class="prop-card">
-      <div class="prop-img-ph"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
-      <span class="prop-badge">Alquiler turístico</span>
-      <div class="prop-body">
-        <h3 class="prop-title">Cabaña en bosque — temporada alta</h3>
-        <div class="prop-meta">
-          <span class="prop-meta-item">m²: <strong>90 m²</strong></span>
-          <span class="prop-meta-item">Zona: <strong>San Martín de los Andes</strong></span>
-        </div>
-        <p class="prop-price">$850.000 / mes</p>
-        <div class="prop-footer">
-          <span class="prop-code">AT-011</span>
-          <a href="#" class="prop-link">Ver propiedad →</a>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="props-cta-wrap">
-    <a href="#" class="btn-outline">Ver todas las propiedades →</a>
-  </div>
-</section>
 
 <!-- VALORES -->
 <section class="valores-section" id="valores">
@@ -1412,16 +1355,43 @@
       grid.innerHTML = props.map(renderCard).join('');
     }
 
-    // Filtrar y mostrar — llamado por el botón Buscar
+    function setHeader(eyebrow, titulo, btnLabel) {
+      var e = document.getElementById('propiedades-eyebrow');
+      var t = document.getElementById('propiedades-titulo');
+      var b = document.getElementById('btn-ver-todas');
+      if (e) e.textContent = eyebrow;
+      if (t) t.textContent = titulo;
+      if (b) b.textContent = btnLabel;
+    }
+
+    // Mostrar solo destacadas (vista por defecto)
+    function mostrarDestacadas() {
+      var dest = allProps.filter(function(p) { return p.destacada; }).slice(0, 3);
+      setHeader('Disponibles ahora', 'Propiedades destacadas', 'Ver todas →');
+      renderGrid(dest.length ? dest : allProps.slice(0, 3));
+    }
+
+    // Ver todas
+    window.verTodasPropiedades = function() {
+      setHeader('Todas las propiedades', 'Propiedades', 'Solo destacadas ↑');
+      document.getElementById('btn-ver-todas').onclick = function() {
+        mostrarDestacadas();
+        document.getElementById('btn-ver-todas').onclick = function() { window.verTodasPropiedades(); };
+        document.getElementById('propiedades').scrollIntoView({ behavior: 'smooth' });
+      };
+      renderGrid(allProps);
+      document.getElementById('propiedades').scrollIntoView({ behavior: 'smooth' });
+    };
+
+    // Filtrar por búsqueda — llamado por el botón Buscar
     window.filtrarPropiedades = function() {
-      var tipoEl   = document.querySelector('#sf-tipo .sf-value');
+      var tipoEl    = document.querySelector('#sf-tipo .sf-value');
       var ubicInput = document.querySelector('.search-filter input');
-      var tipo  = tipoEl ? tipoEl.textContent.trim() : '';
-      var ubic  = ubicInput ? ubicInput.value.toLowerCase().trim() : '';
+      var tipo = tipoEl    ? tipoEl.textContent.trim()       : '';
+      var ubic = ubicInput ? ubicInput.value.toLowerCase().trim() : '';
 
       var filtered = allProps.filter(function(p) {
         if (tipo && tipo !== 'Cualquier tipo') {
-          // normalizo: "Lote" matchea con "Lotes", "Casa" con "Casas"
           var t = (p.tipo || '').toLowerCase();
           var q = tipo.toLowerCase().replace(/s$/, '');
           if (!t.includes(q)) return false;
@@ -1433,6 +1403,11 @@
         return true;
       });
 
+      setHeader('Resultados de búsqueda', filtered.length + ' propiedad' + (filtered.length !== 1 ? 'es' : '') + ' encontrada' + (filtered.length !== 1 ? 's' : ''), 'Ver destacadas ↑');
+      document.getElementById('btn-ver-todas').onclick = function() {
+        mostrarDestacadas();
+        document.getElementById('btn-ver-todas').onclick = function() { window.verTodasPropiedades(); };
+      };
       renderGrid(filtered);
       document.getElementById('propiedades').scrollIntoView({ behavior: 'smooth' });
     };
@@ -1452,9 +1427,8 @@
       })
       .then(function(props) {
         document.getElementById('propiedades-loading').style.display = 'none';
-        // Destacadas primero
         allProps = props.sort(function(a, b) { return (b.destacada ? 1 : 0) - (a.destacada ? 1 : 0); });
-        renderGrid(allProps);
+        mostrarDestacadas();
       })
       .catch(function() {
         var el = document.getElementById('propiedades-loading');
