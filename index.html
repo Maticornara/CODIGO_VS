@@ -252,11 +252,13 @@
       box-shadow: 0 8px 40px rgba(0,0,0,0.35);
       position: relative;
     }
-    /* Wrapper interno que sí tiene overflow hidden para los bordes redondeados */
     .search-bar-inner {
       display: flex; align-items: center; width: 100%;
-      border-radius: 8px; overflow: hidden;
+      border-radius: 8px; overflow: visible;
     }
+    /* Primer y último hijo reciben el border-radius para reemplazar overflow:hidden */
+    .search-bar-inner > .search-filter:first-child { border-radius: 7px 0 0 7px; }
+    .search-bar-inner > .search-sep:first-of-type ~ .search-filter { border-radius: 0; }
     /* Botón BUSCAR — a la DERECHA */
     .search-btn {
       display: flex; align-items: center; gap: 9px;
@@ -331,6 +333,90 @@
     }
     .sf-option:hover { background: var(--acento); color: #fff; }
     .sf-option.selected { color: var(--acento); font-weight: 600; }
+
+    /* SECCIÓN PROPIEDADES */
+    .propiedades-section {
+      background: var(--crema-dark);
+      padding: 80px 56px 100px;
+    }
+    .propiedades-inner { max-width: var(--max-w); margin: 0 auto; }
+    .propiedades-header { margin-bottom: 48px; }
+    .propiedades-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .propiedades-loading, .propiedades-empty {
+      text-align: center; padding: 80px 0;
+      color: var(--gris-texto); font-size: 14px; letter-spacing: 0.05em;
+    }
+    .prop-card {
+      background: var(--crema); border-radius: 4px;
+      overflow: hidden; text-decoration: none; color: var(--negro);
+      display: flex; flex-direction: column;
+      border: 1px solid rgba(54,81,43,0.1);
+      transition: transform 0.22s cubic-bezier(0.23,1,0.32,1), box-shadow 0.22s;
+    }
+    .prop-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 48px rgba(54,81,43,0.13);
+    }
+    .prop-card-img {
+      position: relative; aspect-ratio: 4/3;
+      overflow: hidden; background: var(--gris-suave);
+      flex-shrink: 0;
+    }
+    .prop-card-img img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+    .prop-card:hover .prop-card-img img { transform: scale(1.05); }
+    .prop-card-no-img {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .prop-card-no-img svg {
+      width: 36px; height: 36px;
+      stroke: rgba(54,81,43,0.22); fill: none; stroke-width: 1.5;
+    }
+    .prop-card-tipo {
+      position: absolute; top: 12px; left: 12px;
+      background: var(--crema); color: var(--verde);
+      font-family: var(--font-body); font-size: 9px;
+      font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
+      padding: 5px 10px; border-radius: 2px;
+    }
+    .prop-card-body { padding: 20px; display: flex; flex-direction: column; flex: 1; }
+    .prop-card-titulo {
+      font-family: var(--font-display); font-size: 15px;
+      font-weight: 900; line-height: 1.3; color: var(--negro);
+      margin-bottom: 8px;
+    }
+    .prop-card-meta {
+      display: flex; gap: 14px; flex-wrap: wrap;
+      font-size: 11.5px; color: var(--gris-texto); margin-bottom: 14px;
+    }
+    .prop-card-meta span { display: flex; gap: 4px; }
+    .prop-card-meta b { color: var(--verde-claro); font-weight: 600; }
+    .prop-card-precio {
+      font-family: var(--font-display); font-size: 22px;
+      font-weight: 900; color: var(--verde);
+      margin-bottom: 16px; margin-top: auto;
+    }
+    .prop-card-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: 14px; border-top: 1px solid rgba(54,81,43,0.09);
+    }
+    .prop-card-codigo {
+      font-size: 10.5px; font-weight: 700;
+      letter-spacing: 0.14em; color: var(--gris-texto);
+    }
+    .prop-card-ver {
+      font-size: 10.5px; font-weight: 700;
+      letter-spacing: 0.1em; color: var(--acento);
+      transition: letter-spacing 0.2s;
+    }
+    .prop-card:hover .prop-card-ver { letter-spacing: 0.18em; }
 
     /* SHARED */
     .section-eyebrow {
@@ -525,6 +611,7 @@
 
     /* RESPONSIVE */
     @media (max-width: 1024px) {
+      .propiedades-grid { grid-template-columns: repeat(2,1fr); }
       .servicios-grid { grid-template-columns: repeat(2,1fr); }
       .props-grid { grid-template-columns: repeat(2,1fr); }
       .valores-grid { grid-template-columns: 1fr; }
@@ -551,6 +638,8 @@
       .sf-dropdown { top: auto; bottom: calc(100% + 8px); } /* dropdowns abren hacia arriba en mobile */
       .servicios-wrap { padding: 72px 20px 0; }
       .servicios-grid { grid-template-columns: 1fr; margin-bottom: 72px; }
+      .propiedades-grid { grid-template-columns: 1fr; }
+      .propiedades-section { padding: 56px 20px 72px; }
       .props-section, .faq-section, .contacto-section, .sobre-outer { padding: 72px 20px; }
       .valores-section { padding: 72px 0; }
       .valores-inner { padding: 0 20px; }
@@ -766,6 +855,21 @@
         </button>
 
       </div><!-- fin search-bar-inner -->
+    </div>
+  </div>
+</section>
+
+<!-- PROPIEDADES -->
+<section class="propiedades-section" id="propiedades">
+  <div class="propiedades-inner">
+    <div class="propiedades-header">
+      <p class="section-eyebrow">Disponibles ahora</p>
+      <h2 class="section-title" style="margin-bottom:0">Propiedades</h2>
+    </div>
+    <div class="propiedades-loading" id="propiedades-loading">Cargando propiedades…</div>
+    <div class="propiedades-grid" id="propiedades-grid"></div>
+    <div class="propiedades-empty" id="propiedades-empty" style="display:none">
+      No se encontraron propiedades con esos filtros.
     </div>
   </div>
 </section>
@@ -1232,6 +1336,130 @@
 
     // Click fuera cierra todo
     document.addEventListener('click', () => closeAll(null));
+  })();
+  // ────────────────────────────────────────────────────────────────────────
+
+  // ── PROPIEDADES — fetch desde GitHub API ────────────────────────────────
+  (function() {
+    var REPO    = 'Maticornara/CODIGO_VS';
+    var API_DIR = 'https://api.github.com/repos/' + REPO + '/contents/content/propiedades?ref=main';
+    var allProps = [];
+
+    // Parser de YAML frontmatter simple
+    function parseYAML(text) {
+      var match = text.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+      if (!match) return {};
+      var lines = match[1].split('\n');
+      var result = {};
+      var listKey = null;
+      lines.forEach(function(line) {
+        if (/^\s+-\s+/.test(line)) {
+          if (listKey) result[listKey].push(line.replace(/^\s+-\s+/, '').trim());
+          return;
+        }
+        listKey = null;
+        var ci = line.indexOf(':');
+        if (ci === -1) return;
+        var k = line.slice(0, ci).trim();
+        var v = line.slice(ci + 1).trim();
+        if (v === '')            { result[k] = []; listKey = k; }
+        else if (v === 'true')   result[k] = true;
+        else if (v === 'false')  result[k] = false;
+        else if (v !== '' && !isNaN(v)) result[k] = Number(v);
+        else result[k] = v.replace(/^["']|["']$/g, '');
+      });
+      return result;
+    }
+
+    function fmtPrecio(prop) {
+      var n = Number(prop.precio);
+      if (isNaN(n)) return prop.precio || '';
+      var formatted = n.toLocaleString('es-AR');
+      var esAlq = prop.tipo && prop.tipo.toLowerCase().includes('alquiler');
+      var prefix = prop.moneda === 'ARS' ? '$ ' : 'U$S ';
+      return prefix + formatted + (esAlq ? ' / mes' : '');
+    }
+
+    function renderCard(p) {
+      var foto = p.fotos && p.fotos.length ? p.fotos[0] : null;
+      var imgHtml = foto
+        ? '<img src="' + foto + '" alt="' + (p.titulo || '') + '" loading="lazy"/>'
+        : '<div class="prop-card-no-img"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>';
+      return '<a class="prop-card" href="/propiedades/' + (p.codigo || '') + '">' +
+        '<div class="prop-card-img">' + imgHtml +
+          '<span class="prop-card-tipo">' + (p.tipo || '') + '</span>' +
+        '</div>' +
+        '<div class="prop-card-body">' +
+          '<h3 class="prop-card-titulo">' + (p.titulo || '') + '</h3>' +
+          '<div class="prop-card-meta">' +
+            (p.metros_cuadrados ? '<span><b>m²</b> ' + p.metros_cuadrados + '</span>' : '') +
+            (p.ubicacion ? '<span><b>Zona</b> ' + p.ubicacion + '</span>' : '') +
+          '</div>' +
+          '<p class="prop-card-precio">' + fmtPrecio(p) + '</p>' +
+          '<div class="prop-card-footer">' +
+            '<span class="prop-card-codigo">' + (p.codigo || '') + '</span>' +
+            '<span class="prop-card-ver">VER PROPIEDAD →</span>' +
+          '</div>' +
+        '</div>' +
+      '</a>';
+    }
+
+    function renderGrid(props) {
+      var grid  = document.getElementById('propiedades-grid');
+      var empty = document.getElementById('propiedades-empty');
+      if (!props.length) { grid.innerHTML = ''; empty.style.display = 'block'; return; }
+      empty.style.display = 'none';
+      grid.innerHTML = props.map(renderCard).join('');
+    }
+
+    // Filtrar y mostrar — llamado por el botón Buscar
+    window.filtrarPropiedades = function() {
+      var tipoEl   = document.querySelector('#sf-tipo .sf-value');
+      var ubicInput = document.querySelector('.search-filter input');
+      var tipo  = tipoEl ? tipoEl.textContent.trim() : '';
+      var ubic  = ubicInput ? ubicInput.value.toLowerCase().trim() : '';
+
+      var filtered = allProps.filter(function(p) {
+        if (tipo && tipo !== 'Cualquier tipo') {
+          // normalizo: "Lote" matchea con "Lotes", "Casa" con "Casas"
+          var t = (p.tipo || '').toLowerCase();
+          var q = tipo.toLowerCase().replace(/s$/, '');
+          if (!t.includes(q)) return false;
+        }
+        if (ubic) {
+          var hay = ((p.titulo || '') + ' ' + (p.ubicacion || '')).toLowerCase();
+          if (!hay.includes(ubic)) return false;
+        }
+        return true;
+      });
+
+      renderGrid(filtered);
+      document.getElementById('propiedades').scrollIntoView({ behavior: 'smooth' });
+    };
+
+    // Conectar botón Buscar
+    var btn = document.querySelector('.search-btn');
+    if (btn) btn.addEventListener('click', window.filtrarPropiedades);
+
+    // Cargar propiedades al iniciar
+    fetch(API_DIR)
+      .then(function(r) { return r.json(); })
+      .then(function(files) {
+        var mds = files.filter(function(f) { return f.name.endsWith('.md'); });
+        return Promise.all(mds.map(function(f) {
+          return fetch(f.download_url).then(function(r) { return r.text(); }).then(parseYAML);
+        }));
+      })
+      .then(function(props) {
+        document.getElementById('propiedades-loading').style.display = 'none';
+        // Destacadas primero
+        allProps = props.sort(function(a, b) { return (b.destacada ? 1 : 0) - (a.destacada ? 1 : 0); });
+        renderGrid(allProps);
+      })
+      .catch(function() {
+        var el = document.getElementById('propiedades-loading');
+        if (el) el.textContent = 'No se pudieron cargar las propiedades.';
+      });
   })();
   // ────────────────────────────────────────────────────────────────────────
 

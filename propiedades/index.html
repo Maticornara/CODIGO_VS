@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Solar Propiedades</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Archivo+Black&display=swap" rel="stylesheet"/>
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --verde: #36512B; --verde-claro: #4a6e3a; --verde-oscuro: #1e2e17;
+      --acento: #EE7A13; --acento-dark: #c9650d;
+      --crema: #FFFCEB; --crema-dark: #f0edda;
+      --gris-suave: #e4e0d0; --gris-texto: #6b6860; --negro: #1E1E1E;
+      --font-display: 'Archivo Black', sans-serif; --font-body: 'Archivo', sans-serif;
+      --nav-h: 76px; --max-w: 1280px;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font-body); background: var(--crema); color: var(--negro); overflow-x: hidden; }
+    ::-webkit-scrollbar { width: 7px; }
+    ::-webkit-scrollbar-track { background: #1a1a1a; }
+    ::-webkit-scrollbar-thumb { background: #EE7A13; border-radius: 4px; }
+    * { scrollbar-width: thin; scrollbar-color: #EE7A13 #1a1a1a; }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      height: var(--nav-h); display: flex; align-items: center; padding: 0 56px;
+      background: rgba(255,252,235,0.97); backdrop-filter: blur(14px);
+      box-shadow: 0 1px 0 rgba(54,81,43,0.10);
+    }
+    .nav-logo { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+    .nav-logo img { height: 36px; width: auto; }
+    .nav-back {
+      margin-left: auto; display: flex; align-items: center; gap: 8px;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--verde); text-decoration: none; transition: color 0.2s;
+    }
+    .nav-back:hover { color: var(--acento); }
+    .nav-back svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* PÁGINA PROPIEDAD */
+    .prop-page {
+      max-width: 1100px; margin: 0 auto;
+      padding: calc(var(--nav-h) + 56px) 40px 80px;
+    }
+
+    /* BREADCRUMB */
+    .breadcrumb {
+      font-size: 12px; color: var(--gris-texto); margin-bottom: 28px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb a { color: var(--verde-claro); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--acento); }
+    .breadcrumb span { opacity: 0.5; }
+
+    /* GALERÍA */
+    .gallery { margin-bottom: 48px; }
+    .gallery-main {
+      width: 100%; aspect-ratio: 16/9; border-radius: 6px;
+      overflow: hidden; background: var(--gris-suave);
+      margin-bottom: 10px;
+    }
+    .gallery-main img { width: 100%; height: 100%; object-fit: cover; cursor: zoom-in; }
+    .gallery-no-img {
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 12px; color: var(--gris-texto); font-size: 13px;
+    }
+    .gallery-no-img svg { width: 48px; height: 48px; stroke: var(--gris-suave); fill: none; stroke-width: 1; }
+    .gallery-thumbs {
+      display: flex; gap: 8px; flex-wrap: wrap;
+    }
+    .gallery-thumb {
+      width: 80px; height: 60px; border-radius: 4px; overflow: hidden;
+      cursor: pointer; opacity: 0.7; transition: opacity 0.2s;
+      flex-shrink: 0;
+    }
+    .gallery-thumb:hover, .gallery-thumb.active { opacity: 1; }
+    .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* LAYOUT 2 COLS */
+    .prop-layout { display: grid; grid-template-columns: 1fr 340px; gap: 48px; align-items: start; }
+    @media (max-width: 860px) { .prop-layout { grid-template-columns: 1fr; } }
+
+    /* COLUMNA IZQUIERDA */
+    .prop-tipo-badge {
+      display: inline-block; margin-bottom: 14px;
+      background: var(--verde); color: var(--crema);
+      font-size: 9px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase;
+      padding: 5px 12px; border-radius: 2px;
+    }
+    .prop-titulo {
+      font-family: var(--font-display); font-size: clamp(24px, 3vw, 38px);
+      font-weight: 900; line-height: 1.15; color: var(--negro);
+      margin-bottom: 20px;
+    }
+    .prop-meta-row {
+      display: flex; gap: 28px; flex-wrap: wrap; margin-bottom: 28px;
+    }
+    .prop-meta-item {
+      display: flex; flex-direction: column; gap: 3px;
+    }
+    .prop-meta-label {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--gris-texto);
+    }
+    .prop-meta-val {
+      font-size: 14px; font-weight: 500; color: var(--negro);
+    }
+    .prop-desc-title {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--verde); margin-bottom: 12px; margin-top: 32px;
+    }
+    .prop-desc {
+      font-size: 14px; line-height: 1.8; color: #444;
+      white-space: pre-line;
+    }
+    .prop-reel {
+      display: inline-flex; align-items: center; gap: 10px; margin-top: 28px;
+      background: var(--negro); color: var(--crema); text-decoration: none;
+      padding: 12px 22px; border-radius: 4px; font-size: 12px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase; transition: background 0.2s;
+    }
+    .prop-reel:hover { background: #333; }
+    .prop-reel svg { width: 16px; height: 16px; fill: var(--crema); }
+
+    /* COLUMNA DERECHA — PRECIO + CONTACTO */
+    .prop-sidebar {
+      background: var(--verde); color: var(--crema);
+      border-radius: 6px; padding: 32px 28px; position: sticky; top: calc(var(--nav-h) + 24px);
+    }
+    .prop-sidebar-codigo {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase;
+      color: rgba(255,252,235,0.45); margin-bottom: 10px;
+    }
+    .prop-precio {
+      font-family: var(--font-display); font-size: 32px; font-weight: 900;
+      color: var(--crema); line-height: 1.1; margin-bottom: 6px;
+    }
+    .prop-precio-sub {
+      font-size: 12px; color: rgba(255,252,235,0.5); margin-bottom: 28px;
+    }
+    .prop-sidebar-divider {
+      width: 100%; height: 1px; background: rgba(255,252,235,0.12); margin-bottom: 24px;
+    }
+    .prop-wa-btn {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      width: 100%; padding: 14px; background: #25D366; color: #fff;
+      text-decoration: none; border-radius: 4px; font-size: 13px; font-weight: 700;
+      letter-spacing: 0.06em; transition: background 0.2s; margin-bottom: 10px;
+    }
+    .prop-wa-btn:hover { background: #1ebe5c; }
+    .prop-wa-btn svg { width: 18px; height: 18px; fill: #fff; }
+    .prop-mail-btn {
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; padding: 13px; background: transparent;
+      border: 1px solid rgba(255,252,235,0.25); color: rgba(255,252,235,0.8);
+      text-decoration: none; border-radius: 4px; font-size: 13px; font-weight: 600;
+      letter-spacing: 0.06em; transition: border-color 0.2s, color 0.2s;
+    }
+    .prop-mail-btn:hover { border-color: var(--acento); color: var(--acento); }
+
+    /* MAPA */
+    .prop-map-section { margin-top: 56px; }
+    .prop-map-title {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--verde); margin-bottom: 16px;
+    }
+    .prop-map-frame {
+      width: 100%; height: 340px; border-radius: 6px; overflow: hidden;
+      border: none;
+    }
+
+    /* LOADING */
+    .prop-loading {
+      min-height: 60vh; display: flex; align-items: center; justify-content: center;
+      font-size: 14px; color: var(--gris-texto);
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--negro); color: rgba(255,252,235,0.35);
+      padding: 28px 56px; display: flex; align-items: center; justify-content: space-between;
+      font-size: 11px; letter-spacing: 0.08em;
+    }
+    @media (max-width: 600px) {
+      nav { padding: 0 20px; }
+      .prop-page { padding: calc(var(--nav-h) + 28px) 20px 60px; }
+      footer { flex-direction: column; gap: 16px; padding: 28px 20px; text-align: center; }
+    }
+
+    /* LIGHTBOX */
+    .lightbox {
+      display: none; position: fixed; inset: 0; z-index: 500;
+      background: rgba(0,0,0,0.92); align-items: center; justify-content: center;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox img { max-width: 92vw; max-height: 88vh; object-fit: contain; border-radius: 4px; }
+    .lightbox-close {
+      position: absolute; top: 20px; right: 24px;
+      background: none; border: none; color: #fff; font-size: 32px; cursor: pointer; opacity: 0.7;
+    }
+    .lightbox-close:hover { opacity: 1; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">
+    <img src="/fotos/LOGO.PNG" alt="Solar Propiedades"/>
+  </a>
+  <a class="nav-back" href="/#propiedades">
+    <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    Todas las propiedades
+  </a>
+</nav>
+
+<div class="prop-page">
+  <div class="prop-loading" id="propLoading">Cargando propiedad…</div>
+  <div id="propContent" style="display:none">
+
+    <div class="breadcrumb">
+      <a href="/">Inicio</a>
+      <span>›</span>
+      <a href="/#propiedades">Propiedades</a>
+      <span>›</span>
+      <span id="bcCodigo"></span>
+    </div>
+
+    <div class="gallery" id="gallery">
+      <div class="gallery-main" id="galleryMain"></div>
+      <div class="gallery-thumbs" id="galleryThumbs"></div>
+    </div>
+
+    <div class="prop-layout">
+
+      <!-- Columna izquierda -->
+      <div>
+        <span class="prop-tipo-badge" id="propTipo"></span>
+        <h1 class="prop-titulo" id="propTitulo"></h1>
+        <div class="prop-meta-row" id="propMeta"></div>
+        <div id="propDescWrap" style="display:none">
+          <p class="prop-desc-title">Descripción</p>
+          <p class="prop-desc" id="propDesc"></p>
+        </div>
+        <div id="propReelWrap" style="display:none">
+          <a class="prop-reel" id="propReel" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+            Ver reel / video
+          </a>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="prop-sidebar">
+        <p class="prop-sidebar-codigo" id="sidebarCodigo"></p>
+        <p class="prop-precio" id="sidebarPrecio"></p>
+        <p class="prop-precio-sub" id="sidebarPrecioSub"></p>
+        <div class="prop-sidebar-divider"></div>
+        <a class="prop-wa-btn" id="waBtn" href="#" target="_blank">
+          <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Consultar por WhatsApp
+        </a>
+        <a class="prop-mail-btn" href="mailto:solar@solarpropiedades.com">Enviar consulta por email</a>
+      </div>
+
+    </div>
+
+    <!-- Mapa -->
+    <div class="prop-map-section" id="propMapSection" style="display:none">
+      <p class="prop-map-title">Ubicación en el mapa</p>
+      <iframe class="prop-map-frame" id="propMap" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+
+  </div><!-- fin propContent -->
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" onclick="document.getElementById('lightbox').classList.remove('open')">×</button>
+  <img id="lightboxImg" src="" alt=""/>
+</div>
+
+<footer>
+  <span>© 2025 Solar Propiedades · Antonella Gutiérrez · Neuquén, Argentina</span>
+</footer>
+
+<script>
+(function() {
+  var REPO = 'Maticornara/CODIGO_VS';
+
+  function parseYAML(text) {
+    var match = text.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+    if (!match) return {};
+    var lines = match[1].split('\n');
+    var result = {};
+    var listKey = null;
+    lines.forEach(function(line) {
+      if (/^\s+-\s+/.test(line)) {
+        if (listKey) result[listKey].push(line.replace(/^\s+-\s+/, '').trim());
+        return;
+      }
+      listKey = null;
+      var ci = line.indexOf(':');
+      if (ci === -1) return;
+      var k = line.slice(0, ci).trim();
+      var v = line.slice(ci + 1).trim();
+      if (v === '')            { result[k] = []; listKey = k; }
+      else if (v === 'true')   result[k] = true;
+      else if (v === 'false')  result[k] = false;
+      else if (v !== '' && !isNaN(v)) result[k] = Number(v);
+      else result[k] = v.replace(/^["']|["']$/g, '');
+    });
+    return result;
+  }
+
+  function fmtPrecio(p) {
+    var n = Number(p.precio);
+    if (isNaN(n)) return p.precio || '';
+    return (p.moneda === 'ARS' ? '$ ' : 'U$S ') + n.toLocaleString('es-AR');
+  }
+
+  // Extraer código desde la URL: /propiedades/lo-615
+  var parts = window.location.pathname.replace(/\/$/, '').split('/');
+  var codigo = parts[parts.length - 1];
+
+  if (!codigo || codigo === 'propiedades') {
+    window.location.href = '/#propiedades';
+    return;
+  }
+
+  var url = 'https://api.github.com/repos/' + REPO + '/contents/content/propiedades/' + codigo + '.md?ref=main';
+
+  fetch(url)
+    .then(function(r) {
+      if (!r.ok) throw new Error('not found');
+      return r.json();
+    })
+    .then(function(data) {
+      var text = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ''))));
+      return parseYAML(text);
+    })
+    .then(function(p) {
+      document.title = (p.titulo || 'Propiedad') + ' — Solar Propiedades';
+
+      // Breadcrumb
+      document.getElementById('bcCodigo').textContent = p.codigo || codigo;
+
+      // Galería
+      var mainEl   = document.getElementById('galleryMain');
+      var thumbsEl = document.getElementById('galleryThumbs');
+      var fotos    = p.fotos && p.fotos.length ? p.fotos : [];
+
+      if (fotos.length) {
+        mainEl.innerHTML = '<img id="mainImg" src="' + fotos[0] + '" alt="' + (p.titulo||'') + '"/>';
+        var mainImg = document.getElementById('mainImg');
+        mainImg.addEventListener('click', function() {
+          document.getElementById('lightboxImg').src = mainImg.src;
+          document.getElementById('lightbox').classList.add('open');
+        });
+        fotos.forEach(function(f, i) {
+          var t = document.createElement('div');
+          t.className = 'gallery-thumb' + (i === 0 ? ' active' : '');
+          t.innerHTML = '<img src="' + f + '" alt="foto ' + (i+1) + '"/>';
+          t.addEventListener('click', function() {
+            document.querySelectorAll('.gallery-thumb').forEach(function(x) { x.classList.remove('active'); });
+            t.classList.add('active');
+            mainImg.src = f;
+          });
+          thumbsEl.appendChild(t);
+        });
+      } else {
+        mainEl.innerHTML = '<div class="gallery-no-img"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span>Sin fotos disponibles</span></div>';
+      }
+
+      // Datos principales
+      document.getElementById('propTipo').textContent    = p.tipo || '';
+      document.getElementById('propTitulo').textContent  = p.titulo || '';
+      document.getElementById('sidebarCodigo').textContent = p.codigo || '';
+
+      // Precio sidebar
+      document.getElementById('sidebarPrecio').textContent = fmtPrecio(p);
+      var esAlq = p.tipo && p.tipo.toLowerCase().includes('alquiler');
+      document.getElementById('sidebarPrecioSub').textContent = esAlq ? 'por mes' : (p.moneda === 'ARS' ? 'pesos argentinos' : 'dólares estadounidenses');
+
+      // Meta row
+      var meta = document.getElementById('propMeta');
+      var items = [];
+      if (p.metros_cuadrados) items.push({ label: 'Superficie', val: p.metros_cuadrados + ' m²' });
+      if (p.ubicacion)        items.push({ label: 'Zona',       val: p.ubicacion });
+      if (p.tipo)             items.push({ label: 'Tipo',       val: p.tipo });
+      if (p.moneda)           items.push({ label: 'Moneda',     val: p.moneda });
+      meta.innerHTML = items.map(function(it) {
+        return '<div class="prop-meta-item"><span class="prop-meta-label">' + it.label + '</span><span class="prop-meta-val">' + it.val + '</span></div>';
+      }).join('');
+
+      // Descripción
+      if (p.descripcion) {
+        document.getElementById('propDesc').textContent = p.descripcion;
+        document.getElementById('propDescWrap').style.display = 'block';
+      }
+
+      // Reel
+      if (p.link_reel) {
+        document.getElementById('propReel').href = p.link_reel;
+        document.getElementById('propReelWrap').style.display = 'block';
+      }
+
+      // WhatsApp
+      var msg = 'Hola Antonella, me comunico desde Solar Propiedades por la propiedad ' + (p.codigo || '') + ' — ' + (p.titulo || '') + '.';
+      document.getElementById('waBtn').href = 'https://wa.me/5499XXXXXXXX?text=' + encodeURIComponent(msg);
+
+      // Mapa
+      if (p.coordenadas_lat && p.coordenadas_lng) {
+        var mapUrl = 'https://maps.google.com/maps?q=' + p.coordenadas_lat + ',' + p.coordenadas_lng + '&z=15&output=embed';
+        document.getElementById('propMap').src = mapUrl;
+        document.getElementById('propMapSection').style.display = 'block';
+      }
+
+      // Mostrar contenido
+      document.getElementById('propLoading').style.display = 'none';
+      document.getElementById('propContent').style.display = 'block';
+    })
+    .catch(function() {
+      document.getElementById('propLoading').innerHTML = 'Propiedad no encontrada. <a href="/#propiedades" style="color:var(--acento)">Ver todas las propiedades →</a>';
+    });
+
+  // Cerrar lightbox con Escape
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') document.getElementById('lightbox').classList.remove('open');
+  });
+})();
+</script>
+
+</body>
+</html>
