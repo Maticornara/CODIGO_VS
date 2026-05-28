@@ -1,0 +1,107 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "fotos/propiedades"
+public_folder: "/fotos/propiedades"
+
+locale: es
+
+collections:
+  - name: propiedades
+    label: Propiedades
+    label_singular: Propiedad
+    folder: content/propiedades
+    create: true
+    slug: "{{fields.codigo}}"
+    identifier_field: codigo
+    summary: "{{fields.codigo}} — {{fields.titulo}}"
+    fields:
+      - label: "Código"
+        name: codigo
+        widget: string
+        required: true
+        hint: "Ej: LO-615"
+
+      - label: "Título"
+        name: titulo
+        widget: string
+        required: true
+
+      - label: "Tipo"
+        name: tipo
+        widget: select
+        options:
+          - Lote
+          - Casa
+          - "Alquiler permanente"
+          - "Alquiler turístico"
+        required: true
+
+      - label: "Precio"
+        name: precio
+        widget: string
+        required: true
+        hint: "Ej: 85000"
+
+      - label: "Moneda"
+        name: moneda
+        widget: select
+        options:
+          - USD
+          - ARS
+        default: "USD"
+
+      - label: "Metros cuadrados"
+        name: metros_cuadrados
+        widget: number
+        required: false
+        value_type: int
+        min: 0
+
+      - label: "Ubicación"
+        name: ubicacion
+        widget: string
+        required: false
+        hint: "Ej: Chapelco Ski, San Martín de los Andes"
+
+      - label: "Latitud"
+        name: coordenadas_lat
+        widget: number
+        required: false
+        value_type: float
+        hint: "Latitud para Google Maps (ej: -38.9516)"
+
+      - label: "Longitud"
+        name: coordenadas_lng
+        widget: number
+        required: false
+        value_type: float
+        hint: "Longitud para Google Maps (ej: -68.0591)"
+
+      - label: "Descripción"
+        name: descripcion
+        widget: text
+        required: false
+
+      - label: "Fotos"
+        name: fotos
+        widget: list
+        max: 12
+        required: false
+        field:
+          label: Foto
+          name: foto
+          widget: image
+
+      - label: "Link Reel / Video"
+        name: link_reel
+        widget: string
+        required: false
+        hint: "Link a reel de Instagram o video de YouTube"
+
+      - label: "Destacada"
+        name: destacada
+        widget: boolean
+        default: false
+        hint: "Activar para que aparezca en el home"
