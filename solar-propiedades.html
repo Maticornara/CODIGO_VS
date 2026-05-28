@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solar Propiedades</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Archivo+Black&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --verde:        #36512B;
+      --verde-claro:  #4a6e3a;
+      --verde-oscuro: #1e2e17;
+      --verde-mist:   rgba(54,81,43,0.09);
+      --acento:       #EE7A13;
+      --acento-dark:  #c9650d;
+      --crema:        #FFFCEB;
+      --crema-dark:   #f0edda;
+      --gris-suave:   #e4e0d0;
+      --gris-texto:   #6b6860;
+      --negro:        #1E1E1E;
+      --font-display: 'Archivo Black', sans-serif;
+      --font-body:    'Archivo', sans-serif;
+      --nav-h:        76px;
+      --radius:       3px;
+      --max-w:        1280px;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font-body); background: var(--crema); color: var(--negro); overflow-x: hidden; }
+
+    /* SCROLLBAR NARANJA */
+    ::-webkit-scrollbar { width: 7px; }
+    ::-webkit-scrollbar-track { background: #1a1a1a; }
+    ::-webkit-scrollbar-thumb { background: #EE7A13; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #c9650d; }
+    * { scrollbar-width: thin; scrollbar-color: #EE7A13 #1a1a1a; }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      height: var(--nav-h); display: flex; align-items: center;
+      padding: 0 56px;
+      transition: background 0.4s, box-shadow 0.4s;
+    }
+    nav.scrolled {
+      background: rgba(255,252,235,0.97);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 1px 0 rgba(54,81,43,0.10);
+    }
+    /* Marca izquierda: logo + isologo juntos */
+    .nav-logo {
+      display: flex; align-items: center; gap: 12px;
+      text-decoration: none; flex-shrink: 0;
+    }
+    .nav-logo-img {
+      height: 46px; width: auto; object-fit: contain;
+      filter: brightness(0) invert(1);
+      transition: filter 0.4s;
+    }
+    .nav-isologo-img {
+      height: 34px; width: auto; object-fit: contain;
+      filter: brightness(0) invert(1);
+      transition: filter 0.4s, opacity 0.2s;
+      opacity: 0.92;
+    }
+    nav.scrolled .nav-logo-img,
+    nav.scrolled .nav-isologo-img { filter: none; opacity: 1; }
+    .nav-logo:hover .nav-isologo-img { opacity: 0.75; }
+
+    /* Links — centrados entre logo e isologo */
+    .nav-links { display: flex; align-items: center; gap: 32px; margin-left: auto; list-style: none; }
+    .nav-links a {
+      font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+      color: rgba(255,252,235,0.85); text-decoration: none; position: relative; transition: color 0.2s;
+    }
+    nav.scrolled .nav-links a { color: var(--negro); }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -4px; left: 0;
+      width: 0; height: 1.5px; background: var(--acento); transition: width 0.25s;
+    }
+    .nav-links a:hover { color: var(--acento); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-cta {
+      margin-left: 32px; padding: 10px 22px; background: var(--acento);
+      color: var(--crema) !important; border-radius: var(--radius);
+      font-weight: 700 !important; transition: background 0.2s, transform 0.15s;
+    }
+    .nav-cta::after { display: none !important; }
+    .nav-cta:hover { background: var(--acento-dark) !important; transform: translateY(-1px); }
+    #google_translate_element { margin-left: 20px; font-size: 11px; opacity: 0.7; }
+
+    /* HERO */
+    .hero {
+      position: relative; height: 100vh; min-height: 600px;
+      display: flex; flex-direction: column; justify-content: center;
+      overflow: hidden; background: #1a2a10;
+    }
+
+    /* ── Capa base: color sólido oscuro ── */
+    .hero-pattern {
+      position: absolute; inset: 0;
+      background: #1a2a10;
+    }
+
+    /* ── Blobs orgánicos animados (efecto noise/mesh) ── */
+    .hero-pattern::before,
+    .hero-pattern::after { content: ''; position: absolute; inset: 0; }
+
+    /* Blob 1 — verde oliva, se mueve lento en diagonal */
+    .hero-pattern::before {
+      background:
+        radial-gradient(ellipse 75% 60% at 20% 40%, #3B5220 0%, transparent 70%),
+        radial-gradient(ellipse 55% 70% at 80% 70%, #2e4718 0%, transparent 65%),
+        radial-gradient(ellipse 40% 50% at 60% 20%, #4a6128 0%, transparent 60%);
+      animation: blobA 14s ease-in-out infinite alternate;
+      filter: blur(40px);
+    }
+
+    /* Blob 2 — acento naranja muy suave + verde claro, se mueve opuesto */
+    .hero-pattern::after {
+      background:
+        radial-gradient(ellipse 50% 45% at 75% 30%, rgba(238,122,19,0.22) 0%, transparent 65%),
+        radial-gradient(ellipse 65% 55% at 10% 75%, #243d12 0%, transparent 70%),
+        radial-gradient(ellipse 45% 60% at 50% 90%, #3d5520 0%, transparent 60%);
+      animation: blobB 18s ease-in-out infinite alternate;
+      filter: blur(50px);
+    }
+
+    @keyframes blobA {
+      0%   { transform: translate(0px,    0px)   scale(1);    }
+      33%  { transform: translate(40px,  -30px)  scale(1.08); }
+      66%  { transform: translate(-25px,  45px)  scale(0.95); }
+      100% { transform: translate(30px,   20px)  scale(1.05); }
+    }
+    @keyframes blobB {
+      0%   { transform: translate(0px,    0px)   scale(1);    }
+      33%  { transform: translate(-50px,  25px)  scale(1.1);  }
+      66%  { transform: translate(35px,  -40px)  scale(0.92); }
+      100% { transform: translate(-20px,  30px)  scale(1.06); }
+    }
+
+    /* ── Noise SVG overlay: da la textura orgánica ── */
+    .hero-noise {
+      position: absolute; inset: 0; pointer-events: none; z-index: 1;
+      opacity: 0.055;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      background-size: 260px 260px;
+    }
+    /* Hero — layout de dos columnas */
+    .hero-layout {
+      position: relative; z-index: 2;
+      display: flex; align-items: center;
+      width: 100%; padding: calc(var(--nav-h) + 80px) 56px 100px;
+      gap: 60px;
+    }
+    .hero-content {
+      flex: 1; max-width: 560px;
+    }
+
+    /* Ilustraciones animadas — lado derecho */
+    .hero-illus-wrap {
+      flex: 1; position: relative;
+      display: flex; align-items: center; justify-content: center;
+      min-height: 400px;
+    }
+    .illus-svg {
+      position: absolute;
+      width: 75%; max-width: 360px; height: auto;
+      opacity: 0;
+      overflow: visible;
+      filter: drop-shadow(0 0 14px rgba(238,122,19,0.15));
+    }
+    /* Grosor visual uniforme independientemente del viewBox */
+    .illus-svg path, .illus-svg polyline, .illus-svg polygon,
+    .illus-svg line, .illus-svg circle {
+      vector-effect: non-scaling-stroke;
+    }
+    .hero-eyebrow {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.35em; text-transform: uppercase;
+      color: var(--acento); margin-bottom: 20px;
+      opacity: 0; animation: fadeUp 0.7s 0.2s forwards;
+    }
+    .hero-welcome {
+      font-size: clamp(14px, 1.3vw, 17px); font-weight: 300;
+      color: rgba(255,252,235,0.5); letter-spacing: 0.03em; margin-bottom: 22px;
+      opacity: 0; animation: fadeUp 0.7s 0.4s forwards;
+    }
+    /* Espacio reservado fijo para que el typewriter no empuje el contenido */
+    .hero-title {
+      font-family: var(--font-display); font-size: clamp(22px, 4vw, 56px);
+      font-weight: 900; line-height: 1.15; color: var(--crema);
+      margin-bottom: 36px;
+      min-height: 2.4em;
+      display: block;
+      white-space: pre-line;
+      opacity: 0; animation: fadeUp 0.8s 0.55s forwards;
+    }
+    .typewriter-cursor {
+      display: inline-block; width: 3px; height: 0.78em;
+      background: var(--acento); margin-left: 5px;
+      vertical-align: -0.08em;
+      animation: blink 0.75s step-end infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+    .hero-sub {
+      font-size: clamp(13px, 1.2vw, 15px); font-weight: 300; line-height: 1.8;
+      color: rgba(255,252,235,0.5); max-width: 480px; margin-bottom: 52px;
+      opacity: 0; animation: fadeUp 0.8s 1.8s forwards;
+    }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+    /* SEARCH SECTION — continúa el degradé del hero */
+    .search-section {
+      position: relative; overflow: hidden;
+      background: #1a2a10;
+      padding: 52px 56px 72px;
+    }
+    /* Blobs del hero se extienden aquí */
+    .search-section::before, .search-section::after {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+    }
+    .search-section::before {
+      background:
+        radial-gradient(ellipse 80% 120% at 15% 80%, #3B5220 0%, transparent 65%),
+        radial-gradient(ellipse 60% 100% at 85% 30%, #2e4718 0%, transparent 60%);
+      animation: blobA 14s ease-in-out infinite alternate;
+      filter: blur(45px);
+    }
+    .search-section::after {
+      background:
+        radial-gradient(ellipse 55% 90% at 70% 10%, rgba(238,122,19,0.15) 0%, transparent 60%),
+        radial-gradient(ellipse 70% 80% at 5% 50%, #243d12 0%, transparent 65%);
+      animation: blobB 18s ease-in-out infinite alternate;
+      filter: blur(55px);
+    }
+    .search-section-inner {
+      position: relative; z-index: 1;
+      max-width: var(--max-w); margin: 0 auto;
+    }
+    .search-label {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.32em; text-transform: uppercase;
+      color: rgba(255,252,235,0.28); margin-bottom: 20px;
+    }
+    .search-bar {
+      display: flex; align-items: center;
+      background: rgba(255,252,235,0.06);
+      border: 1px solid rgba(255,252,235,0.12);
+      border-radius: 8px;
+      overflow: visible; /* para que los dropdowns salgan */
+      box-shadow: 0 8px 40px rgba(0,0,0,0.35);
+      position: relative;
+    }
+    /* Wrapper interno que sí tiene overflow hidden para los bordes redondeados */
+    .search-bar-inner {
+      display: flex; align-items: center; width: 100%;
+      border-radius: 8px; overflow: hidden;
+    }
+    /* Botón BUSCAR — a la DERECHA */
+    .search-btn {
+      display: flex; align-items: center; gap: 9px;
+      padding: 0 28px; height: 58px;
+      background: var(--acento); color: var(--crema);
+      font-family: var(--font-body); font-size: 12px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      border: none; cursor: pointer; white-space: nowrap;
+      transition: background 0.2s; flex-shrink: 0;
+      border-radius: 0 7px 7px 0;
+    }
+    .search-btn:hover { background: var(--acento-dark); }
+    .search-btn svg { width: 15px; height: 15px; stroke: var(--crema); fill: none; }
+    .search-sep {
+      width: 1px; height: 30px; background: rgba(255,252,235,0.12); flex-shrink: 0;
+    }
+    /* Filtro genérico */
+    .search-filter {
+      display: flex; align-items: center; gap: 8px;
+      padding: 0 20px; height: 58px; flex: 1; min-width: 130px;
+      position: relative; cursor: pointer;
+      transition: background 0.2s; user-select: none;
+    }
+    .search-filter:hover { background: rgba(255,252,235,0.05); }
+    .search-filter label {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase;
+      color: rgba(255,252,235,0.35); white-space: nowrap; flex-shrink: 0; pointer-events: none;
+    }
+    /* Valor mostrado (custom select) */
+    .sf-value {
+      font-family: var(--font-body); font-size: 13px; font-weight: 400;
+      color: rgba(255,252,235,0.82); flex: 1; white-space: nowrap;
+      overflow: hidden; text-overflow: ellipsis; pointer-events: none;
+    }
+    /* Input texto (ubicación) */
+    .search-filter input {
+      font-family: var(--font-body); font-size: 13px; font-weight: 400;
+      color: rgba(255,252,235,0.82); background: transparent;
+      border: none; outline: none; width: 100%; cursor: text;
+    }
+    .search-filter input::placeholder { color: rgba(255,252,235,0.28); }
+    .search-chevron {
+      width: 14px; height: 14px; flex-shrink: 0; opacity: 0.3;
+      stroke: var(--crema); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+      pointer-events: none; transition: transform 0.25s, opacity 0.2s;
+    }
+    .search-filter.open .search-chevron { transform: rotate(180deg); opacity: 0.6; }
+
+    /* DROPDOWN PANEL */
+    .sf-dropdown {
+      position: absolute; top: calc(100% + 8px); left: 0;
+      min-width: 100%; background: #1e2e17;
+      border: 1px solid rgba(255,252,235,0.14);
+      border-radius: 6px;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+      z-index: 500;
+      overflow: hidden;
+      max-height: 0; opacity: 0;
+      transition: max-height 0.32s cubic-bezier(0.4,0,0.2,1), opacity 0.22s ease;
+      pointer-events: none;
+    }
+    .search-filter.open .sf-dropdown {
+      max-height: 280px; opacity: 1; pointer-events: auto;
+    }
+    .sf-option {
+      padding: 13px 18px;
+      font-family: var(--font-body); font-size: 13px; font-weight: 400;
+      color: rgba(255,252,235,0.75);
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+    .sf-option:hover { background: var(--acento); color: #fff; }
+    .sf-option.selected { color: var(--acento); font-weight: 600; }
+
+    /* SHARED */
+    .section-eyebrow {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.32em; text-transform: uppercase;
+      color: var(--acento); margin-bottom: 20px;
+    }
+    .section-title {
+      font-family: var(--font-display); font-size: clamp(30px, 3.2vw, 50px);
+      font-weight: 900; line-height: 1.08; color: var(--negro); margin-bottom: 64px;
+    }
+
+    /* SERVICIOS */
+    .servicios-wrap { padding: 120px 56px 0; max-width: var(--max-w); margin: 0 auto; }
+    .servicios-grid {
+      display: grid; grid-template-columns: repeat(4,1fr);
+      gap: 2px; background: var(--gris-suave);
+      max-width: var(--max-w); margin: 0 auto 120px;
+    }
+    .servicio-card {
+      background: var(--crema); padding: 56px 40px;
+      position: relative; overflow: hidden;
+      transition: background 0.25s, transform 0.28s cubic-bezier(0.23,1,0.32,1), box-shadow 0.28s;
+    }
+    .servicio-card::after {
+      content: ''; position: absolute; bottom: 0; left: 0;
+      width: 100%; height: 3px; background: var(--acento);
+      transform: scaleX(0); transform-origin: left; transition: transform 0.3s;
+    }
+    .servicio-card:hover { background: #fffef5; transform: translateY(-8px); box-shadow: 0 24px 56px rgba(30,30,30,0.13); }
+    .servicio-card:hover::after { transform: scaleX(1); }
+    .servicio-num {
+      font-family: var(--font-display); font-size: 68px; font-weight: 900;
+      color: rgba(54,81,43,0.05); line-height: 1; position: absolute; top: 18px; right: 22px;
+      transition: color 0.25s;
+    }
+    .servicio-card:hover .servicio-num { color: #EE7A13; }
+    .servicio-icon {
+      width: 48px; height: 48px; background: var(--verde-mist); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; margin-bottom: 28px;
+    }
+    .servicio-icon svg { width: 22px; height: 22px; stroke: var(--verde); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    .servicio-title { font-family: var(--font-display); font-size: 21px; font-weight: 900; color: var(--negro); margin-bottom: 14px; line-height: 1.2; }
+    .servicio-desc { font-size: 13px; font-weight: 300; line-height: 1.8; color: var(--gris-texto); }
+
+    /* PROPIEDADES DESTACADAS */
+    .props-section { background: #f5f2e3; padding: 120px 56px; }
+    .props-header { max-width: var(--max-w); margin: 0 auto 56px; }
+    .props-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; max-width: var(--max-w); margin: 0 auto; }
+    .prop-card {
+      background: var(--crema); border-radius: var(--radius); overflow: hidden;
+      box-shadow: 0 2px 16px rgba(30,30,30,0.07);
+      transition: transform 0.25s, box-shadow 0.25s; cursor: pointer; position: relative;
+    }
+    .prop-card:hover { transform: translateY(-5px); box-shadow: 0 16px 48px rgba(30,30,30,0.13); }
+    .prop-img-ph {
+      width: 100%; aspect-ratio: 4/3;
+      background: linear-gradient(135deg, #d0cdb8, #bab6a5);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .prop-img-ph svg { width: 40px; height: 40px; stroke: rgba(255,255,255,0.4); fill: none; stroke-width: 1; }
+    .prop-badge {
+      position: absolute; top: 14px; left: 14px;
+      background: var(--crema); color: var(--verde);
+      font-size: 9px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
+      padding: 5px 10px; border-radius: 2px;
+    }
+    .prop-body { padding: 26px 26px 30px; }
+    .prop-title { font-family: var(--font-display); font-size: 17px; font-weight: 900; color: var(--negro); margin-bottom: 12px; line-height: 1.25; }
+    .prop-meta { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+    .prop-meta-item { font-size: 11px; font-weight: 400; color: var(--gris-texto); }
+    .prop-meta-item strong { color: var(--negro); font-weight: 600; }
+    .prop-price { font-family: var(--font-display); font-size: 20px; font-weight: 900; color: var(--verde); margin-bottom: 18px; }
+    .prop-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 16px; border-top: 1px solid var(--gris-suave); }
+    .prop-code { font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gris-texto); }
+    .prop-link { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--acento); text-decoration: none; display: flex; align-items: center; gap: 5px; transition: gap 0.2s; }
+    .prop-link:hover { gap: 9px; }
+    .props-cta-wrap { text-align: center; margin-top: 56px; }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 32px; border: 1.5px solid var(--verde); color: var(--verde);
+      font-family: var(--font-body); font-size: 12px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none;
+      border-radius: var(--radius); transition: background 0.2s, color 0.2s;
+    }
+    .btn-outline:hover { background: var(--verde); color: var(--crema); }
+
+    /* VALORES */
+    .valores-section {
+      background: var(--verde-oscuro); padding: 160px 0;
+      width: 100vw; position: relative; left: 50%; right: 50%;
+      margin-left: -50vw; margin-right: -50vw;
+    }
+    .valores-inner { max-width: var(--max-w); margin: 0 auto; padding: 0 56px; }
+    .valores-section .section-title { color: var(--crema); margin-bottom: 88px; }
+    .valores-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 0; }
+    .valor-item { padding: 64px 52px; border-right: 1px solid rgba(255,252,235,0.07); }
+    .valor-item:last-child { border-right: none; }
+    .valor-num { font-size: 10px; font-weight: 700; letter-spacing: 0.25em; color: var(--acento); margin-bottom: 24px; }
+    .valor-title { font-family: var(--font-display); font-size: 28px; font-weight: 900; color: var(--crema); margin-bottom: 20px; line-height: 1.1; }
+    .valor-desc { font-size: 13px; font-weight: 300; line-height: 1.85; color: rgba(255,252,235,0.45); }
+
+    /* SOBRE MÍ */
+    .sobre-outer { padding: 120px 56px; }
+    .sobre-section { max-width: var(--max-w); margin: 0 auto; display: grid; grid-template-columns: 5fr 7fr; gap: 100px; align-items: center; }
+    .sobre-img-wrap { position: relative; }
+    .sobre-img-placeholder {
+      width: 100%; aspect-ratio: 3/4;
+      background: linear-gradient(145deg, var(--gris-suave), #d5d1c1);
+      border-radius: var(--radius); display: flex; align-items: center;
+      justify-content: center; flex-direction: column; gap: 14px; color: var(--gris-texto);
+    }
+    .sobre-img-placeholder svg { width: 52px; height: 52px; stroke: currentColor; fill: none; stroke-width: 1; opacity: 0.3; }
+    .sobre-img-placeholder span { font-size: 11px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; opacity: 0.35; }
+    .sobre-frame {
+      position: absolute; bottom: -18px; right: -18px;
+      width: calc(100% - 36px); height: calc(100% - 36px);
+      border: 1.5px solid var(--acento); border-radius: var(--radius); opacity: 0.25; pointer-events: none;
+    }
+    .sobre-text .section-title { margin-bottom: 20px; }
+    .sobre-bio { font-size: 15px; font-weight: 300; line-height: 1.9; color: var(--gris-texto); margin-bottom: 40px; }
+    .sobre-badges { display: flex; gap: 12px; flex-wrap: wrap; }
+    .badge { display: flex; align-items: center; gap: 8px; padding: 10px 16px; border: 1.5px solid var(--gris-suave); border-radius: 2px; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--verde); }
+    .badge-dot { width: 6px; height: 6px; background: var(--acento); border-radius: 50%; flex-shrink: 0; }
+
+    /* FAQ — hover expande la respuesta, pregunta con fondo naranja */
+    .faq-section { background: #f5f2e3; padding: 120px 56px; }
+    .faq-inner { max-width: 860px; margin: 0 auto; }
+    .faq-item { border-top: 1px solid var(--gris-suave); }
+    .faq-item:last-child { border-bottom: 1px solid var(--gris-suave); }
+    /* Fila de la pregunta */
+    .faq-q {
+      width: 100%; display: flex; align-items: center; padding: 8px 0;
+      background: none; border: none; cursor: default; text-align: left;
+    }
+    .faq-q-text {
+      font-family: var(--font-display); font-size: 19px; font-weight: 900;
+      color: var(--negro); line-height: 1.3;
+      padding: 18px 22px; border-radius: 4px;
+      transition: background 0.22s, color 0.22s;
+      display: block; width: 100%;
+    }
+    /* Hover sobre el item: pregunta se pone naranja con letras blancas */
+    .faq-item:hover .faq-q-text {
+      background: #EE7A13;
+      color: #fff;
+    }
+    /* La respuesta se despliega con hover sobre el item */
+    .faq-a {
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.75s cubic-bezier(0.25,0,0.1,1), opacity 0.55s ease 0.12s;
+      opacity: 0;
+    }
+    .faq-item:hover .faq-a { max-height: 700px; opacity: 1; }
+    .faq-a-inner { padding: 0 22px 28px; font-size: 14px; font-weight: 300; line-height: 1.85; color: var(--gris-texto); }
+    .faq-a-inner ul { margin-top: 14px; padding-left: 0; list-style: none; }
+    .faq-a-inner li { padding: 8px 0 8px 22px; position: relative; border-bottom: 1px solid var(--gris-suave); font-size: 13px; }
+    .faq-a-inner li:last-child { border-bottom: none; }
+    .faq-a-inner li::before { content: '—'; position: absolute; left: 0; color: var(--acento); font-size: 11px; }
+    .faq-cta { margin-top: 44px; font-size: 14px; font-weight: 300; color: var(--gris-texto); }
+    .faq-cta a { color: var(--verde); font-weight: 700; text-decoration: none; }
+
+    /* CONTACTO */
+    .contacto-section { padding: 120px 56px; background: var(--negro); }
+    .contacto-inner { max-width: var(--max-w); margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 96px; align-items: start; }
+    .contacto-text .section-eyebrow { color: var(--acento); }
+    .contacto-text .section-title { color: var(--crema); margin-bottom: 16px; }
+    .contacto-desc { font-size: 14px; font-weight: 300; line-height: 1.85; color: rgba(255,252,235,0.38); margin-bottom: 44px; }
+    .contacto-wa { display: inline-flex; align-items: center; gap: 10px; padding: 14px 26px; background: #25D366; color: white; border-radius: var(--radius); font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-decoration: none; transition: opacity 0.2s, transform 0.15s; }
+    .contacto-wa:hover { opacity: 0.88; transform: translateY(-2px); }
+    .contacto-form { display: flex; flex-direction: column; gap: 16px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-field { display: flex; flex-direction: column; gap: 7px; }
+    .form-field label { font-size: 9px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(255,252,235,0.3); }
+    .form-field input, .form-field textarea { font-family: var(--font-body); font-size: 14px; font-weight: 300; color: var(--crema); background: rgba(255,252,235,0.05); border: 1px solid rgba(255,252,235,0.08); border-radius: var(--radius); padding: 14px 16px; outline: none; transition: border-color 0.2s; resize: none; }
+    .form-field input:focus, .form-field textarea:focus { border-color: var(--acento); }
+    .form-field input::placeholder, .form-field textarea::placeholder { color: rgba(255,252,235,0.16); }
+    .form-submit { align-self: flex-end; padding: 14px 32px; background: var(--acento); color: var(--crema); font-family: var(--font-body); font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; border: none; border-radius: var(--radius); cursor: pointer; transition: background 0.2s, transform 0.15s; }
+    .form-submit:hover { background: var(--acento-dark); transform: translateY(-1px); }
+
+    /* FOOTER */
+    footer { background: var(--negro); border-top: 1px solid rgba(255,252,235,0.05); padding: 36px 56px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+    .footer-copy { font-size: 11px; font-weight: 300; color: rgba(255,252,235,0.22); letter-spacing: 0.04em; }
+    .footer-links { display: flex; gap: 28px; list-style: none; }
+    .footer-links a { font-size: 11px; font-weight: 500; color: rgba(255,252,235,0.22); text-decoration: none; letter-spacing: 0.06em; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--acento); }
+
+    /* WA FLOTANTE */
+    .wa-float { position: fixed; bottom: 30px; right: 30px; z-index: 200; width: 58px; height: 58px; background: #25D366; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(37,211,102,0.3); text-decoration: none; transition: transform 0.2s, box-shadow 0.2s; animation: waPulse 3.5s ease-in-out infinite; }
+    .wa-float:hover { transform: scale(1.1); animation: none; box-shadow: 0 8px 32px rgba(37,211,102,0.5); }
+    .wa-float svg { width: 28px; height: 28px; fill: white; }
+    @keyframes waPulse { 0%,100%{box-shadow:0 4px 20px rgba(37,211,102,0.3)} 50%{box-shadow:0 4px 36px rgba(37,211,102,0.55)} }
+
+    /* RESPONSIVE */
+    @media (max-width: 1024px) {
+      .servicios-grid { grid-template-columns: repeat(2,1fr); }
+      .props-grid { grid-template-columns: repeat(2,1fr); }
+      .valores-grid { grid-template-columns: 1fr; }
+      .valor-item { border-right: none; border-bottom: 1px solid rgba(255,252,235,0.07); padding: 48px 24px; }
+      .valor-item:last-child { border-bottom: none; }
+      .sobre-section { grid-template-columns: 1fr; gap: 56px; }
+      .sobre-frame { display: none; }
+      .contacto-inner { grid-template-columns: 1fr; gap: 56px; }
+    }
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      .nav-isologo-img { display: none; }
+      .hero-layout { flex-direction: column; padding: calc(var(--nav-h) + 48px) 20px 80px; gap: 0; }
+      .hero-content { max-width: 100%; }
+      .hero-illus-wrap { display: none; }
+      .hero-title { height: auto; min-height: 2.6em; }
+      /* Barra de búsqueda en mobile: columna */
+      .search-section { padding: 36px 20px 48px; }
+      .search-bar-inner { flex-direction: column; }
+      .search-btn { border-radius: 0 0 7px 7px; padding: 18px 28px; justify-content: center; width: 100%; }
+      .search-sep { width: 80%; height: 1px; margin: 0 auto; }
+      .search-filter { padding: 14px 20px; border-bottom: 1px solid rgba(255,252,235,0.1); min-width: unset; }
+      .sf-dropdown { top: auto; bottom: calc(100% + 8px); } /* dropdowns abren hacia arriba en mobile */
+      .servicios-wrap { padding: 72px 20px 0; }
+      .servicios-grid { grid-template-columns: 1fr; margin-bottom: 72px; }
+      .props-section, .faq-section, .contacto-section, .sobre-outer { padding: 72px 20px; }
+      .valores-section { padding: 72px 0; }
+      .valores-inner { padding: 0 20px; }
+      .props-grid { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      footer { padding: 28px 20px; flex-direction: column; align-items: flex-start; }
+    }
+    @media (max-width: 1024px) {
+      .valores-section { padding: 120px 0; }
+      .valores-inner { padding: 0 40px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <!-- Marca: logo + isologo juntos a la izquierda -->
+  <a href="#inicio" class="nav-logo">
+    <img src="fotos/LOGO.PNG" alt="Solar Propiedades" class="nav-logo-img" />
+    <img src="fotos/ISOLOGO.PNG" alt="Solar Propiedades" class="nav-isologo-img" />
+  </a>
+
+  <!-- Links a la derecha -->
+  <ul class="nav-links">
+    <li><a href="#inicio">Inicio</a></li>
+    <li><a href="#servicios">Servicios</a></li>
+    <li><a href="#propiedades">Propiedades</a></li>
+    <li><a href="#valores">Nuestra esencia</a></li>
+    <li><a href="#sobre">Sobre mí</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="#contacto" class="nav-cta">Consultar</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="inicio">
+  <div class="hero-pattern"></div>
+  <div class="hero-noise"></div>
+  <div class="hero-layout">
+
+  <!-- COLUMNA IZQUIERDA: texto + búsqueda -->
+  <div class="hero-content">
+    <p class="hero-eyebrow">Neuquén · Patagonia Argentina</p>
+    <p class="hero-welcome">Bienvenido a Solar Propiedades.</p>
+    <h1 class="hero-title" id="heroTitle"><span class="typewriter-cursor"></span></h1>
+    <p class="hero-sub">Asesoramiento inmobiliario con respaldo contable real. Comprá, vendé o alquilá sabiendo exactamente qué vale cada propiedad.</p>
+  </div><!-- fin hero-content -->
+
+  <!-- COLUMNA DERECHA: ilustraciones animadas -->
+  <div class="hero-illus-wrap">
+
+    <!-- 0. CASA — coords del SVG fuente -->
+    <svg class="illus-svg" id="illus-0"
+      viewBox="0 14 250 268"
+      fill="none" stroke="#EE7A13" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round"
+      xmlns="http://www.w3.org/2000/svg">
+      <polyline points="13.8 123.5 62.8 95.1 121 189.1 121 277.4 13.8 217.2 13.8 123.5 1 130.9"/>
+      <polyline points="62.8 95.1 184.8 20.1 246.1 115.7 121 189.1"/>
+      <line x1="140.6" y1="265.8" x2="121" y2="277.4"/>
+      <polyline points="233.1 123.4 233.1 210.8 180.8 241.9"/>
+      <polygon points="157.3 265.5 157.3 274.5 140.6 265.8 140.6 256.5 148.8 260.9 157.3 265.5"/>
+      <polygon points="189 246.9 189 256.9 157.3 274.5 157.3 265.5 189 246.9"/>
+      <polygon points="189 246.9 157.3 265.5 148.8 260.9 140.6 256.5 174.9 238.2 180.8 241.9 189 246.9"/>
+      <polygon points="145.1 254.1 145.1 197.1 170.5 181.8 170.5 240.6 145.1 254.1"/>
+      <circle cx="165.4" cy="215.7" r="1.3"/>
+      <polygon points="73.9 142.4 73.9 170.2 51.7 159.7 51.7 131.6 69.8 140.4 73.9 142.4"/>
+      <polygon points="82.9 201.4 82.9 229.3 42.6 209 42.6 180.9 78.8 199.4 82.9 201.4"/>
+    </svg>
+
+    <!-- 1. EDIFICIO — viewBox expandido para tamaño más pequeño -->
+    <svg class="illus-svg" id="illus-1"
+      viewBox="240 -40 340 470"
+      fill="none" stroke="#EE7A13" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round"
+      xmlns="http://www.w3.org/2000/svg">
+      <polygon points="413.9 125.3 413.9 380.6 366.8 357.4 366.8 299.8 335.7 285.5 335.7 342.1 301.9 325.4 305.2 65.1 413.9 125.3"/>
+      <polygon points="305.2 65.1 413.9 2 519.6 65.1 413.9 125.3 305.2 65.1"/>
+      <polygon points="493.8 162.5 493.8 119.2 453.1 138.8 453.1 180.7 435 171.9 435 200 457.3 210.5 519.6 177.5 519.6 226 499.6 217.4 499.6 242.5 493.8 245.8 493.8 202.4 453.1 222.1 453.1 263.9 435 255.2 435 283.3 457.3 293.8 519.6 260.7 519.6 327.2 413.9 380.6 413.9 125.3 519.6 65.1 519.6 142.7 499.6 134.1 499.6 159.2 493.8 162.5"/>
+      <polygon points="457.3 265.9 457.3 293.8 435 283.3 435 255.2 453.1 263.9 457.3 265.9"/>
+      <polygon points="389 228.1 389 256 366.8 245.5 366.8 217.4 384.9 226.2 389 228.1"/>
+      <polygon points="354.2 211.3 354.2 239.2 313.9 218.9 313.9 190.8 350.1 209.3 354.2 211.3"/>
+      <polygon points="389 145.1 389 172.9 366.8 162.4 366.8 134.4 384.9 143.1 389 145.1"/>
+      <polygon points="354.2 128.3 354.2 156.1 313.9 135.8 313.9 107.7 350.1 126.3 354.2 128.3"/>
+      <polygon points="525.2 228.4 525.2 257.8 519.6 260.7 457.3 293.8 457.3 265.9 493.8 245.8 499.6 242.5 519.6 231.5 525.2 228.4"/>
+      <polygon points="525.2 228.4 519.6 231.5 499.6 242.5 499.6 217.4 519.6 226 525.2 228.4"/>
+      <polygon points="493.8 202.4 493.8 245.8 457.3 265.9 453.1 263.9 453.1 222.1 493.8 202.4"/>
+      <polygon points="457.3 182.7 457.3 210.5 435 200 435 171.9 453.1 180.7 457.3 182.7"/>
+      <polygon points="525.2 145.1 525.2 174.5 519.6 177.5 457.3 210.5 457.3 182.7 493.8 162.5 499.6 159.2 519.6 148.2 525.2 145.1"/>
+      <polygon points="525.2 145.1 519.6 148.2 499.6 159.2 499.6 134.1 519.6 142.7 525.2 145.1"/>
+      <polygon points="493.8 119.2 493.8 162.5 457.3 182.7 453.1 180.7 453.1 138.8 493.8 119.2"/>
+    </svg>
+
+    <!-- 2. LOTE / TERRENO -->
+    <svg class="illus-svg" id="illus-2"
+      viewBox="558 60 285 220"
+      fill="none" stroke="#EE7A13" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round"
+      xmlns="http://www.w3.org/2000/svg">
+      <polygon points="835.6 185.9 835.6 204.1 795.2 224.6 769.4 237.6 706.3 269.5 706.3 251.2 751 228.6 776.8 215.6 835.6 185.9"/>
+      <polygon points="706.3 251.2 706.3 269.5 569.2 201.9 569.2 183.7 706.3 251.2"/>
+      <polyline points="800.9 166.7 835.6 185.9 776.9 215.6 751 228.6 706.3 251.2 569.2 183.7 706.3 114.4 706.3 114.4 772.3 150.9"/>
+      <line x1="664.6" y1="148.4" x2="664.6" y2="72"/>
+      <line x1="664.6" y1="102.7" x2="650.9" y2="88.9"/>
+      <line x1="664.6" y1="86.9" x2="674.2" y2="77.2"/>
+      <line x1="664.6" y1="112.4" x2="674.2" y2="102.7"/>
+      <path d="M675.9,122.2s-4.1,1.5-11.3,1.2c-7.2.3-11.3-1.2-11.3-1.2-26.7-10.5-18.3-30.6-11.3-52.7,3.2-9.9,8-15.7,12.5-19.1,6-4.6,14.3-4.6,20.3,0,4.4,3.4,9.3,9.2,12.5,19.1,7,22.1,15.4,42.2-11.3,52.7Z"/>
+      <line x1="733.4" y1="138.5" x2="733.4" y2="91.9"/>
+      <line x1="733.4" y1="110.6" x2="725" y2="102.2"/>
+      <line x1="733.4" y1="100.9" x2="739.3" y2="95"/>
+      <line x1="733.4" y1="116.5" x2="739.3" y2="110.6"/>
+      <path d="M740.3,122.5s-2.5.9-6.9.7c-4.4.2-6.9-.7-6.9-.7-16.3-6.4-11.2-18.7-6.9-32.2,1.9-6.1,4.9-9.6,7.6-11.7,3.7-2.8,8.8-2.8,12.4,0,2.7,2.1,5.7,5.6,7.6,11.7,4.3,13.5,9.4,25.8-6.9,32.2Z"/>
+      <path d="M776.8,215.6l-25.8,13-33.4-16.4-18.8,9.4c-3.2,1.6-6.9,1.6-10.1,0l-55.4-27.3c-2.1-1-2.1-4,0-5.1l66.5-33.4c2.5-1.3,5.5-1.2,8,.1l27,14.9,22.5,12.4,3.7,2c2,1.1,1.9,4,0,5l-3.6,1.8-13.7,6.9,33.3,16.4Z"/>
+      <line x1="788.9" y1="198.3" x2="788.9" y2="172.7"/>
+      <polygon points="809.6 132.1 809.6 162.3 788.9 172.7 768.2 183.2 768.2 152.9 809.6 132.1"/>
+    </svg>
+
+    <!-- 3. LLAVE -->
+    <svg class="illus-svg" id="illus-3"
+      viewBox="858 88 200 135"
+      fill="none" stroke="#EE7A13" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round"
+      xmlns="http://www.w3.org/2000/svg">
+      <path d="M1006.8,97.3h0c1.9-1.1,4.2-1.1,6.1,0l12.6,7.5c3.8,2.3,3.7,7.8-.1,9.9h0c-1.7,1-3.8,1-5.6,0l-12.8-7.1c-4.1-2.2-4.1-8.1,0-10.4h0Z"/>
+      <path d="M1053.5,118.1c0,1.8-.4,3.5-1.2,5.1-.9,1.8-2.2,3.3-4.1,4.5l-29,18.3c-8.5,5.4-18.5,7.4-28.1,6.2-4.1-.5-8.1-1.6-11.9-3.3l-8.4,5.3-22.8-17.1c-.7-.5-1.2-1.1-1.7-1.7l7.1-4.5-5.4-4.1c-.7-.5-1.2-1.1-1.7-1.7-1.2-1.5-1.7-3.3-1.7-5.1,0-2.8,1.3-5.5,3.9-7.2l30.5-19.5c11.9-7.6,26.6-8.7,39.4-3.4,2.3,1,4.5,2.1,6.7,3.5l20.7,13.4,2.6,1.7c1.9,1.3,3.3,3,4.2,4.9.7,1.5,1,3.1,1,4.7Z"/>
+      <path d="M953.4,130.9l-7.1,4.5c-1.2-1.5-1.7-3.3-1.7-5.1v-10.2c0,1.8.6,3.6,1.7,5.1.5.6,1,1.2,1.7,1.7l5.4,4.1h0Z"/>
+      <path d="M949.5,178.4l30.2-19c12.7,5.4,27.4,4.5,39.5-3.1l29-18.3c3.5-2.2,5.3-5.9,5.3-9.6v-10.3c0,1.8-.4,3.5-1.2,5.1-.9,1.8-2.2,3.3-4.1,4.5l-29,18.3c-8.5,5.4-18.5,7.4-28.1,6.2-4.1-.5-8.1-1.6-11.9-3.3l-8.4,5.3"/>
+      <path d="M890.4,204.9v10.8l-16.1-.7-5.4-.3c-3.1-.2-5.3-2.7-5.3-5.6v-11.2c0,.9.2,1.8.6,2.6.2.5.6.9.9,1.3.9,1,2.2,1.7,3.8,1.8l21.5,1.3h0Z"/>
+      <path d="M970.8,154.2l-21.2,13.4-15,2.5-15.2,9.8-1.5,7.6-9.3-1-5.4,3.7-2.7,8.2h0l-10.2,6.4-21.5-1.3c-1.5,0-2.8-.8-3.8-1.8-.4-.4-.7-.9-.9-1.3-.4-.8-.6-1.6-.6-2.6s0-.9.2-1.3l2.5-10.7,80-50.4c.5.6,1,1.2,1.7,1.7l22.8,17.1h0Z"/>
+      <line x1="944.7" y1="148" x2="864.2" y2="200.5"/>
+      <polygon points="949.5 167.6 949.5 178.4 934.6 181.1 919.4 190.9 918 198.3 908.7 197.5 903.3 201.2 900.7 209.2 890.4 215.7 890.4 204.9 900.6 198.4 903.3 190.2 908.7 186.5 917.9 187.5 919.4 179.9 934.6 170.1 949.5 167.6"/>
+      <line x1="917.7" y1="198.5" x2="917.9" y2="187.5"/>
+      <line x1="900.6" y1="209.3" x2="900.6" y2="198.4"/>
+      <line x1="908.7" y1="186.5" x2="908.7" y2="197.5"/>
+      <line x1="934.6" y1="170.1" x2="934.6" y2="181.1"/>
+      <line x1="919.4" y1="179.9" x2="919.4" y2="190.9"/>
+    </svg>
+
+  </div><!-- fin hero-illus-wrap -->
+
+  </div><!-- fin hero-layout -->
+</section>
+
+<!-- BARRA DE BÚSQUEDA -->
+<section class="search-section">
+  <div class="search-section-inner">
+    <p class="search-label">Encontrá tu propiedad ideal</p>
+    <div class="search-bar">
+      <div class="search-bar-inner">
+
+        <!-- TIPO — dropdown custom -->
+        <div class="search-filter" data-custom-select id="sf-tipo">
+          <label>Tipo</label>
+          <span class="sf-value">Cualquier tipo</span>
+          <svg class="search-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          <div class="sf-dropdown">
+            <div class="sf-option selected" data-value="">Cualquier tipo</div>
+            <div class="sf-option" data-value="lotes">Lotes</div>
+            <div class="sf-option" data-value="casas">Casas</div>
+            <div class="sf-option" data-value="alquiler-permanente">Alquiler permanente</div>
+            <div class="sf-option" data-value="alquiler-turistico">Alquiler turístico</div>
+          </div>
+        </div>
+
+        <span class="search-sep"></span>
+
+        <!-- UBICACIÓN — input texto -->
+        <div class="search-filter" style="flex:1.4; cursor:text;">
+          <label>Ubicación</label>
+          <input type="text" placeholder="Villa La Angostura..." />
+        </div>
+
+        <span class="search-sep"></span>
+
+        <!-- PRECIO MÁX — dropdown custom -->
+        <div class="search-filter" data-custom-select id="sf-precio">
+          <label>Precio máx.</label>
+          <span class="sf-value">Sin límite</span>
+          <svg class="search-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          <div class="sf-dropdown">
+            <div class="sf-option selected" data-value="">Sin límite</div>
+            <div class="sf-option" data-value="100k">U$S 100.000</div>
+            <div class="sf-option" data-value="250k">U$S 250.000</div>
+            <div class="sf-option" data-value="500k">U$S 500.000</div>
+            <div class="sf-option" data-value="1m">U$S 1.000.000</div>
+          </div>
+        </div>
+
+        <span class="search-sep"></span>
+
+        <!-- M² MÍN — dropdown custom -->
+        <div class="search-filter" data-custom-select id="sf-m2">
+          <label>m² mín.</label>
+          <span class="sf-value">Sin límite</span>
+          <svg class="search-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          <div class="sf-dropdown">
+            <div class="sf-option selected" data-value="">Sin límite</div>
+            <div class="sf-option" data-value="100">100 m²</div>
+            <div class="sf-option" data-value="300">300 m²</div>
+            <div class="sf-option" data-value="1000">1.000 m²</div>
+            <div class="sf-option" data-value="5000">5.000 m²</div>
+          </div>
+        </div>
+
+        <span class="search-sep"></span>
+
+        <!-- BOTÓN BUSCAR — derecha -->
+        <button class="search-btn">
+          <svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Buscar
+        </button>
+
+      </div><!-- fin search-bar-inner -->
+    </div>
+  </div>
+</section>
+
+<!-- SERVICIOS -->
+<div class="servicios-wrap" id="servicios">
+  <p class="section-eyebrow">Lo que hacemos</p>
+  <h2 class="section-title">Servicios pensados<br/>para cada etapa</h2>
+</div>
+<div class="servicios-grid">
+  <div class="servicio-card">
+    <span class="servicio-num">01</span>
+    <div class="servicio-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+    <h3 class="servicio-title">Venta de Casas</h3>
+    <p class="servicio-desc">Gestionamos la venta con análisis técnico de mercado, marketing estratégico y acompañamiento legal completo.</p>
+  </div>
+  <div class="servicio-card">
+    <span class="servicio-num">02</span>
+    <div class="servicio-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+    <h3 class="servicio-title">Venta de Lotes</h3>
+    <p class="servicio-desc">Terrenos en barrios cerrados, a la vera de lagos y zonas de alta valorización en toda la región de Neuquén.</p>
+  </div>
+  <div class="servicio-card">
+    <span class="servicio-num">03</span>
+    <div class="servicio-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+    <h3 class="servicio-title">Alquileres</h3>
+    <p class="servicio-desc">Permanentes y turísticos. Administración integral, contratos seguros y gestión de inquilinos para propietarios tranquilos.</p>
+  </div>
+  <div class="servicio-card">
+    <span class="servicio-num">04</span>
+    <div class="servicio-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+    <h3 class="servicio-title">Tasaciones</h3>
+    <p class="servicio-desc">Valuación técnica y profesional basada en análisis real de mercado. Respaldada por matrícula contable e inmobiliaria.</p>
+  </div>
+</div>
+
+<!-- PROPIEDADES DESTACADAS -->
+<section class="props-section" id="propiedades">
+  <div class="props-header">
+    <p class="section-eyebrow">En oferta</p>
+    <h2 class="section-title">Propiedades destacadas</h2>
+  </div>
+  <div class="props-grid">
+    <div class="prop-card">
+      <div class="prop-img-ph"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+      <span class="prop-badge">Lote</span>
+      <div class="prop-body">
+        <h3 class="prop-title">Lote costa de lago — Loteo Araucarias</h3>
+        <div class="prop-meta">
+          <span class="prop-meta-item">m²: <strong>4.999 m²</strong></span>
+          <span class="prop-meta-item">Zona: <strong>Villa La Angostura</strong></span>
+        </div>
+        <p class="prop-price">U$S 750.000</p>
+        <div class="prop-footer">
+          <span class="prop-code">LO-615</span>
+          <a href="#" class="prop-link">Ver propiedad →</a>
+        </div>
+      </div>
+    </div>
+    <div class="prop-card">
+      <div class="prop-img-ph"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+      <span class="prop-badge">Casa</span>
+      <div class="prop-body">
+        <h3 class="prop-title">Casa en barrio privado con vista al lago</h3>
+        <div class="prop-meta">
+          <span class="prop-meta-item">m²: <strong>180 m²</strong></span>
+          <span class="prop-meta-item">Zona: <strong>Neuquén Capital</strong></span>
+        </div>
+        <p class="prop-price">U$S 320.000</p>
+        <div class="prop-footer">
+          <span class="prop-code">CS-032</span>
+          <a href="#" class="prop-link">Ver propiedad →</a>
+        </div>
+      </div>
+    </div>
+    <div class="prop-card">
+      <div class="prop-img-ph"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+      <span class="prop-badge">Alquiler turístico</span>
+      <div class="prop-body">
+        <h3 class="prop-title">Cabaña en bosque — temporada alta</h3>
+        <div class="prop-meta">
+          <span class="prop-meta-item">m²: <strong>90 m²</strong></span>
+          <span class="prop-meta-item">Zona: <strong>San Martín de los Andes</strong></span>
+        </div>
+        <p class="prop-price">$850.000 / mes</p>
+        <div class="prop-footer">
+          <span class="prop-code">AT-011</span>
+          <a href="#" class="prop-link">Ver propiedad →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="props-cta-wrap">
+    <a href="#" class="btn-outline">Ver todas las propiedades →</a>
+  </div>
+</section>
+
+<!-- VALORES -->
+<section class="valores-section" id="valores">
+  <div class="valores-inner">
+    <p class="section-eyebrow">Nuestra esencia</p>
+    <h2 class="section-title">Lo que nos define</h2>
+    <div class="valores-grid">
+      <div class="valor-item">
+        <p class="valor-num">01 ——</p>
+        <h3 class="valor-title">Integridad</h3>
+        <p class="valor-desc">Actuamos con honestidad en cada operación. Tu confianza es el activo más valioso que administramos.</p>
+      </div>
+      <div class="valor-item">
+        <p class="valor-num">02 ——</p>
+        <h3 class="valor-title">Precisión Técnica</h3>
+        <p class="valor-desc">La doble formación contable e inmobiliaria nos permite ver lo que otros no ven: el valor real de cada propiedad.</p>
+      </div>
+      <div class="valor-item">
+        <p class="valor-num">03 ——</p>
+        <h3 class="valor-title">Transparencia</h3>
+        <p class="valor-desc">Sin sorpresas. Te explicamos cada paso, cada costo y cada implicancia legal antes de firmar cualquier documento.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOBRE MÍ -->
+<div class="sobre-outer" id="sobre">
+  <div class="sobre-section">
+    <div class="sobre-img-wrap">
+      <div class="sobre-img-placeholder">
+        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>Foto de Antonella</span>
+      </div>
+      <div class="sobre-frame"></div>
+    </div>
+    <div class="sobre-text">
+      <p class="section-eyebrow">Sobre mí</p>
+      <h2 class="section-title">Hola, soy<br/>Antonella Gutiérrez</h2>
+      <p class="sobre-bio">Combinar mis dos pasiones —la contabilidad y el corretaje inmobiliario— es lo que me permite diferenciarme en el mercado. Entiendo el valor real de las propiedades no solo por su ubicación, sino por su rendimiento y su marco legal.<br/><br/>Mi objetivo es que te sientas asesorado por una profesional que domina tanto el mercado inmobiliario como la normativa vigente, garantizando una experiencia eficiente y sin sorpresas.</p>
+      <div class="sobre-badges">
+        <div class="badge"><span class="badge-dot"></span>Consejo de Ciencias Económicas</div>
+        <div class="badge"><span class="badge-dot"></span>Colegio de Martilleros — Neuquén</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ -->
+<section class="faq-section" id="faq">
+  <div class="faq-inner">
+    <p class="section-eyebrow">Preguntas frecuentes</p>
+    <h2 class="section-title">Todo lo que necesitás saber</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-q">
+          <span class="faq-q-text">¿Qué documentos necesito para vender mi casa o lote?</span>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner">Para iniciar el proceso de venta y garantizar una operación segura, necesitás:<ul>
+          <li>Título de Propiedad (Escritura) inscripta en el Registro de la Propiedad Inmueble</li>
+          <li>DNI del/los titulares y de sus cónyuges si corresponde</li>
+          <li>Plano de Mensura actualizado y aprobado por Catastro</li>
+          <li>Estado parcelario para verificar que lo que figura en el papel coincide con el terreno real</li>
+          <li>Comprobantes de tasa municipal (TISH), impuesto inmobiliario provincial y servicios al día</li>
+          <li>Certificado de libre deuda de expensas (en caso de departamentos o barrios cerrados)</li>
+        </ul></div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">
+          <span class="faq-q-text">¿Qué documentos necesito para comprar una casa o lote?</span>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner">Comprar una propiedad es un paso importante. Para avanzar de forma firme necesitás:<ul>
+          <li>DNI vigente de quienes figurarán como titulares</li>
+          <li>Constancia de CUIT/CUIL emitida por ANSES o AFIP</li>
+          <li>Justificación de fondos: declaraciones juradas, recibos de sueldo o boletos de venta anteriores</li>
+          <li>Reserva de compra: documento formal para congelar precio y condiciones mientras se revisa la documentación legal</li>
+        </ul></div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">
+          <span class="faq-q-text">¿Para qué contratar los servicios de Solar Propiedades?</span>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner">Contratar un profesional matriculado no es un gasto, es una inversión en seguridad. Al trabajar con nosotros obtenés:<ul>
+          <li>Tasación técnica basada en análisis de mercado real, no en estimaciones</li>
+          <li>Marketing estratégico con visibilidad en los mejores portales y redes sociales</li>
+          <li>Filtro de interesados: gestionamos visitas y verificamos la solvencia de compradores potenciales</li>
+        </ul></div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">
+          <span class="faq-q-text">¿Qué impuestos debo pagar al comprar?</span>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner">Al comprar una propiedad existen costos asociados a tener en cuenta:<ul>
+          <li>Impuesto de Sellos: impuesto provincial que generalmente se abona por partes iguales entre comprador y vendedor</li>
+          <li>Tasas de Inscripción: gastos de registro en el Registro de la Propiedad Inmueble</li>
+          <li>Honorarios de Escribanía: costos de la escritura pública</li>
+          <li>Tasa Municipal: al momento de la posesión, el nuevo titular asume tasas municipales y servicios</li>
+        </ul></div></div>
+      </div>
+    </div>
+    <p class="faq-cta">¿Tenés otra consulta? <a href="#contacto">¡Consultanos →</a></p>
+  </div>
+</section>
+
+<!-- CONTACTO -->
+<section class="contacto-section" id="contacto">
+  <div class="contacto-inner">
+    <div class="contacto-text">
+      <p class="section-eyebrow">Contacto</p>
+      <h2 class="section-title">Hablemos de tu<br/>próximo paso</h2>
+      <p class="contacto-desc">Ya sea que quieras vender, comprar, alquilar o saber cuánto vale tu propiedad, estamos acá para ayudarte.</p>
+      <a href="https://wa.me/5499XXXXXXXX?text=Hola%20Antonella%2C%20me%20comunico%20desde%20Solar%20Propiedades.%20Quisiera%20recibir%20asesoramiento." class="contacto-wa" target="_blank">
+        <svg viewBox="0 0 24 24" fill="white" width="20" height="20"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Escribir por WhatsApp
+      </a>
+    </div>
+    <form class="contacto-form" onsubmit="return false;">
+      <div class="form-row">
+        <div class="form-field"><label>Nombre</label><input type="text" placeholder="Tu nombre" /></div>
+        <div class="form-field"><label>Teléfono</label><input type="tel" placeholder="+54 9 ..." /></div>
+      </div>
+      <div class="form-field"><label>Email</label><input type="email" placeholder="tu@email.com" /></div>
+      <div class="form-field"><label>Mensaje</label><textarea rows="4" placeholder="¿En qué podemos ayudarte?"></textarea></div>
+      <button class="form-submit" type="submit">Enviar consulta →</button>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-copy">© 2025 Solar Propiedades · Antonella Gutiérrez · Neuquén, Argentina</span>
+  <ul class="footer-links">
+    <li><a href="#inicio">Inicio</a></li>
+    <li><a href="#propiedades">Propiedades</a></li>
+    <li><a href="#servicios">Servicios</a></li>
+    <li><a href="#sobre">Sobre mí</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+  </ul>
+</footer>
+
+<!-- WA FLOTANTE -->
+<a class="wa-float" href="https://wa.me/5499XXXXXXXX?text=Hola%20Antonella%2C%20me%20comunico%20desde%20Solar%20Propiedades." target="_blank" title="WhatsApp">
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" fill="white"/></svg>
+</a>
+
+<script>
+  // Nav scroll
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  // ── TYPEWRITER + ILUSTRACIONES SVG — SINCRONIZADOS ───────────────────────
+  (function() {
+
+    /* ── Tiempos globales (ms) ─────────────────────────────────────────── */
+    var DRAW_MS   = 2000;  // SVG se dibuja en 2s
+    var HOLD_MS   = 4000;  // pausa con todo visible
+    var UNDRAW_MS = 1000;  // SVG se desdibuja en 1s
+    var CHAR_MS   = 75;    // ms por carácter al tipear
+
+    /* ── Typewriter ────────────────────────────────────────────────────── */
+    var titleEl = document.getElementById('heroTitle');
+    var BASE    = 'El valor justo de\ntu ';
+    var WORDS   = ['Casa.', 'departamento.', 'terreno.', 'propiedad.'];
+    var curText = '';
+
+    function render(text) {
+      curText = text;
+      titleEl.innerHTML = text + '<span class="typewriter-cursor"></span>';
+    }
+
+    // Tipea de a un char cada `ms` hasta llegar a `target`
+    function typeTo(target, ms) {
+      return new Promise(function(res) {
+        var i = curText.length;
+        if (i >= target.length) { res(); return; }
+        var iv = setInterval(function() {
+          i++;
+          render(target.substring(0, i));
+          if (i >= target.length) { clearInterval(iv); res(); }
+        }, ms);
+      });
+    }
+
+    // Borra de a un char cada `ms` hasta dejar `targetLen` chars
+    function eraseTo(targetLen, ms) {
+      return new Promise(function(res) {
+        if (curText.length <= targetLen) { res(); return; }
+        var iv = setInterval(function() {
+          render(curText.substring(0, curText.length - 1));
+          if (curText.length <= targetLen) { clearInterval(iv); res(); }
+        }, ms);
+      });
+    }
+
+    /* ── SVG ilustraciones ──────────────────────────────────────────────── */
+    var svgs = ['illus-0','illus-1','illus-2','illus-3']
+                 .map(function(id) { return document.getElementById(id); });
+
+    /*
+      DASH = valor fijo mayor que la longitud de cualquier trazo en el SVG.
+      Con dasharray=DASH y dashoffset=DASH → trazo invisible.
+      Con dashoffset=0 → trazo completamente dibujado (siempre, sin importar getTotalLength).
+    */
+    var DASH = 9000;
+
+    function initSVG(svg) {
+      svg.querySelectorAll('path,polyline,polygon,line,circle').forEach(function(el) {
+        el.style.transition       = 'none';
+        el.style.strokeDasharray  = DASH;
+        el.style.strokeDashoffset = DASH;
+      });
+    }
+
+    /*
+      draw(): el ÚLTIMO trazo termina exactamente en DRAW_MS.
+      perPath = DRAW_MS - (n-1)*STAGGER → último trazo: start=(n-1)*40, end=DRAW_MS ✓
+    */
+    function draw(svg) {
+      return new Promise(function(res) {
+        var els     = Array.from(svg.querySelectorAll('path,polyline,polygon,line,circle'));
+        var STAGGER = 40;
+        var perPath = DRAW_MS - (els.length - 1) * STAGGER;
+
+        els.forEach(function(el) {
+          el.style.transition       = 'none';
+          el.style.strokeDashoffset = DASH;
+        });
+        void svg.getBoundingClientRect(); // fuerza reflow para commitear estado inicial
+
+        els.forEach(function(el, i) {
+          setTimeout(function() {
+            el.style.transition       = 'stroke-dashoffset ' + (perPath / 1000) + 's ease-in-out';
+            el.style.strokeDashoffset = '0';
+          }, i * STAGGER);
+        });
+
+        setTimeout(res, DRAW_MS + 120);
+      });
+    }
+
+    /*
+      undraw(): los trazos vuelven de 0 → DASH (desaparecen).
+      El delay de 20ms garantiza que el browser haya pintado dashoffset=0
+      antes de intentar la transición de regreso. Sin ese frame,
+      el browser puede no detectar el cambio y no disparar la animación.
+    */
+    function undraw(svg) {
+      return new Promise(function(res) {
+        var els = Array.from(svg.querySelectorAll('path,polyline,polygon,line,circle'));
+        void svg.getBoundingClientRect(); // asegura estado actual (dashoffset=0) committed
+        setTimeout(function() {
+          els.forEach(function(el) {
+            el.style.transition       = 'stroke-dashoffset ' + (UNDRAW_MS / 1000) + 's ease-in';
+            el.style.strokeDashoffset = DASH;
+          });
+        }, 20); // 1 frame de espera para que el browser vea el punto de partida
+        setTimeout(res, UNDRAW_MS + 140);
+      });
+    }
+
+    function sleep(ms) { return new Promise(function(r) { setTimeout(r, ms); }); }
+
+    /* ── Init ───────────────────────────────────────────────────────────── */
+    svgs.forEach(initSVG);
+    render('');
+
+    /* ── Loop principal ─────────────────────────────────────────────────── */
+    async function loop() {
+      var idx = 0;
+      await sleep(800);
+
+      /*
+        ARRANQUE: BASE(21 chars) + "Casa."(5) = 26 chars × 75ms = 1950ms ≈ DRAW_MS
+        → typewriter y SVG terminan prácticamente al mismo tiempo.
+      */
+      svgs[0].style.opacity = '1';
+      await Promise.all([
+        draw(svgs[0]),
+        typeTo(BASE + WORDS[0], CHAR_MS)
+      ]);
+
+      while (true) {
+        // HOLD: 4 segundos con SVG al 100% y texto completo
+        await sleep(HOLD_MS);
+
+        var nextIdx  = (idx + 1) % svgs.length;
+        var nextWord = WORDS[nextIdx];
+
+        /*
+          SALIDA: borrar palabra + desdibujar SVG en paralelo (~1s ambos).
+          eraseMs = UNDRAW_MS / longitud_palabra → ambos terminan juntos.
+        */
+        var eraseMs = Math.floor(UNDRAW_MS / WORDS[idx].length);
+        await Promise.all([
+          eraseTo(BASE.length, eraseMs),
+          undraw(svgs[idx])
+        ]);
+
+        svgs[idx].style.opacity = '0';
+        initSVG(svgs[idx]);
+        await sleep(150);
+
+        /*
+          ENTRADA: dibujar SVG (2s) + tipear nueva palabra.
+          La palabra empieza tarde para que ambos terminen juntos:
+          wordDelay = DRAW_MS - wordLength×CHAR_MS - 50ms margen
+        */
+        var wordDelay = Math.max(0, DRAW_MS - nextWord.length * CHAR_MS - 50);
+        svgs[nextIdx].style.opacity = '1';
+        await Promise.all([
+          draw(svgs[nextIdx]),
+          (async function(word, delay) {
+            await sleep(delay);
+            await typeTo(BASE + word, CHAR_MS);
+          }(nextWord, wordDelay))
+        ]);
+
+        idx = nextIdx;
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() { setTimeout(loop, 400); });
+    } else {
+      setTimeout(loop, 400);
+    }
+
+  })();
+  // ────────────────────────────────────────────────────────────────────────
+
+  // ── DROPDOWNS CUSTOM DE LA BARRA DE BÚSQUEDA ────────────────────────────
+  (function() {
+    const filters = document.querySelectorAll('[data-custom-select]');
+
+    // Cierra todos los dropdowns
+    function closeAll(except) {
+      filters.forEach(f => { if (f !== except) f.classList.remove('open'); });
+    }
+
+    filters.forEach(filter => {
+      const valueEl = filter.querySelector('.sf-value');
+      const options = filter.querySelectorAll('.sf-option');
+
+      // Click en cualquier parte del filtro abre/cierra
+      filter.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const wasOpen = this.classList.contains('open');
+        closeAll(this);
+        this.classList.toggle('open', !wasOpen);
+      });
+
+      // Click en una opción
+      options.forEach(opt => {
+        opt.addEventListener('click', function(e) {
+          e.stopPropagation();
+          // Marca seleccionado
+          options.forEach(o => o.classList.remove('selected'));
+          this.classList.add('selected');
+          // Actualiza valor mostrado
+          valueEl.textContent = this.textContent;
+          // Cierra
+          filter.classList.remove('open');
+        });
+      });
+    });
+
+    // Click fuera cierra todo
+    document.addEventListener('click', () => closeAll(null));
+  })();
+  // ────────────────────────────────────────────────────────────────────────
+
+  // Google Translate
+  function googleTranslateElementInit() {
+    new google.translate.TranslateElement({
+      pageLanguage: 'es', includedLanguages: 'en',
+      layout: google.translate.TranslateElement.InlineLayout.SIMPLE, autoDisplay: false
+    }, 'google_translate_element');
+  }
+</script>
+<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</body>
+</html>
