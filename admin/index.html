@@ -8,48 +8,49 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
     :root {
-      --verde:  #2d5016;
-      --verde2: #3d6b1f;
+      --verde:  #1F3216;
+      --verde2: #2d4a20;
       --crema:  #f5f0e8;
-      --acento: #6b9b2a;
-      --gris:   #888;
+      --acento: #4a7c20;
       --borde:  #ddd8ce;
     }
 
-    /* ── Base ── */
     body { margin: 0; font-family: 'Inter', sans-serif; background: var(--crema); }
 
-    /* ── Top nav bar ── */
+    /* ── Top bar ── */
     [class*="AppHeader"],
     [class*="app-header"],
     header[role="banner"] {
       background: var(--verde) !important;
       border-bottom: none !important;
-      box-shadow: 0 2px 8px rgba(0,0,0,.18) !important;
+      box-shadow: 0 2px 8px rgba(0,0,0,.22) !important;
     }
-
-    /* Logo / site name en el header */
     [class*="AppHeader"] a,
     [class*="AppHeader"] span,
-    [class*="app-header"] a,
-    [class*="app-header"] span {
-      color: var(--crema) !important;
-      font-weight: 600 !important;
-      letter-spacing: .02em !important;
+    [class*="AppHeader"] button:not([class*="QuickCreate"]) {
+      color: rgba(245,240,232,.9) !important;
+      font-weight: 500 !important;
     }
 
-    /* ── Sidebar / nav lateral ── */
+    /* ── Ocultar "Añadir rápido" ── */
+    [class*="QuickCreate"],
+    [data-testid="quick-add"],
+    button[class*="quick"] {
+      display: none !important;
+    }
+
+    /* ── Sidebar ── */
     [class*="Nav"],
-    nav[class*="sidebar"],
-    [class*="Sidebar"] {
-      background: #1e3a0e !important;
-      border-right: 1px solid rgba(255,255,255,.08) !important;
+    [class*="Sidebar"],
+    nav[class*="sidebar"] {
+      background: #162410 !important;
+      border-right: 1px solid rgba(255,255,255,.07) !important;
     }
     [class*="Nav"] a,
     [class*="Nav"] button,
     [class*="Sidebar"] a,
     [class*="Sidebar"] button {
-      color: rgba(245,240,232,.85) !important;
+      color: rgba(245,240,232,.75) !important;
       border-radius: 6px !important;
       transition: background .15s !important;
     }
@@ -57,29 +58,33 @@
     [class*="Nav"] a[class*="active"],
     [class*="Sidebar"] a:hover,
     [class*="Sidebar"] a[class*="active"] {
-      background: rgba(107,155,42,.3) !important;
+      background: rgba(74,124,32,.35) !important;
       color: #fff !important;
     }
 
-    /* ── Área de contenido principal ── */
-    [class*="App__container"],
+    /* ── Fondo principal (todo crema) ── */
+    [class*="App"],
     [class*="app-container"],
-    main {
+    main,
+    [class*="Page"],
+    [class*="Collection"],
+    [class*="Editor"] {
       background: var(--crema) !important;
     }
 
-    /* ── Tarjetas / lista de propiedades ── */
+    /* ── Cards de la colección ── */
     [class*="Card"],
     [class*="card"] {
       background: #fff !important;
       border: 1px solid var(--borde) !important;
       border-radius: 10px !important;
-      box-shadow: 0 2px 8px rgba(0,0,0,.06) !important;
-      transition: box-shadow .2s !important;
+      box-shadow: 0 2px 6px rgba(0,0,0,.05) !important;
+      transition: box-shadow .2s, transform .2s !important;
     }
     [class*="Card"]:hover,
     [class*="card"]:hover {
-      box-shadow: 0 4px 16px rgba(0,0,0,.12) !important;
+      box-shadow: 0 6px 18px rgba(0,0,0,.1) !important;
+      transform: translateY(-2px) !important;
     }
 
     /* ── Formulario ── */
@@ -91,48 +96,49 @@
       border: 1px solid var(--borde) !important;
     }
 
-    /* Labels de campos */
+    /* Labels */
     [class*="ControlLabel"],
     [class*="control-label"],
     label {
       color: var(--verde) !important;
       font-size: 11px !important;
       font-weight: 600 !important;
-      letter-spacing: .08em !important;
+      letter-spacing: .07em !important;
       text-transform: uppercase !important;
     }
 
-    /* Inputs y textareas */
+    /* Inputs */
     input[type="text"],
     input[type="number"],
     input[type="url"],
-    input[type="email"],
     textarea,
-    select,
-    [class*="TextControl"],
-    [class*="NumberControl"],
-    [class*="SelectControl"] > div {
+    select {
       background: var(--crema) !important;
       border: 1.5px solid var(--borde) !important;
       border-radius: 7px !important;
-      color: #222 !important;
+      color: #1a1a1a !important;
       font-family: 'Inter', sans-serif !important;
       font-size: 14px !important;
-      transition: border-color .2s !important;
     }
     input:focus,
     textarea:focus,
     select:focus {
       border-color: var(--acento) !important;
       outline: none !important;
-      box-shadow: 0 0 0 3px rgba(107,155,42,.15) !important;
+      box-shadow: 0 0 0 3px rgba(74,124,32,.15) !important;
     }
 
-    /* ── Botones primarios ── */
+    /* Textarea multiline (descripción) */
+    textarea {
+      min-height: 120px !important;
+      resize: vertical !important;
+      line-height: 1.6 !important;
+    }
+
+    /* ── Botones ── */
     button[class*="success"],
     button[class*="primary"],
-    [class*="PublishButton"],
-    [class*="publish-button"] {
+    [class*="PublishButton"] {
       background: var(--acento) !important;
       border-color: var(--acento) !important;
       border-radius: 7px !important;
@@ -142,49 +148,62 @@
     button[class*="success"]:hover,
     button[class*="primary"]:hover {
       background: var(--verde2) !important;
-      border-color: var(--verde2) !important;
     }
-
-    /* Botón "Eliminar entrada" */
     button[class*="delete"],
     button[class*="danger"] {
       border-radius: 7px !important;
     }
 
-    /* ── Toggle / boolean ── */
-    [class*="ToggleBackground"],
-    [class*="toggle-background"] {
+    /* ── Toggle boolean ── */
+    [class*="ToggleBackground"] {
       background: var(--borde) !important;
     }
-    [class*="ToggleBackground"][class*="active"],
-    input:checked + [class*="ToggleBackground"] {
+    [class*="ToggleBackground"][class*="active"] {
       background: var(--acento) !important;
     }
 
-    /* ── Imagen upload ── */
+    /* ── Upload de imagen ── */
     [class*="ImageUploadButton"],
-    [class*="image-upload"] {
+    [class*="image-upload"],
+    [class*="FileUploadButton"] {
       border: 2px dashed var(--acento) !important;
       border-radius: 10px !important;
-      background: rgba(107,155,42,.05) !important;
+      background: rgba(74,124,32,.04) !important;
       color: var(--verde) !important;
     }
 
-    /* ── Preview pane header ── */
-    [class*="PreviewPane"],
-    [class*="preview-pane"] {
+    /* ── Preview ── */
+    [class*="PreviewPane"] {
       background: var(--crema) !important;
       border-left: 1px solid var(--borde) !important;
     }
 
     /* ── Scrollbar ── */
     * { scrollbar-width: thin; scrollbar-color: var(--acento) transparent; }
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-thumb { background: var(--acento); border-radius: 3px; }
     ::-webkit-scrollbar-track { background: transparent; }
   </style>
 </head>
 <body>
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+  <script>
+    // Renombrar "Medios" → "Imágenes" y limpiar elementos no deseados
+    var _obs = new MutationObserver(function() {
+      // Renombrar tab "Medios"
+      document.querySelectorAll('a, button, span, li').forEach(function(el) {
+        if (el.children.length === 0 && el.textContent.trim() === 'Medios') {
+          el.textContent = 'Imágenes';
+        }
+      });
+      // Ocultar "Añadir rápido" por texto
+      document.querySelectorAll('button').forEach(function(btn) {
+        if (btn.textContent.includes('Añadir rápido') || btn.textContent.includes('Quick add')) {
+          btn.style.display = 'none';
+        }
+      });
+    });
+    _obs.observe(document.body, { childList: true, subtree: true, characterData: true });
+  </script>
 </body>
 </html>

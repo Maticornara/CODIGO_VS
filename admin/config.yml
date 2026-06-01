@@ -16,6 +16,7 @@ collections:
     slug: "{{fields.codigo}}"
     identifier_field: codigo
     summary: "{{fields.codigo}} — {{fields.titulo}}"
+    thumbnail: fotos
     fields:
       - label: "Código"
         name: codigo
