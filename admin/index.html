@@ -5,6 +5,184 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Solar Propiedades — Administración</title>
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --verde:  #2d5016;
+      --verde2: #3d6b1f;
+      --crema:  #f5f0e8;
+      --acento: #6b9b2a;
+      --gris:   #888;
+      --borde:  #ddd8ce;
+    }
+
+    /* ── Base ── */
+    body { margin: 0; font-family: 'Inter', sans-serif; background: var(--crema); }
+
+    /* ── Top nav bar ── */
+    [class*="AppHeader"],
+    [class*="app-header"],
+    header[role="banner"] {
+      background: var(--verde) !important;
+      border-bottom: none !important;
+      box-shadow: 0 2px 8px rgba(0,0,0,.18) !important;
+    }
+
+    /* Logo / site name en el header */
+    [class*="AppHeader"] a,
+    [class*="AppHeader"] span,
+    [class*="app-header"] a,
+    [class*="app-header"] span {
+      color: var(--crema) !important;
+      font-weight: 600 !important;
+      letter-spacing: .02em !important;
+    }
+
+    /* ── Sidebar / nav lateral ── */
+    [class*="Nav"],
+    nav[class*="sidebar"],
+    [class*="Sidebar"] {
+      background: #1e3a0e !important;
+      border-right: 1px solid rgba(255,255,255,.08) !important;
+    }
+    [class*="Nav"] a,
+    [class*="Nav"] button,
+    [class*="Sidebar"] a,
+    [class*="Sidebar"] button {
+      color: rgba(245,240,232,.85) !important;
+      border-radius: 6px !important;
+      transition: background .15s !important;
+    }
+    [class*="Nav"] a:hover,
+    [class*="Nav"] a[class*="active"],
+    [class*="Sidebar"] a:hover,
+    [class*="Sidebar"] a[class*="active"] {
+      background: rgba(107,155,42,.3) !important;
+      color: #fff !important;
+    }
+
+    /* ── Área de contenido principal ── */
+    [class*="App__container"],
+    [class*="app-container"],
+    main {
+      background: var(--crema) !important;
+    }
+
+    /* ── Tarjetas / lista de propiedades ── */
+    [class*="Card"],
+    [class*="card"] {
+      background: #fff !important;
+      border: 1px solid var(--borde) !important;
+      border-radius: 10px !important;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06) !important;
+      transition: box-shadow .2s !important;
+    }
+    [class*="Card"]:hover,
+    [class*="card"]:hover {
+      box-shadow: 0 4px 16px rgba(0,0,0,.12) !important;
+    }
+
+    /* ── Formulario ── */
+    [class*="ControlPanel"],
+    [class*="EditorContainer"],
+    [class*="editor-container"] {
+      background: #fff !important;
+      border-radius: 10px !important;
+      border: 1px solid var(--borde) !important;
+    }
+
+    /* Labels de campos */
+    [class*="ControlLabel"],
+    [class*="control-label"],
+    label {
+      color: var(--verde) !important;
+      font-size: 11px !important;
+      font-weight: 600 !important;
+      letter-spacing: .08em !important;
+      text-transform: uppercase !important;
+    }
+
+    /* Inputs y textareas */
+    input[type="text"],
+    input[type="number"],
+    input[type="url"],
+    input[type="email"],
+    textarea,
+    select,
+    [class*="TextControl"],
+    [class*="NumberControl"],
+    [class*="SelectControl"] > div {
+      background: var(--crema) !important;
+      border: 1.5px solid var(--borde) !important;
+      border-radius: 7px !important;
+      color: #222 !important;
+      font-family: 'Inter', sans-serif !important;
+      font-size: 14px !important;
+      transition: border-color .2s !important;
+    }
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: var(--acento) !important;
+      outline: none !important;
+      box-shadow: 0 0 0 3px rgba(107,155,42,.15) !important;
+    }
+
+    /* ── Botones primarios ── */
+    button[class*="success"],
+    button[class*="primary"],
+    [class*="PublishButton"],
+    [class*="publish-button"] {
+      background: var(--acento) !important;
+      border-color: var(--acento) !important;
+      border-radius: 7px !important;
+      font-weight: 600 !important;
+      color: #fff !important;
+    }
+    button[class*="success"]:hover,
+    button[class*="primary"]:hover {
+      background: var(--verde2) !important;
+      border-color: var(--verde2) !important;
+    }
+
+    /* Botón "Eliminar entrada" */
+    button[class*="delete"],
+    button[class*="danger"] {
+      border-radius: 7px !important;
+    }
+
+    /* ── Toggle / boolean ── */
+    [class*="ToggleBackground"],
+    [class*="toggle-background"] {
+      background: var(--borde) !important;
+    }
+    [class*="ToggleBackground"][class*="active"],
+    input:checked + [class*="ToggleBackground"] {
+      background: var(--acento) !important;
+    }
+
+    /* ── Imagen upload ── */
+    [class*="ImageUploadButton"],
+    [class*="image-upload"] {
+      border: 2px dashed var(--acento) !important;
+      border-radius: 10px !important;
+      background: rgba(107,155,42,.05) !important;
+      color: var(--verde) !important;
+    }
+
+    /* ── Preview pane header ── */
+    [class*="PreviewPane"],
+    [class*="preview-pane"] {
+      background: var(--crema) !important;
+      border-left: 1px solid var(--borde) !important;
+    }
+
+    /* ── Scrollbar ── */
+    * { scrollbar-width: thin; scrollbar-color: var(--acento) transparent; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-thumb { background: var(--acento); border-radius: 3px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+  </style>
 </head>
 <body>
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
