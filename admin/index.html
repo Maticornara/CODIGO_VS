@@ -3,227 +3,197 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Solar Propiedades — Administración</title>
+  <title>Solar Propiedades — Admin</title>
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-  <style>
-    :root {
-      --verde:  #1F3216;
-      --verde2: #2d4a20;
-      --crema:  #FFFCEB;
-      --acento: #EE7A13;
-      --acento2:#c9650d;
-      --borde:  #e8e3d5;
-    }
-
-    body { margin: 0; font-family: 'Inter', sans-serif; background: var(--crema); }
-
-    /* ── Top bar ── */
-    [class*="AppHeader"],
-    [class*="app-header"],
-    header[role="banner"] {
-      background: var(--verde) !important;
-      border-bottom: none !important;
-      box-shadow: 0 2px 10px rgba(0,0,0,.25) !important;
-    }
-    [class*="AppHeader"] a,
-    [class*="AppHeader"] span {
-      color: rgba(255,252,235,.9) !important;
-      font-weight: 500 !important;
-    }
-
-    /* ── Ocultar "Añadir rápido" ── */
-    [class*="QuickCreate"],
-    [data-testid="quick-add"] {
-      display: none !important;
-    }
-
-    /* ── Sidebar ── */
-    [class*="Nav"],
-    [class*="Sidebar"],
-    nav[class*="sidebar"] {
-      background: #162410 !important;
-      border-right: 1px solid rgba(255,255,255,.07) !important;
-    }
-    [class*="Nav"] a,
-    [class*="Nav"] button,
-    [class*="Sidebar"] a,
-    [class*="Sidebar"] button {
-      color: rgba(255,252,235,.72) !important;
-      border-radius: 6px !important;
-      transition: background .15s !important;
-    }
-    [class*="Nav"] a:hover,
-    [class*="Nav"] a[class*="active"],
-    [class*="Sidebar"] a:hover,
-    [class*="Sidebar"] a[class*="active"] {
-      background: rgba(238,122,19,.28) !important;
-      color: #fff !important;
-    }
-
-    /* ── Fondo principal — todo crema ── */
-    [class*="App"],
-    [class*="app-container"],
-    main,
-    [class*="Page"],
-    [class*="Collection"],
-    [class*="EditorContainer"],
-    [class*="Editor"] {
-      background: var(--crema) !important;
-    }
-
-    /* ── Cards de colección ── */
-    [class*="Card"],
-    [class*="card"] {
-      background: #fff !important;
-      border: 1px solid var(--borde) !important;
-      border-radius: 10px !important;
-      box-shadow: 0 2px 6px rgba(0,0,0,.05) !important;
-      transition: box-shadow .2s, transform .2s !important;
-    }
-    [class*="Card"]:hover,
-    [class*="card"]:hover {
-      box-shadow: 0 6px 20px rgba(0,0,0,.1) !important;
-      transform: translateY(-2px) !important;
-    }
-
-    /* ── Labels ── */
-    [class*="ControlLabel"],
-    [class*="control-label"],
-    label {
-      color: var(--verde) !important;
-      font-size: 11px !important;
-      font-weight: 600 !important;
-      letter-spacing: .07em !important;
-      text-transform: uppercase !important;
-    }
-
-    /* ── Inputs y textareas ── */
-    input[type="text"],
-    input[type="number"],
-    input[type="url"],
-    input[type="email"],
-    select {
-      background: #fff !important;
-      border: 1.5px solid var(--borde) !important;
-      border-radius: 7px !important;
-      color: #1a1a1a !important;
-      font-family: 'Inter', sans-serif !important;
-      font-size: 14px !important;
-      transition: border-color .2s !important;
-    }
-    textarea {
-      background: #fff !important;
-      border: 1.5px solid var(--borde) !important;
-      border-radius: 7px !important;
-      color: #1a1a1a !important;
-      font-family: 'Inter', sans-serif !important;
-      font-size: 14px !important;
-      min-height: 140px !important;
-      resize: vertical !important;
-      line-height: 1.65 !important;
-      transition: border-color .2s !important;
-    }
-    input:focus,
-    textarea:focus,
-    select:focus {
-      border-color: var(--acento) !important;
-      outline: none !important;
-      box-shadow: 0 0 0 3px rgba(238,122,19,.15) !important;
-    }
-
-    /* ── Markdown editor ── */
-    [class*="RichTextEditor"],
-    [class*="richtext"],
-    [class*="Editor__editor"] {
-      background: #fff !important;
-      border: 1.5px solid var(--borde) !important;
-      border-radius: 7px !important;
-      font-family: 'Inter', sans-serif !important;
-      font-size: 14px !important;
-      line-height: 1.65 !important;
-      color: #1a1a1a !important;
-    }
-    [class*="Toolbar"],
-    [class*="toolbar"] {
-      background: var(--crema) !important;
-      border-bottom: 1px solid var(--borde) !important;
-      border-radius: 7px 7px 0 0 !important;
-    }
-    [class*="Toolbar"] button,
-    [class*="toolbar"] button {
-      color: var(--verde) !important;
-      border-radius: 4px !important;
-    }
-    [class*="Toolbar"] button:hover,
-    [class*="toolbar"] button:hover,
-    [class*="Toolbar"] button[class*="active"],
-    [class*="toolbar"] button[class*="active"] {
-      background: rgba(238,122,19,.15) !important;
-      color: var(--acento) !important;
-    }
-
-    /* ── Botón publicar ── */
-    button[class*="success"],
-    button[class*="primary"],
-    [class*="PublishButton"] {
-      background: var(--acento) !important;
-      border-color: var(--acento) !important;
-      border-radius: 7px !important;
-      font-weight: 600 !important;
-      color: #fff !important;
-    }
-    button[class*="success"]:hover,
-    button[class*="primary"]:hover {
-      background: var(--acento2) !important;
-    }
-    button[class*="delete"],
-    button[class*="danger"] { border-radius: 7px !important; }
-
-    /* ── Toggle boolean ── */
-    [class*="ToggleBackground"] { background: var(--borde) !important; }
-    [class*="ToggleBackground"][class*="active"] { background: var(--acento) !important; }
-
-    /* ── Upload imagen ── */
-    [class*="ImageUploadButton"],
-    [class*="FileUploadButton"] {
-      border: 2px dashed var(--acento) !important;
-      border-radius: 10px !important;
-      background: rgba(238,122,19,.04) !important;
-      color: var(--verde) !important;
-    }
-
-    /* ── Hints ── */
-    [class*="HintText"],
-    [class*="hint"] {
-      color: #888 !important;
-      font-size: 11px !important;
-    }
-
-    /* ── Scrollbar ── */
-    * { scrollbar-width: thin; scrollbar-color: var(--acento) transparent; }
-    ::-webkit-scrollbar { width: 5px; height: 5px; }
-    ::-webkit-scrollbar-thumb { background: var(--acento); border-radius: 3px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 </head>
 <body>
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
   <script>
-    var _obs = new MutationObserver(function() {
-      document.querySelectorAll('a, button, span, li').forEach(function(el) {
-        if (el.children.length === 0 && el.textContent.trim() === 'Medios') {
-          el.textContent = 'Imágenes';
+  (function () {
+    var A = '#EE7A13';
+    var V = '#1F3216';
+
+    function injectCSS() {
+      var s = document.getElementById('solar-css');
+      if (!s) { s = document.createElement('style'); s.id = 'solar-css'; document.head.appendChild(s); }
+      s.textContent = `
+        *, *::before, *::after { font-family: 'Inter', sans-serif !important; }
+        body { background: #f2f0ea !important; }
+
+        [data-testid="new-button"] {
+          background: #EE7A13 !important;
+          background-color: #EE7A13 !important;
+          border-color: #EE7A13 !important;
+          color: #fff !important;
+          font-weight: 700 !important;
+          text-transform: uppercase !important;
+          letter-spacing: .05em !important;
+          border-radius: 8px !important;
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          text-align: center !important;
+        }
+        [data-testid="new-button"]:hover {
+          background: #c9650d !important;
+          background-color: #c9650d !important;
+        }
+
+        article {
+          background: #fff !important;
+          border: 1px solid #dedad2 !important;
+          border-radius: 10px !important;
+          box-shadow: 0 1px 4px rgba(0,0,0,.06) !important;
+          overflow: hidden !important;
+        }
+        article:hover {
+          box-shadow: 0 4px 16px rgba(0,0,0,.12) !important;
+          transform: translateY(-2px) !important;
+        }
+
+        input, textarea, select {
+          background: #fff !important; border: 1.5px solid #dedad2 !important;
+          border-radius: 7px !important; color: #111 !important; font-size: 14px !important;
+        }
+        input:focus, textarea:focus, select:focus {
+          border-color: #EE7A13 !important;
+          box-shadow: 0 0 0 3px rgba(238,122,19,.15) !important;
+          outline: none !important;
+        }
+        textarea { min-height: 120px !important; resize: vertical !important; }
+        label { color: #1F3216 !important; font-size: 11px !important; font-weight: 600 !important; letter-spacing: .07em !important; text-transform: uppercase !important; }
+        [class*="Toolbar"] { background: #f0ede4 !important; border-bottom: 1px solid #dedad2 !important; border-radius: 7px 7px 0 0 !important; }
+        [class*="Toolbar"] button { color: #1F3216 !important; background: transparent !important; border: none !important; border-radius: 4px !important; }
+        [class*="Toolbar"] button:hover { background: rgba(238,122,19,.15) !important; color: #EE7A13 !important; }
+
+        .solar-thumb { width: 100%; height: 160px; object-fit: cover; display: block; border-bottom: 1px solid #dedad2; }
+        .solar-nophoto { width: 100%; height: 60px; background: #f5f3ee; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #dedad2; color: #ccc; font-size: 11px; }
+
+        * { scrollbar-width: thin; scrollbar-color: #EE7A13 transparent; }
+        ::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-thumb { background: #EE7A13; border-radius: 3px; }
+      `;
+    }
+
+    var propCache = {}, propFetching = {};
+    function fetchProp(slug, cb) {
+      if (propCache[slug]) { cb(propCache[slug]); return; }
+      if (propFetching[slug]) return;
+      propFetching[slug] = true;
+      var base = location.hostname === 'localhost' ? location.origin : 'https://raw.githubusercontent.com/Maticornara/CODIGO_VS/main';
+      fetch(base + '/content/propiedades/' + slug + '.md')
+        .then(function(r) { return r.ok ? r.text() : Promise.reject(); })
+        .then(function(txt) {
+          propCache[slug] = {
+            foto: ((txt.match(/fotos:\s*\n\s*-\s*(\S+)/) || [])[1] || '').trim(),
+            tipo: ((txt.match(/^tipo:\s*(.+)$/m) || [])[1] || '').trim().replace(/^["']|["']$/g, '')
+          };
+          cb(propCache[slug]);
+        })
+        .catch(function() { propCache[slug] = { foto:'', tipo:'' }; cb(propCache[slug]); });
+    }
+
+    var hdrDone = false;
+    function styleHeader() {
+      if (hdrDone) return;
+      var found = null;
+      Array.from(document.querySelectorAll('[data-testid="header"],header,body>div>div,body>div')).some(function(el) {
+        var r = el.getBoundingClientRect();
+        if (r.top <= 4 && r.height > 20 && r.height < 120 && r.width > window.innerWidth * 0.7) { found = el; return true; }
+      });
+      if (!found) return;
+      found.style.setProperty('background', V, 'important');
+      found.style.setProperty('background-color', V, 'important');
+      found.style.setProperty('box-shadow', '0 1px 8px rgba(0,0,0,.25)', 'important');
+      /* Ocultar tabs */
+      Array.from(found.querySelectorAll('a,li,span,button')).forEach(function(el) {
+        var t = (el.textContent||'').trim();
+        if (['Contenido','Medios','Media','Content'].indexOf(t) !== -1) {
+          (el.closest('li') || el.closest('a') || el).style.setProperty('display','none','important');
         }
       });
-      document.querySelectorAll('button').forEach(function(btn) {
-        var t = btn.textContent.trim();
-        if (t === 'Añadir rápido' || t === 'Quick add' || t.startsWith('Añadir rápido')) {
-          btn.style.display = 'none';
+      hdrDone = true;
+    }
+
+    function applyRepeating() {
+      /* Ocultar Añadir rápido */
+      Array.from(document.querySelectorAll('button,a')).forEach(function(el) {
+        var t = (el.innerText||el.textContent||'').trim();
+        if (t.indexOf('Añadir')!==-1||t.indexOf('rápido')!==-1||t.indexOf('Quick')!==-1) {
+          el.style.setProperty('display','none','important');
+          if (el.parentElement) el.parentElement.style.setProperty('display','none','important');
         }
       });
+
+      /* Botón naranja */
+      var nb = document.querySelector('[data-testid="new-button"]');
+      if (nb) {
+        nb.style.setProperty('background',       A, 'important');
+        nb.style.setProperty('background-color', A, 'important');
+        nb.style.setProperty('border-color',     A, 'important');
+        nb.style.setProperty('color',            '#fff', 'important');
+        nb.style.setProperty('font-weight',      '700', 'important');
+        nb.style.setProperty('text-transform',   'uppercase', 'important');
+        nb.style.setProperty('border-radius',    '8px', 'important');
+        /* Nuevo → Nueva */
+        Array.from(nb.querySelectorAll('*')).concat([nb]).forEach(function(el) {
+          if (el.childElementCount===0 && (el.textContent||'').indexOf('Nuevo')!==-1)
+            el.textContent = el.textContent.replace('Nuevo','Nueva');
+        });
+        /* Lock */
+        if (!nb.dataset.locked) {
+          nb.dataset.locked = '1';
+          new MutationObserver(function() {
+            nb.style.setProperty('background',       A, 'important');
+            nb.style.setProperty('background-color', A, 'important');
+            nb.style.setProperty('color',            '#fff', 'important');
+          }).observe(nb, { attributes:true, attributeFilter:['style','class'] });
+        }
+      }
+
+      /* Cards */
+      Array.from(document.querySelectorAll('article')).forEach(function(card) {
+        if (!card.dataset.codeOk) {
+          Array.from(card.querySelectorAll('p,span,div')).some(function(el) {
+            if (el.dataset.solarDone) return false;
+            var t = (el.innerText||el.textContent||'').trim();
+            if (!t||t.length>150) return false;
+            var m = t.match(/^([A-Z]{2,4}-\d{2,4})\b/);
+            if (!m) return false;
+            el.dataset.solarDone='1'; card.dataset.codeOk='1';
+            el.innerHTML='<span style="color:'+A+';font-weight:700;letter-spacing:.04em;font-size:13px">'+m[1]+'</span><span style="color:#555;font-weight:500">'+t.slice(m[1].length)+'</span>';
+            return true;
+          });
+        }
+        if (card.querySelector('.solar-thumb,.solar-nophoto')) return;
+        var link = card.querySelector('a[href]');
+        if (!link) return;
+        var slug = (link.getAttribute('href')||'').split('/').pop();
+        if (!slug||slug.length<2) return;
+        (function(s,c) {
+          fetchProp(s, function(p) {
+            if (c.querySelector('.solar-thumb,.solar-nophoto')) return;
+            if (p.foto) {
+              var img=document.createElement('img'); img.className='solar-thumb'; img.src=p.foto; img.alt=s;
+              c.insertBefore(img,c.firstChild);
+            } else {
+              var ph=document.createElement('div'); ph.className='solar-nophoto'; ph.textContent='Sin foto';
+              c.insertBefore(ph,c.firstChild);
+            }
+          });
+        })(slug,card);
+      });
+    }
+
+    function run() { injectCSS(); styleHeader(); applyRepeating(); }
+
+    new MutationObserver(run).observe(document.documentElement, { childList:true, subtree:true });
+    window.addEventListener('load', function() {
+      setTimeout(function() { injectCSS(); run(); }, 100);
+      [300,700,1200,2000,4000].forEach(function(ms){ setTimeout(run,ms); });
+      setInterval(function(){ injectCSS(); applyRepeating(); },800);
     });
-    _obs.observe(document.body, { childList: true, subtree: true, characterData: true });
+  })();
   </script>
 </body>
 </html>
