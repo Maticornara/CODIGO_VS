@@ -187,11 +187,18 @@
 
     function run() { injectCSS(); styleHeader(); applyRepeating(); }
 
-    new MutationObserver(run).observe(document.documentElement, { childList:true, subtree:true });
+    /* Observar solo el body, no el head (evita loop infinito) */
+    var pending = false;
+    new MutationObserver(function() {
+      if (pending) return;
+      pending = true;
+      setTimeout(function() { pending = false; styleHeader(); applyRepeating(); }, 150);
+    }).observe(document.body || document.documentElement, { childList:true, subtree:true });
+
     window.addEventListener('load', function() {
       setTimeout(function() { injectCSS(); run(); }, 100);
-      [300,700,1200,2000,4000].forEach(function(ms){ setTimeout(run,ms); });
-      setInterval(function(){ injectCSS(); applyRepeating(); },800);
+      [400,900,1800,3500].forEach(function(ms){ setTimeout(run,ms); });
+      setInterval(function(){ styleHeader(); applyRepeating(); }, 1000);
     });
   })();
   </script>
