@@ -139,8 +139,10 @@
     }
     .prop-desc {
       font-size: 14px; line-height: 1.8; color: #444;
-      white-space: pre-line;
     }
+    .prop-desc p { margin-bottom: 12px; }
+    .prop-desc ul { padding-left: 20px; margin-bottom: 12px; }
+    .prop-desc li { margin-bottom: 4px; }
     .prop-reel {
       display: inline-flex; align-items: center; gap: 10px; margin-top: 28px;
       background: var(--negro); color: var(--crema); text-decoration: none;
@@ -533,7 +535,7 @@
         <div class="prop-meta-row" id="propMeta"></div>
         <div id="propDescWrap" style="display:none">
           <p class="prop-desc-title">Descripción</p>
-          <p class="prop-desc" id="propDesc"></p>
+          <div class="prop-desc" id="propDesc"></div>
         </div>
         <div id="propReelWrap" style="display:none">
           <a class="prop-reel" id="propReel" target="_blank" rel="noopener">
@@ -860,25 +862,38 @@
         return '<div class="prop-meta-item"><span class="prop-meta-label">' + it.label + '</span><span class="prop-meta-val">' + it.val + '</span></div>';
       }).join('');
 
-      // Descripción
-      if (p.descripcion) {
-        document.getElementById('propDesc').textContent = p.descripcion;
-        document.getElementById('propDescWrap').style.display = 'block';
-      }
-
       // Reel
       if (p.link_reel) {
         document.getElementById('propReel').href = p.link_reel;
         document.getElementById('propReelWrap').style.display = 'block';
       }
 
+      // Descripción — renderizar markdown básico
+      if (p.descripcion) {
+        var md = p.descripcion
+          .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+          .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+          .replace(/\*(.+?)\*/g, '<em>$1</em>')
+          .replace(/(^|\n)((?:\s*[-*]\s+.+\n?)+)/g, function(_, pre, block) {
+            var items = block.trim().split('\n').map(function(l) {
+              return '<li>' + l.replace(/^\s*[-*]\s+/, '') + '</li>';
+            }).join('');
+            return pre + '<ul>' + items + '</ul>';
+          })
+          .replace(/\n{2,}/g, '</p><p>')
+          .replace(/\n/g, '<br>');
+        document.getElementById('propDesc').innerHTML = '<p>' + md + '</p>';
+        document.getElementById('propDescWrap').style.display = 'block';
+      }
+
       // WhatsApp
       var msg = 'Hola Antonella, me comunico desde Solar Propiedades por la propiedad ' + (p.codigo || '') + ' — ' + (p.titulo || '') + '.';
-      document.getElementById('waBtn').href = 'https://wa.me/5499XXXXXXXX?text=' + encodeURIComponent(msg);
+      document.getElementById('waBtn').href = 'https://wa.me/5492994029148?text=' + encodeURIComponent(msg);
 
-      // Mapa
-      if (p.coordenadas_lat && p.coordenadas_lng) {
-        var mapUrl = 'https://maps.google.com/maps?q=' + p.coordenadas_lat + ',' + p.coordenadas_lng + '&z=15&output=embed';
+      // Mapa — acepta coordenadas únicas (decimal o DMS) o lat/lng por separado
+      var coords = p.coordenadas || (p.coordenadas_lat && p.coordenadas_lng ? p.coordenadas_lat + ',' + p.coordenadas_lng : null);
+      if (coords) {
+        var mapUrl = 'https://maps.google.com/maps?q=' + encodeURIComponent(coords) + '&z=15&output=embed';
         document.getElementById('propMap').src = mapUrl;
         document.getElementById('propMapSection').style.display = 'block';
       }

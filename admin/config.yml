@@ -66,29 +66,22 @@ collections:
         required: false
         hint: "Ej: Chapelco Ski, San Martín de los Andes"
 
-      - label: "Latitud"
-        name: coordenadas_lat
-        widget: number
+      - label: "Coordenadas (Google Maps)"
+        name: coordenadas
+        widget: string
         required: false
-        value_type: float
-        hint: "Latitud para Google Maps (ej: -38.9516)"
-
-      - label: "Longitud"
-        name: coordenadas_lng
-        widget: number
-        required: false
-        value_type: float
-        hint: "Longitud para Google Maps (ej: -68.0591)"
+        hint: "Pegá las coordenadas de Google Maps. Ej: -40.749944, -71.656222 o 40°44'59.8\"S 71°39'22.4\"W"
 
       - label: "Descripción"
         name: descripcion
-        widget: text
+        widget: markdown
         required: false
+        hint: "Podés usar Enter para separar párrafos, - para listas, **negrita**, etc."
 
       - label: "Fotos"
         name: fotos
         widget: list
-        max: 12
+        max: 20
         required: false
         field:
           label: Foto
