@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
@@ -69,7 +69,7 @@
     nav.scrolled .nav-isologo-img { filter: none; opacity: 1; }
     .nav-logo:hover .nav-isologo-img { opacity: 0.75; }
 
-    /* Links â€” centrados entre logo e isologo */
+    /* Links — centrados entre logo e isologo */
     .nav-links { display: flex; align-items: center; gap: 32px; margin-left: auto; list-style: none; }
     .nav-links a {
       font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
@@ -98,17 +98,17 @@
       overflow: hidden; background: #1a2a10;
     }
 
-    /* â”€â”€ Capa base: color sÃ³lido oscuro â”€â”€ */
+    /* ── Capa base: color sólido oscuro ── */
     .hero-pattern {
       position: absolute; inset: 0;
       background: #1a2a10;
     }
 
-    /* â”€â”€ Blobs orgÃ¡nicos animados (efecto noise/mesh) â”€â”€ */
+    /* ── Blobs orgánicos animados (efecto noise/mesh) ── */
     .hero-pattern::before,
     .hero-pattern::after { content: ''; position: absolute; inset: 0; }
 
-    /* Blob 1 â€” verde oliva, se mueve lento en diagonal */
+    /* Blob 1 — verde oliva, se mueve lento en diagonal */
     .hero-pattern::before {
       background:
         radial-gradient(ellipse 75% 60% at 20% 40%, #3B5220 0%, transparent 70%),
@@ -118,7 +118,7 @@
       filter: blur(40px);
     }
 
-    /* Blob 2 â€” acento naranja muy suave + verde claro, se mueve opuesto */
+    /* Blob 2 — acento naranja muy suave + verde claro, se mueve opuesto */
     .hero-pattern::after {
       background:
         radial-gradient(ellipse 50% 45% at 75% 30%, rgba(238,122,19,0.22) 0%, transparent 65%),
@@ -141,14 +141,14 @@
       100% { transform: translate(-20px,  30px)  scale(1.06); }
     }
 
-    /* â”€â”€ Noise SVG overlay: da la textura orgÃ¡nica â”€â”€ */
+    /* ── Noise SVG overlay: da la textura orgánica ── */
     .hero-noise {
       position: absolute; inset: 0; pointer-events: none; z-index: 1;
       opacity: 0.055;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
       background-size: 260px 260px;
     }
-    /* Hero â€” layout de dos columnas */
+    /* Hero — layout de dos columnas */
     .hero-layout {
       position: relative; z-index: 2;
       display: flex; align-items: center;
@@ -159,7 +159,7 @@
       flex: 1; max-width: 560px;
     }
 
-    /* Ilustraciones animadas â€” lado derecho */
+    /* Ilustraciones animadas — lado derecho */
     .hero-illus-wrap {
       flex: 1; position: relative;
       display: flex; align-items: center; justify-content: center;
@@ -211,13 +211,13 @@
     }
     @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
 
-    /* SEARCH SECTION â€” continÃºa el degradÃ© del hero */
+    /* SEARCH SECTION — continúa el degradé del hero */
     .search-section {
       position: relative; overflow: visible;
       background: #1a2a10;
       padding: 52px 56px 72px;
     }
-    /* Blobs del hero se extienden aquÃ­ */
+    /* Blobs del hero se extienden aquí */
     .search-section::before, .search-section::after {
       content: ''; position: absolute; inset: 0; pointer-events: none;
     }
@@ -256,10 +256,10 @@
       display: flex; align-items: center; width: 100%;
       border-radius: 8px; overflow: visible;
     }
-    /* Primer y Ãºltimo hijo reciben el border-radius para reemplazar overflow:hidden */
+    /* Primer y último hijo reciben el border-radius para reemplazar overflow:hidden */
     .search-bar-inner > .search-filter:first-child { border-radius: 7px 0 0 7px; }
     .search-bar-inner > .search-sep:first-of-type ~ .search-filter { border-radius: 0; }
-    /* BotÃ³n BUSCAR â€” a la DERECHA */
+    /* Botón BUSCAR — a la DERECHA */
     .search-btn {
       display: flex; align-items: center; gap: 9px;
       padding: 0 28px; height: 58px;
@@ -275,7 +275,7 @@
     .search-sep {
       width: 1px; height: 30px; background: rgba(255,252,235,0.12); flex-shrink: 0;
     }
-    /* Filtro genÃ©rico */
+    /* Filtro genérico */
     .search-filter {
       display: flex; align-items: center; gap: 8px;
       padding: 0 20px; height: 58px; flex: 1; min-width: 130px;
@@ -293,7 +293,7 @@
       color: rgba(255,252,235,0.82); flex: 1; white-space: nowrap;
       overflow: hidden; text-overflow: ellipsis; pointer-events: none;
     }
-    /* Input texto (ubicaciÃ³n) */
+    /* Input texto (ubicación) */
     .search-filter input {
       font-family: var(--font-body); font-size: 13px; font-weight: 400;
       color: rgba(255,252,235,0.82); background: transparent;
@@ -334,7 +334,7 @@
     .sf-option:hover { background: var(--acento); color: #fff; }
     .sf-option.selected { color: var(--acento); font-weight: 600; }
 
-    /* SECCIÃ“N PROPIEDADES */
+    /* SECCIÓN PROPIEDADES */
     .propiedades-section {
       background: var(--crema-dark);
       padding: 80px 56px 100px;
@@ -518,7 +518,7 @@
     .valor-title { font-family: var(--font-display); font-size: 28px; font-weight: 900; color: var(--crema); margin-bottom: 20px; line-height: 1.1; }
     .valor-desc { font-size: 13px; font-weight: 300; line-height: 1.85; color: rgba(255,252,235,0.45); }
 
-    /* SOBRE MÃ */
+    /* SOBRE MÍ */
     .sobre-outer { padding: 120px 56px; }
     .sobre-section { max-width: var(--max-w); margin: 0 auto; display: grid; grid-template-columns: 5fr 7fr; gap: 100px; align-items: center; }
     .sobre-img-wrap { position: relative; }
@@ -541,7 +541,7 @@
     .badge { display: flex; align-items: center; gap: 8px; padding: 10px 16px; border: 1.5px solid var(--gris-suave); border-radius: 2px; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--verde); }
     .badge-dot { width: 6px; height: 6px; background: var(--acento); border-radius: 50%; flex-shrink: 0; }
 
-    /* FAQ â€” hover expande la respuesta, pregunta con fondo naranja */
+    /* FAQ — hover expande la respuesta, pregunta con fondo naranja */
     .faq-section { background: #f5f2e3; padding: 120px 56px; }
     .faq-inner { max-width: 860px; margin: 0 auto; }
     .faq-item { border-top: 1px solid var(--gris-suave); }
@@ -574,7 +574,7 @@
     .faq-a-inner ul { margin-top: 14px; padding-left: 0; list-style: none; }
     .faq-a-inner li { padding: 8px 0 8px 22px; position: relative; border-bottom: 1px solid var(--gris-suave); font-size: 13px; }
     .faq-a-inner li:last-child { border-bottom: none; }
-    .faq-a-inner li::before { content: 'â€”'; position: absolute; left: 0; color: var(--acento); font-size: 11px; }
+    .faq-a-inner li::before { content: '—'; position: absolute; left: 0; color: var(--acento); font-size: 11px; }
     .faq-cta { margin-top: 44px; font-size: 14px; font-weight: 300; color: var(--gris-texto); }
     .faq-cta a { color: var(--verde); font-weight: 700; text-decoration: none; }
 
@@ -629,7 +629,7 @@
       .hero-content { max-width: 100%; }
       .hero-illus-wrap { display: none; }
       .hero-title { height: auto; min-height: 2.6em; }
-      /* Barra de bÃºsqueda en mobile: columna */
+      /* Barra de búsqueda en mobile: columna */
       .search-section { padding: 36px 20px 48px; }
       .search-bar-inner { flex-direction: column; }
       .search-btn { border-radius: 0 0 7px 7px; padding: 18px 28px; justify-content: center; width: 100%; }
@@ -670,7 +670,7 @@
     <li><a href="#servicios">Servicios</a></li>
     <li><a href="#propiedades">Propiedades</a></li>
     <li><a href="#valores">Nuestra esencia</a></li>
-    <li><a href="#sobre">Sobre mÃ­</a></li>
+    <li><a href="#sobre">Sobre mí</a></li>
     <li><a href="#faq">FAQ</a></li>
     <li><a href="#contacto" class="nav-cta">Consultar</a></li>
   </ul>
@@ -682,18 +682,18 @@
   <div class="hero-noise"></div>
   <div class="hero-layout">
 
-  <!-- COLUMNA IZQUIERDA: texto + bÃºsqueda -->
+  <!-- COLUMNA IZQUIERDA: texto + búsqueda -->
   <div class="hero-content">
-    <p class="hero-eyebrow">NeuquÃ©n Â· Patagonia Argentina</p>
+    <p class="hero-eyebrow">Neuquén · Patagonia Argentina</p>
     <p class="hero-welcome">Bienvenido a Solar Propiedades.</p>
     <h1 class="hero-title" id="heroTitle"><span class="typewriter-cursor"></span></h1>
-    <p class="hero-sub">Asesoramiento inmobiliario con respaldo contable real. ComprÃ¡, vendÃ© o alquilÃ¡ sabiendo exactamente quÃ© vale cada propiedad.</p>
+    <p class="hero-sub">Asesoramiento inmobiliario con respaldo contable real. Comprá, vendé o alquilá sabiendo exactamente qué vale cada propiedad.</p>
   </div><!-- fin hero-content -->
 
   <!-- COLUMNA DERECHA: ilustraciones animadas -->
   <div class="hero-illus-wrap">
 
-    <!-- 0. CASA â€” coords del SVG fuente -->
+    <!-- 0. CASA — coords del SVG fuente -->
     <svg class="illus-svg" id="illus-0"
       viewBox="0 14 250 268"
       fill="none" stroke="#EE7A13" stroke-width="2"
@@ -712,7 +712,7 @@
       <polygon points="82.9 201.4 82.9 229.3 42.6 209 42.6 180.9 78.8 199.4 82.9 201.4"/>
     </svg>
 
-    <!-- 1. EDIFICIO â€” viewBox expandido para tamaÃ±o mÃ¡s pequeÃ±o -->
+    <!-- 1. EDIFICIO — viewBox expandido para tamaño más pequeño -->
     <svg class="illus-svg" id="illus-1"
       viewBox="240 -40 340 470"
       fill="none" stroke="#EE7A13" stroke-width="2"
@@ -785,14 +785,14 @@
   </div><!-- fin hero-layout -->
 </section>
 
-<!-- BARRA DE BÃšSQUEDA -->
+<!-- BARRA DE BÚSQUEDA -->
 <section class="search-section">
   <div class="search-section-inner">
-    <p class="search-label">EncontrÃ¡ tu propiedad ideal</p>
+    <p class="search-label">Encontrá tu propiedad ideal</p>
     <div class="search-bar">
       <div class="search-bar-inner">
 
-        <!-- TIPO â€” dropdown custom -->
+        <!-- TIPO — dropdown custom -->
         <div class="search-filter" data-custom-select id="sf-tipo">
           <label>Tipo</label>
           <span class="sf-value">Cualquier tipo</span>
@@ -802,27 +802,27 @@
             <div class="sf-option" data-value="lotes">Lotes</div>
             <div class="sf-option" data-value="casas">Casas</div>
             <div class="sf-option" data-value="alquiler-permanente">Alquiler permanente</div>
-            <div class="sf-option" data-value="alquiler-turistico">Alquiler turÃ­stico</div>
+            <div class="sf-option" data-value="alquiler-turistico">Alquiler turístico</div>
           </div>
         </div>
 
         <span class="search-sep"></span>
 
-        <!-- UBICACIÃ“N â€” input texto -->
+        <!-- UBICACIÓN — input texto -->
         <div class="search-filter" style="flex:1.4; cursor:text;">
-          <label>UbicaciÃ³n</label>
+          <label>Ubicación</label>
           <input type="text" placeholder="Villa La Angostura..." />
         </div>
 
         <span class="search-sep"></span>
 
-        <!-- PRECIO MÃX â€” dropdown custom -->
+        <!-- PRECIO MÁX — dropdown custom -->
         <div class="search-filter" data-custom-select id="sf-precio">
-          <label>Precio mÃ¡x.</label>
-          <span class="sf-value">Sin lÃ­mite</span>
+          <label>Precio máx.</label>
+          <span class="sf-value">Sin límite</span>
           <svg class="search-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
           <div class="sf-dropdown">
-            <div class="sf-option selected" data-value="">Sin lÃ­mite</div>
+            <div class="sf-option selected" data-value="">Sin límite</div>
             <div class="sf-option" data-value="100k">U$S 100.000</div>
             <div class="sf-option" data-value="250k">U$S 250.000</div>
             <div class="sf-option" data-value="500k">U$S 500.000</div>
@@ -832,23 +832,23 @@
 
         <span class="search-sep"></span>
 
-        <!-- MÂ² MÃN â€” dropdown custom -->
+        <!-- M² MÍN — dropdown custom -->
         <div class="search-filter" data-custom-select id="sf-m2">
-          <label>mÂ² mÃ­n.</label>
-          <span class="sf-value">Sin lÃ­mite</span>
+          <label>m² mín.</label>
+          <span class="sf-value">Sin límite</span>
           <svg class="search-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
           <div class="sf-dropdown">
-            <div class="sf-option selected" data-value="">Sin lÃ­mite</div>
-            <div class="sf-option" data-value="100">100 mÂ²</div>
-            <div class="sf-option" data-value="300">300 mÂ²</div>
-            <div class="sf-option" data-value="1000">1.000 mÂ²</div>
-            <div class="sf-option" data-value="5000">5.000 mÂ²</div>
+            <div class="sf-option selected" data-value="">Sin límite</div>
+            <div class="sf-option" data-value="100">100 m²</div>
+            <div class="sf-option" data-value="300">300 m²</div>
+            <div class="sf-option" data-value="1000">1.000 m²</div>
+            <div class="sf-option" data-value="5000">5.000 m²</div>
           </div>
         </div>
 
         <span class="search-sep"></span>
 
-        <!-- BOTÃ“N BUSCAR â€” derecha -->
+        <!-- BOTÓN BUSCAR — derecha -->
         <button class="search-btn">
           <svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           Buscar
@@ -867,9 +867,9 @@
         <p class="section-eyebrow" id="propiedades-eyebrow">Disponibles ahora</p>
         <h2 class="section-title" style="margin-bottom:0" id="propiedades-titulo">Propiedades destacadas</h2>
       </div>
-      <a href="/propiedades" style="background:none; border:1.5px solid var(--verde); color:var(--verde); font-family:var(--font-body); font-size:12px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; padding:10px 22px; border-radius:3px; cursor:pointer; transition:background 0.2s, color 0.2s; text-decoration:none; display:inline-block;">Ver todas â†’</a>
+      <a href="/propiedades" style="background:none; border:1.5px solid var(--verde); color:var(--verde); font-family:var(--font-body); font-size:12px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; padding:10px 22px; border-radius:3px; cursor:pointer; transition:background 0.2s, color 0.2s; text-decoration:none; display:inline-block;">Ver todas →</a>
     </div>
-    <div class="propiedades-loading" id="propiedades-loading">Cargando propiedadesâ€¦</div>
+    <div class="propiedades-loading" id="propiedades-loading">Cargando propiedades…</div>
     <div class="propiedades-grid" id="propiedades-grid"></div>
     <div class="propiedades-empty" id="propiedades-empty" style="display:none">
       No se encontraron propiedades con esos filtros.
@@ -887,25 +887,25 @@
     <span class="servicio-num">01</span>
     <div class="servicio-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
     <h3 class="servicio-title">Venta de Casas</h3>
-    <p class="servicio-desc">Gestionamos la venta con anÃ¡lisis tÃ©cnico de mercado, marketing estratÃ©gico y acompaÃ±amiento legal completo.</p>
+    <p class="servicio-desc">Gestionamos la venta con análisis técnico de mercado, marketing estratégico y acompañamiento legal completo.</p>
   </div>
   <div class="servicio-card">
     <span class="servicio-num">02</span>
     <div class="servicio-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
     <h3 class="servicio-title">Venta de Lotes</h3>
-    <p class="servicio-desc">Terrenos en barrios cerrados, a la vera de lagos y zonas de alta valorizaciÃ³n en toda la regiÃ³n de NeuquÃ©n.</p>
+    <p class="servicio-desc">Terrenos en barrios cerrados, a la vera de lagos y zonas de alta valorización en toda la región de Neuquén.</p>
   </div>
   <div class="servicio-card">
     <span class="servicio-num">03</span>
     <div class="servicio-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
     <h3 class="servicio-title">Alquileres</h3>
-    <p class="servicio-desc">Permanentes y turÃ­sticos. AdministraciÃ³n integral, contratos seguros y gestiÃ³n de inquilinos para propietarios tranquilos.</p>
+    <p class="servicio-desc">Permanentes y turísticos. Administración integral, contratos seguros y gestión de inquilinos para propietarios tranquilos.</p>
   </div>
   <div class="servicio-card">
     <span class="servicio-num">04</span>
     <div class="servicio-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
     <h3 class="servicio-title">Tasaciones</h3>
-    <p class="servicio-desc">ValuaciÃ³n tÃ©cnica y profesional basada en anÃ¡lisis real de mercado. Respaldada por matrÃ­cula contable e inmobiliaria.</p>
+    <p class="servicio-desc">Valuación técnica y profesional basada en análisis real de mercado. Respaldada por matrícula contable e inmobiliaria.</p>
   </div>
 </div>
 
@@ -917,17 +917,17 @@
     <h2 class="section-title">Lo que nos define</h2>
     <div class="valores-grid">
       <div class="valor-item">
-        <p class="valor-num">01 â€”â€”</p>
+        <p class="valor-num">01 ——</p>
         <h3 class="valor-title">Integridad</h3>
-        <p class="valor-desc">Actuamos con honestidad en cada operaciÃ³n. Tu confianza es el activo mÃ¡s valioso que administramos.</p>
+        <p class="valor-desc">Actuamos con honestidad en cada operación. Tu confianza es el activo más valioso que administramos.</p>
       </div>
       <div class="valor-item">
-        <p class="valor-num">02 â€”â€”</p>
-        <h3 class="valor-title">PrecisiÃ³n TÃ©cnica</h3>
-        <p class="valor-desc">La doble formaciÃ³n contable e inmobiliaria nos permite ver lo que otros no ven: el valor real de cada propiedad.</p>
+        <p class="valor-num">02 ——</p>
+        <h3 class="valor-title">Precisión Técnica</h3>
+        <p class="valor-desc">La doble formación contable e inmobiliaria nos permite ver lo que otros no ven: el valor real de cada propiedad.</p>
       </div>
       <div class="valor-item">
-        <p class="valor-num">03 â€”â€”</p>
+        <p class="valor-num">03 ——</p>
         <h3 class="valor-title">Transparencia</h3>
         <p class="valor-desc">Sin sorpresas. Te explicamos cada paso, cada costo y cada implicancia legal antes de firmar cualquier documento.</p>
       </div>
@@ -935,7 +935,7 @@
   </div>
 </section>
 
-<!-- SOBRE MÃ -->
+<!-- SOBRE MÍ -->
 <div class="sobre-outer" id="sobre">
   <div class="sobre-section">
     <div class="sobre-img-wrap">
@@ -946,12 +946,12 @@
       <div class="sobre-frame"></div>
     </div>
     <div class="sobre-text">
-      <p class="section-eyebrow">Sobre mÃ­</p>
-      <h2 class="section-title">Hola, soy<br/>Antonella GutiÃ©rrez</h2>
-      <p class="sobre-bio">Combinar mis dos pasiones â€”la contabilidad y el corretaje inmobiliarioâ€” es lo que me permite diferenciarme en el mercado. Entiendo el valor real de las propiedades no solo por su ubicaciÃ³n, sino por su rendimiento y su marco legal.<br/><br/>Mi objetivo es que te sientas asesorado por una profesional que domina tanto el mercado inmobiliario como la normativa vigente, garantizando una experiencia eficiente y sin sorpresas.</p>
+      <p class="section-eyebrow">Sobre mí</p>
+      <h2 class="section-title">Hola, soy<br/>Antonella Gutiérrez</h2>
+      <p class="sobre-bio">Combinar mis dos pasiones —la contabilidad y el corretaje inmobiliario— es lo que me permite diferenciarme en el mercado. Entiendo el valor real de las propiedades no solo por su ubicación, sino por su rendimiento y su marco legal.<br/><br/>Mi objetivo es que te sientas asesorado por una profesional que domina tanto el mercado inmobiliario como la normativa vigente, garantizando una experiencia eficiente y sin sorpresas.</p>
       <div class="sobre-badges">
-        <div class="badge"><span class="badge-dot"></span>Consejo de Ciencias EconÃ³micas</div>
-        <div class="badge"><span class="badge-dot"></span>Colegio de Martilleros â€” NeuquÃ©n</div>
+        <div class="badge"><span class="badge-dot"></span>Consejo de Ciencias Económicas</div>
+        <div class="badge"><span class="badge-dot"></span>Colegio de Martilleros — Neuquén</div>
       </div>
     </div>
   </div>
@@ -961,55 +961,55 @@
 <section class="faq-section" id="faq">
   <div class="faq-inner">
     <p class="section-eyebrow">Preguntas frecuentes</p>
-    <h2 class="section-title">Todo lo que necesitÃ¡s saber</h2>
+    <h2 class="section-title">Todo lo que necesitás saber</h2>
     <div class="faq-list">
       <div class="faq-item">
         <div class="faq-q">
-          <span class="faq-q-text">Â¿QuÃ© documentos necesito para vender mi casa o lote?</span>
+          <span class="faq-q-text">¿Qué documentos necesito para vender mi casa o lote?</span>
         </div>
-        <div class="faq-a"><div class="faq-a-inner">Para iniciar el proceso de venta y garantizar una operaciÃ³n segura, necesitÃ¡s:<ul>
-          <li>TÃ­tulo de Propiedad (Escritura) inscripta en el Registro de la Propiedad Inmueble</li>
-          <li>DNI del/los titulares y de sus cÃ³nyuges si corresponde</li>
+        <div class="faq-a"><div class="faq-a-inner">Para iniciar el proceso de venta y garantizar una operación segura, necesitás:<ul>
+          <li>Título de Propiedad (Escritura) inscripta en el Registro de la Propiedad Inmueble</li>
+          <li>DNI del/los titulares y de sus cónyuges si corresponde</li>
           <li>Plano de Mensura actualizado y aprobado por Catastro</li>
           <li>Estado parcelario para verificar que lo que figura en el papel coincide con el terreno real</li>
-          <li>Comprobantes de tasa municipal (TISH), impuesto inmobiliario provincial y servicios al dÃ­a</li>
+          <li>Comprobantes de tasa municipal (TISH), impuesto inmobiliario provincial y servicios al día</li>
           <li>Certificado de libre deuda de expensas (en caso de departamentos o barrios cerrados)</li>
         </ul></div></div>
       </div>
       <div class="faq-item">
         <div class="faq-q">
-          <span class="faq-q-text">Â¿QuÃ© documentos necesito para comprar una casa o lote?</span>
+          <span class="faq-q-text">¿Qué documentos necesito para comprar una casa o lote?</span>
         </div>
-        <div class="faq-a"><div class="faq-a-inner">Comprar una propiedad es un paso importante. Para avanzar de forma firme necesitÃ¡s:<ul>
-          <li>DNI vigente de quienes figurarÃ¡n como titulares</li>
+        <div class="faq-a"><div class="faq-a-inner">Comprar una propiedad es un paso importante. Para avanzar de forma firme necesitás:<ul>
+          <li>DNI vigente de quienes figurarán como titulares</li>
           <li>Constancia de CUIT/CUIL emitida por ANSES o AFIP</li>
-          <li>JustificaciÃ³n de fondos: declaraciones juradas, recibos de sueldo o boletos de venta anteriores</li>
-          <li>Reserva de compra: documento formal para congelar precio y condiciones mientras se revisa la documentaciÃ³n legal</li>
+          <li>Justificación de fondos: declaraciones juradas, recibos de sueldo o boletos de venta anteriores</li>
+          <li>Reserva de compra: documento formal para congelar precio y condiciones mientras se revisa la documentación legal</li>
         </ul></div></div>
       </div>
       <div class="faq-item">
         <div class="faq-q">
-          <span class="faq-q-text">Â¿Para quÃ© contratar los servicios de Solar Propiedades?</span>
+          <span class="faq-q-text">¿Para qué contratar los servicios de Solar Propiedades?</span>
         </div>
-        <div class="faq-a"><div class="faq-a-inner">Contratar un profesional matriculado no es un gasto, es una inversiÃ³n en seguridad. Al trabajar con nosotros obtenÃ©s:<ul>
-          <li>TasaciÃ³n tÃ©cnica basada en anÃ¡lisis de mercado real, no en estimaciones</li>
-          <li>Marketing estratÃ©gico con visibilidad en los mejores portales y redes sociales</li>
+        <div class="faq-a"><div class="faq-a-inner">Contratar un profesional matriculado no es un gasto, es una inversión en seguridad. Al trabajar con nosotros obtenés:<ul>
+          <li>Tasación técnica basada en análisis de mercado real, no en estimaciones</li>
+          <li>Marketing estratégico con visibilidad en los mejores portales y redes sociales</li>
           <li>Filtro de interesados: gestionamos visitas y verificamos la solvencia de compradores potenciales</li>
         </ul></div></div>
       </div>
       <div class="faq-item">
         <div class="faq-q">
-          <span class="faq-q-text">Â¿QuÃ© impuestos debo pagar al comprar?</span>
+          <span class="faq-q-text">¿Qué impuestos debo pagar al comprar?</span>
         </div>
         <div class="faq-a"><div class="faq-a-inner">Al comprar una propiedad existen costos asociados a tener en cuenta:<ul>
           <li>Impuesto de Sellos: impuesto provincial que generalmente se abona por partes iguales entre comprador y vendedor</li>
-          <li>Tasas de InscripciÃ³n: gastos de registro en el Registro de la Propiedad Inmueble</li>
-          <li>Honorarios de EscribanÃ­a: costos de la escritura pÃºblica</li>
-          <li>Tasa Municipal: al momento de la posesiÃ³n, el nuevo titular asume tasas municipales y servicios</li>
+          <li>Tasas de Inscripción: gastos de registro en el Registro de la Propiedad Inmueble</li>
+          <li>Honorarios de Escribanía: costos de la escritura pública</li>
+          <li>Tasa Municipal: al momento de la posesión, el nuevo titular asume tasas municipales y servicios</li>
         </ul></div></div>
       </div>
     </div>
-    <p class="faq-cta">Â¿TenÃ©s otra consulta? <a href="#contacto">Â¡Consultanos â†’</a></p>
+    <p class="faq-cta">¿Tenés otra consulta? <a href="#contacto">¡Consultanos →</a></p>
   </div>
 </section>
 
@@ -1018,8 +1018,8 @@
   <div class="contacto-inner">
     <div class="contacto-text">
       <p class="section-eyebrow">Contacto</p>
-      <h2 class="section-title">Hablemos de tu<br/>prÃ³ximo paso</h2>
-      <p class="contacto-desc">Ya sea que quieras vender, comprar, alquilar o saber cuÃ¡nto vale tu propiedad, estamos acÃ¡ para ayudarte.</p>
+      <h2 class="section-title">Hablemos de tu<br/>próximo paso</h2>
+      <p class="contacto-desc">Ya sea que quieras vender, comprar, alquilar o saber cuánto vale tu propiedad, estamos acá para ayudarte.</p>
       <a href="https://wa.me/5492994029148?text=Hola%20Antonella%2C%20me%20comunico%20desde%20Solar%20Propiedades.%20Quisiera%20recibir%20asesoramiento." class="contacto-wa" target="_blank">
         <svg viewBox="0 0 24 24" fill="white" width="20" height="20"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
         Escribir por WhatsApp
@@ -1028,23 +1028,23 @@
     <form class="contacto-form" onsubmit="return false;">
       <div class="form-row">
         <div class="form-field"><label>Nombre</label><input type="text" placeholder="Tu nombre" /></div>
-        <div class="form-field"><label>TelÃ©fono</label><input type="tel" placeholder="+54 9 ..." /></div>
+        <div class="form-field"><label>Teléfono</label><input type="tel" placeholder="+54 9 ..." /></div>
       </div>
       <div class="form-field"><label>Email</label><input type="email" placeholder="tu@email.com" /></div>
-      <div class="form-field"><label>Mensaje</label><textarea rows="4" placeholder="Â¿En quÃ© podemos ayudarte?"></textarea></div>
-      <button class="form-submit" type="submit">Enviar consulta â†’</button>
+      <div class="form-field"><label>Mensaje</label><textarea rows="4" placeholder="¿En qué podemos ayudarte?"></textarea></div>
+      <button class="form-submit" type="submit">Enviar consulta →</button>
     </form>
   </div>
 </section>
 
 <!-- FOOTER -->
 <footer>
-  <span class="footer-copy">Â© 2025 Solar Propiedades Â· Antonella GutiÃ©rrez Â· NeuquÃ©n, Argentina</span>
+  <span class="footer-copy">© 2025 Solar Propiedades · Antonella Gutiérrez · Neuquén, Argentina</span>
   <ul class="footer-links">
     <li><a href="#inicio">Inicio</a></li>
     <li><a href="#propiedades">Propiedades</a></li>
     <li><a href="#servicios">Servicios</a></li>
-    <li><a href="#sobre">Sobre mÃ­</a></li>
+    <li><a href="#sobre">Sobre mí</a></li>
     <li><a href="#contacto">Contacto</a></li>
   </ul>
 </footer>
@@ -1061,16 +1061,16 @@
     nav.classList.toggle('scrolled', window.scrollY > 40);
   });
 
-  // â”€â”€ TYPEWRITER + ILUSTRACIONES SVG â€” SINCRONIZADOS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── TYPEWRITER + ILUSTRACIONES SVG — SINCRONIZADOS ───────────────────────
   (function() {
 
-    /* â”€â”€ Tiempos globales (ms) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    /* ── Tiempos globales (ms) ─────────────────────────────────────────── */
     var DRAW_MS   = 2000;  // SVG se dibuja en 2s
     var HOLD_MS   = 4000;  // pausa con todo visible
     var UNDRAW_MS = 1000;  // SVG se desdibuja en 1s
-    var CHAR_MS   = 75;    // ms por carÃ¡cter al tipear
+    var CHAR_MS   = 75;    // ms por carácter al tipear
 
-    /* â”€â”€ Typewriter â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    /* ── Typewriter ────────────────────────────────────────────────────── */
     var titleEl = document.getElementById('heroTitle');
     var BASE    = 'El valor justo de\ntu ';
     var WORDS   = ['Casa.', 'departamento.', 'terreno.', 'propiedad.'];
@@ -1105,14 +1105,14 @@
       });
     }
 
-    /* â”€â”€ SVG ilustraciones â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    /* ── SVG ilustraciones ──────────────────────────────────────────────── */
     var svgs = ['illus-0','illus-1','illus-2','illus-3']
                  .map(function(id) { return document.getElementById(id); });
 
     /*
       DASH = valor fijo mayor que la longitud de cualquier trazo en el SVG.
-      Con dasharray=DASH y dashoffset=DASH â†’ trazo invisible.
-      Con dashoffset=0 â†’ trazo completamente dibujado (siempre, sin importar getTotalLength).
+      Con dasharray=DASH y dashoffset=DASH → trazo invisible.
+      Con dashoffset=0 → trazo completamente dibujado (siempre, sin importar getTotalLength).
     */
     var DASH = 9000;
 
@@ -1125,8 +1125,8 @@
     }
 
     /*
-      draw(): el ÃšLTIMO trazo termina exactamente en DRAW_MS.
-      perPath = DRAW_MS - (n-1)*STAGGER â†’ Ãºltimo trazo: start=(n-1)*40, end=DRAW_MS âœ“
+      draw(): el ÚLTIMO trazo termina exactamente en DRAW_MS.
+      perPath = DRAW_MS - (n-1)*STAGGER → último trazo: start=(n-1)*40, end=DRAW_MS ✓
     */
     function draw(svg) {
       return new Promise(function(res) {
@@ -1152,10 +1152,10 @@
     }
 
     /*
-      undraw(): los trazos vuelven de 0 â†’ DASH (desaparecen).
+      undraw(): los trazos vuelven de 0 → DASH (desaparecen).
       El delay de 20ms garantiza que el browser haya pintado dashoffset=0
-      antes de intentar la transiciÃ³n de regreso. Sin ese frame,
-      el browser puede no detectar el cambio y no disparar la animaciÃ³n.
+      antes de intentar la transición de regreso. Sin ese frame,
+      el browser puede no detectar el cambio y no disparar la animación.
     */
     function undraw(svg) {
       return new Promise(function(res) {
@@ -1173,18 +1173,18 @@
 
     function sleep(ms) { return new Promise(function(r) { setTimeout(r, ms); }); }
 
-    /* â”€â”€ Init â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    /* ── Init ───────────────────────────────────────────────────────────── */
     svgs.forEach(initSVG);
     render('');
 
-    /* â”€â”€ Loop principal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    /* ── Loop principal ─────────────────────────────────────────────────── */
     async function loop() {
       var idx = 0;
       await sleep(800);
 
       /*
-        ARRANQUE: BASE(21 chars) + "Casa."(5) = 26 chars Ã— 75ms = 1950ms â‰ˆ DRAW_MS
-        â†’ typewriter y SVG terminan prÃ¡cticamente al mismo tiempo.
+        ARRANQUE: BASE(21 chars) + "Casa."(5) = 26 chars × 75ms = 1950ms ≈ DRAW_MS
+        → typewriter y SVG terminan prácticamente al mismo tiempo.
       */
       svgs[0].style.opacity = '1';
       await Promise.all([
@@ -1201,7 +1201,7 @@
 
         /*
           SALIDA: borrar palabra + desdibujar SVG en paralelo (~1s ambos).
-          eraseMs = UNDRAW_MS / longitud_palabra â†’ ambos terminan juntos.
+          eraseMs = UNDRAW_MS / longitud_palabra → ambos terminan juntos.
         */
         var eraseMs = Math.floor(UNDRAW_MS / WORDS[idx].length);
         await Promise.all([
@@ -1216,7 +1216,7 @@
         /*
           ENTRADA: dibujar SVG (2s) + tipear nueva palabra.
           La palabra empieza tarde para que ambos terminen juntos:
-          wordDelay = DRAW_MS - wordLengthÃ—CHAR_MS - 50ms margen
+          wordDelay = DRAW_MS - wordLength×CHAR_MS - 50ms margen
         */
         var wordDelay = Math.max(0, DRAW_MS - nextWord.length * CHAR_MS - 50);
         svgs[nextIdx].style.opacity = '1';
@@ -1239,9 +1239,9 @@
     }
 
   })();
-  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ────────────────────────────────────────────────────────────────────────
 
-  // â”€â”€ DROPDOWNS CUSTOM DE LA BARRA DE BÃšSQUEDA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── DROPDOWNS CUSTOM DE LA BARRA DE BÚSQUEDA ────────────────────────────
   (function() {
     const filters = document.querySelectorAll('[data-custom-select]');
 
@@ -1262,7 +1262,7 @@
         this.classList.toggle('open', !wasOpen);
       });
 
-      // Click en una opciÃ³n
+      // Click en una opción
       options.forEach(opt => {
         opt.addEventListener('click', function(e) {
           e.stopPropagation();
@@ -1280,9 +1280,9 @@
     // Click fuera cierra todo
     document.addEventListener('click', () => closeAll(null));
   })();
-  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ────────────────────────────────────────────────────────────────────────
 
-  // â”€â”€ PROPIEDADES â€” fetch desde GitHub API â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── PROPIEDADES — fetch desde GitHub API ────────────────────────────────
   (function() {
     var REPO    = 'Maticornara/CODIGO_VS';
     var API_DIR = 'https://api.github.com/repos/' + REPO + '/contents/content/propiedades?ref=main';
@@ -1319,8 +1319,8 @@
       if (isNaN(n)) return prop.precio || '';
       var formatted = n.toLocaleString('es-AR');
       var esAlq = prop.tipo && prop.tipo.toLowerCase().includes('alquiler');
-      var prefix = prop.moneda === 'ARS' ? '$Â ' : 'U$SÂ ';
-      return prefix + formatted + (esAlq ? 'Â / mes' : '');
+      var prefix = prop.moneda === 'ARS' ? '$ ' : 'U$S ';
+      return prefix + formatted + (esAlq ? ' / mes' : '');
     }
 
     function renderCard(p) {
@@ -1335,13 +1335,13 @@
         '<div class="prop-card-body">' +
           '<h3 class="prop-card-titulo">' + (p.titulo || '') + '</h3>' +
           '<div class="prop-card-meta">' +
-            (p.metros_cuadrados ? '<span><b>mÂ²</b> ' + p.metros_cuadrados + '</span>' : '') +
+            (p.metros_cuadrados ? '<span><b>m²</b> ' + p.metros_cuadrados + '</span>' : '') +
             (p.ubicacion ? '<span><b>Zona</b> ' + p.ubicacion + '</span>' : '') +
           '</div>' +
           '<p class="prop-card-precio">' + fmtPrecio(p) + '</p>' +
           '<div class="prop-card-footer">' +
             '<span class="prop-card-codigo">' + (p.codigo || '') + '</span>' +
-            '<span class="prop-card-ver">VER PROPIEDAD â†’</span>' +
+            '<span class="prop-card-ver">VER PROPIEDAD →</span>' +
           '</div>' +
         '</div>' +
       '</a>';
@@ -1367,13 +1367,13 @@
     // Mostrar solo destacadas (vista por defecto)
     function mostrarDestacadas() {
       var dest = allProps.filter(function(p) { return p.destacada; }).slice(0, 3);
-      setHeader('Disponibles ahora', 'Propiedades destacadas', 'Ver todas â†’');
+      setHeader('Disponibles ahora', 'Propiedades destacadas', 'Ver todas →');
       renderGrid(dest.length ? dest : allProps.slice(0, 3));
     }
 
     // Ver todas
     window.verTodasPropiedades = function() {
-      setHeader('Todas las propiedades', 'Propiedades', 'Solo destacadas â†‘');
+      setHeader('Todas las propiedades', 'Propiedades', 'Solo destacadas ↑');
       document.getElementById('btn-ver-todas').onclick = function() {
         mostrarDestacadas();
         document.getElementById('btn-ver-todas').onclick = function() { window.verTodasPropiedades(); };
@@ -1383,7 +1383,7 @@
       document.getElementById('propiedades').scrollIntoView({ behavior: 'smooth' });
     };
 
-    // Filtrar por bÃºsqueda â€” llamado por el botÃ³n Buscar
+    // Filtrar por búsqueda — llamado por el botón Buscar
     window.filtrarPropiedades = function() {
       var tipoEl    = document.querySelector('#sf-tipo .sf-value');
       var ubicInput = document.querySelector('.search-filter input');
@@ -1403,7 +1403,7 @@
         return true;
       });
 
-      setHeader('Resultados de bÃºsqueda', filtered.length + ' propiedad' + (filtered.length !== 1 ? 'es' : '') + ' encontrada' + (filtered.length !== 1 ? 's' : ''), 'Ver destacadas â†‘');
+      setHeader('Resultados de búsqueda', filtered.length + ' propiedad' + (filtered.length !== 1 ? 'es' : '') + ' encontrada' + (filtered.length !== 1 ? 's' : ''), 'Ver destacadas ↑');
       document.getElementById('btn-ver-todas').onclick = function() {
         mostrarDestacadas();
         document.getElementById('btn-ver-todas').onclick = function() { window.verTodasPropiedades(); };
@@ -1412,7 +1412,7 @@
       document.getElementById('propiedades').scrollIntoView({ behavior: 'smooth' });
     };
 
-    // Conectar botÃ³n Buscar
+    // Conectar botón Buscar
     var btn = document.querySelector('.search-btn');
     if (btn) btn.addEventListener('click', window.filtrarPropiedades);
 
@@ -1440,7 +1440,7 @@
         if (el) el.textContent = 'No se pudieron cargar las propiedades.';
       });
   })();
-  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ────────────────────────────────────────────────────────────────────────
 
   // Google Translate
   function googleTranslateElementInit() {
