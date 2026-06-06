@@ -1,0 +1,5 @@
+# Config local de Claude Code
+.claude/
+
+# Archivos fuente / de trabajo de ilustraciones (no los usa el sitio; van inline en el HTML)
+ILUSTRACIONES/

@@ -17,7 +17,7 @@
       --acento:       #EE7A13;
       --acento-dark:  #c9650d;
       --crema:        #FFFCEB;
-      --crema-dark:   #f0edda;
+      --crema-dark:   #FFFCEB;
       --gris-suave:   #e4e0d0;
       --gris-texto:   #6b6860;
       --negro:        #1E1E1E;
@@ -54,20 +54,22 @@
       display: flex; align-items: center; gap: 12px;
       text-decoration: none; flex-shrink: 0;
     }
+    /* nav-logo-img = pin icon (LOGO.PNG) — colores originales siempre */
     .nav-logo-img {
-      height: 46px; width: auto; object-fit: contain;
-      filter: brightness(0) invert(1);
+      height: 42px; width: auto; object-fit: contain;
+      filter: none;
+      transition: filter 0.4s, opacity 0.3s;
+    }
+    /* nav-isologo-img = texto vectorial (ISOLOGO_VECTOR.svg) */
+    .nav-isologo-img {
+      height: 32px; width: auto; object-fit: contain;
+      filter: sepia(0.25) brightness(0.97); /* blanco → crema sobre fondo oscuro */
       transition: filter 0.4s;
     }
-    .nav-isologo-img {
-      height: 34px; width: auto; object-fit: contain;
-      filter: brightness(0) invert(1);
-      transition: filter 0.4s, opacity 0.2s;
-      opacity: 0.92;
-    }
-    nav.scrolled .nav-logo-img,
-    nav.scrolled .nav-isologo-img { filter: none; opacity: 1; }
-    .nav-logo:hover .nav-isologo-img { opacity: 0.75; }
+    /* Al hacer scroll (nav crema): texto se vuelve verde */
+    nav.scrolled .nav-logo-img { filter: none; }
+    nav.scrolled .nav-isologo-img { filter: brightness(0) saturate(100%) invert(25%) sepia(35%) saturate(700%) hue-rotate(65deg) brightness(88%); }
+    .nav-logo:hover { opacity: 0.85; }
 
     /* Links — centrados entre logo e isologo */
     .nav-links { display: flex; align-items: center; gap: 32px; margin-left: auto; list-style: none; }
@@ -82,6 +84,43 @@
     }
     .nav-links a:hover { color: var(--acento); }
     .nav-links a:hover::after { width: 100%; }
+
+    /* Dropdown Propiedades */
+    .nav-dropdown { position: relative; }
+    .nav-dropdown > a { display: flex; align-items: center; gap: 5px; cursor: pointer; }
+    .nav-dropdown > a::before { display: none; }
+    .nav-dropdown-menu {
+      position: absolute; top: 100%; left: 50%;
+      padding-top: 14px; /* espacio visual sin gap para el mouse */
+      background: transparent;
+      opacity: 0; pointer-events: none;
+      transform: translateX(-50%) translateY(-4px);
+      transition: opacity .2s, transform .2s;
+      z-index: 200;
+      min-width: 180px;
+    }
+    .nav-dropdown-menu-inner {
+      background: var(--crema-dark); border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.12); overflow: hidden;
+    }
+    .nav-dropdown:hover .nav-dropdown-menu,
+    .nav-dropdown:focus-within .nav-dropdown-menu {
+      opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0);
+    }
+    .nav-dropdown-menu a {
+      display: block; padding: 12px 18px;
+      font-size: 12px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase;
+      color: var(--negro) !important; text-decoration: none;
+      border-bottom: 1px solid var(--gris-suave);
+      transition: background .15s, color .15s;
+    }
+    .nav-dropdown-menu a:last-child { border-bottom: none; }
+    .nav-dropdown-menu a:hover { background: var(--verde-mist); color: var(--verde) !important; }
+    .nav-dropdown-menu a::after { display: none !important; }
+    /* Scrolled nav: fondo crema-dark para que no se pierda */
+    nav.scrolled .nav-dropdown-menu-inner { background: #fff; }
+    .nav-chevron { font-size: 9px; opacity: .6; transition: transform .2s; }
+    .nav-dropdown:hover .nav-chevron { transform: rotate(180deg); }
     .nav-cta {
       margin-left: 32px; padding: 10px 22px; background: var(--acento);
       color: var(--crema) !important; border-radius: var(--radius);
@@ -156,47 +195,109 @@
       gap: 60px;
     }
     .hero-content {
-      flex: 1; max-width: 560px;
+      flex: 1; max-width: 640px;
     }
 
     /* Ilustraciones animadas — lado derecho */
     .hero-illus-wrap {
       flex: 1; position: relative;
       display: flex; align-items: center; justify-content: center;
-      min-height: 400px;
+      min-height: 420px;
     }
+    /* Caja fija + preserveAspectRatio "meet" (por defecto): cada ilustración
+       se ajusta dentro de la misma caja, así todas ocupan un espacio similar
+       sin importar su proporción (el edificio alto ya no queda gigante). */
     .illus-svg {
-      position: absolute;
-      width: 75%; max-width: 360px; height: auto;
+      position: absolute; inset: 0; margin: auto;
+      width: 100%; height: 100%;
+      max-width: 410px; max-height: 360px;
       opacity: 0;
       overflow: visible;
       filter: drop-shadow(0 0 14px rgba(238,122,19,0.15));
     }
+    /* La casa tiene más contenido (chimenea, caminito, árboles) → caja un poco mayor */
+    #illus-0 { max-width: 450px; max-height: 420px; transform: translateY(-30px); }
+    /* El edificio ahora tiene auto + canteros abajo → caja más grande para no encogerlo */
+    #illus-1 { max-width: 504px; max-height: 551px; }
     /* Grosor visual uniforme independientemente del viewBox */
-    .illus-svg path, .illus-svg polyline, .illus-svg polygon,
-    .illus-svg line, .illus-svg circle {
-      vector-effect: non-scaling-stroke;
+    .illus-svg * { vector-effect: non-scaling-stroke; }
+    /* Grupo de contornos: solo trazo (hereda stroke del <svg>), nunca relleno */
+    .illus-svg .ill-stroke * { fill: none; }
+    /* Grupo de caras: solo relleno (lo activa el JS), sin trazo */
+    .illus-svg .ill-fill * {
+      stroke: none;
+      fill: url(#faceGrad);   /* crema → naranja sutil (profundidad) */
+      fill-opacity: 0;        /* arranca invisible, se anima con fill-opacity */
+      transition: fill-opacity 0.4s ease;
+    }
+    /* Elementos que "crecen" desde su base (árboles): escalan en Y desde el piso */
+    .illus-svg .ill-grow { transform-box: fill-box; transform-origin: 50% 100%; transform: scaleY(0); }
+    .illus-svg .ill-grow .gfill { fill: url(#faceGrad); }
+    /* Ventanas que se encienden (edificio) */
+    .illus-svg .ill-lights * { stroke: none; fill: rgba(255,252,235,0); transition: fill 0.45s ease; }
+    /* Llave: queda quieta (la agarra la mano, ya no levita) */
+    .illus-svg .key-glint { stroke: none; transform: translateX(-40px); }
+    .illus-svg .bldg-glint { stroke: none; transform: translateX(-60px); }
+    /* La llave mantiene su tamaño; el brazo de la mano se sale de cuadro (overflow). Corrida un poco a la izquierda.
+       + sombra desenfocada por debajo (drop-shadow sigue la silueta de la llave+mano). */
+    #illus-3 {
+      transform-origin: 50% 50%;
+      transform: translateX(-50px);
+      filter: drop-shadow(0 0 14px rgba(238,122,19,0.12)) drop-shadow(4px 22px 14px rgba(0,0,0,0.45));
+    }
+    /* Mano que entra desde la derecha y agarra la llave */
+    .key-hand { opacity: 0; transform: translateX(500px); }
+    .key-hand .hand-fill { fill: url(#faceGrad); transition: fill-opacity 0.4s ease; }
+    /* Humo de la chimenea (casa): bocanadas que suben, crecen y se desvanecen */
+    .smoke { opacity: 0; transition: opacity 0.7s ease; }   /* aparece tras los fills, se va en fadeout */
+    .smoke.on { opacity: 1; }
+    .smoke .puff { fill: rgba(255,252,235,0.5); stroke: none; transform-box: fill-box; transform-origin: 50% 100%; opacity: 0; animation: puff 2.6s ease-out infinite; }  /* siempre en movimiento */
+    .smoke .puff:nth-child(2) { animation-delay: 0.85s; }
+    .smoke .puff:nth-child(3) { animation-delay: 1.7s; }
+    @keyframes puff {
+      0%   { transform: translate(0px,0px) scale(0.3); opacity: 0; }
+      25%  { opacity: 0.55; }
+      100% { transform: translate(-7px,-42px) scale(1.6); opacity: 0; }
+    }
+
+    /* ── Pájaros que cruzan el cielo (casa / depto / terreno) ── */
+    .birds { position: absolute; inset: 0; pointer-events: none; overflow: visible; z-index: 3; }
+    .bird  { position: absolute; left: 0; width: 34px; opacity: 0; will-change: transform, opacity; }
+    .bird svg { display: block; width: 100%; height: auto; overflow: visible; stroke: #EE7A13; stroke-width: 2.4; fill: none; }
+    .bird .wing { animation: flap 0.95s ease-in-out infinite; }
+    .bird:nth-child(2) .wing { animation-duration: 1.15s; }
+    /* Morph de la forma: las alas suben y bajan (aleteo real, sin achatar) */
+    @keyframes flap {
+      0%,100% { d: path("M-14,-8 Q-8,-3 -1,4 Q3,-2 8,-5"); }
+      50%     { d: path("M-14,-3 Q-8,1 -1,5 Q3,1 8,-1"); }
+    }
+    /* Intro coordinada por JS: arrancan ocultos, se revelan con .is-in */
+    .hero-eyebrow, .hero-welcome, .hero-title, .hero-sub {
+      opacity: 0; transform: translateY(22px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .hero-eyebrow.is-in, .hero-welcome.is-in,
+    .hero-title.is-in, .hero-sub.is-in {
+      opacity: 1; transform: translateY(0);
     }
     .hero-eyebrow {
-      font-size: 10px; font-weight: 700; letter-spacing: 0.35em; text-transform: uppercase;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.35em; text-transform: uppercase;
       color: var(--acento); margin-bottom: 20px;
-      opacity: 0; animation: fadeUp 0.7s 0.2s forwards;
     }
     .hero-welcome {
-      font-size: clamp(14px, 1.3vw, 17px); font-weight: 300;
-      color: rgba(255,252,235,0.5); letter-spacing: 0.03em; margin-bottom: 22px;
-      opacity: 0; animation: fadeUp 0.7s 0.4s forwards;
+      font-size: clamp(15px, 1.4vw, 18px); font-weight: 300;
+      color: rgba(255,252,235,0.9); letter-spacing: 0.03em; margin-bottom: 22px;
     }
-    /* Espacio reservado fijo para que el typewriter no empuje el contenido */
     .hero-title {
-      font-family: var(--font-display); font-size: clamp(22px, 4vw, 56px);
-      font-weight: 900; line-height: 1.15; color: var(--crema);
+      font-family: var(--font-display); font-size: clamp(24px, 3.8vw, 58px);
+      font-weight: 900; line-height: 1.2; color: #fff;
       margin-bottom: 36px;
-      min-height: 2.4em;
+      min-height: 3em;
       display: block;
-      white-space: pre-line;
-      opacity: 0; animation: fadeUp 0.8s 0.55s forwards;
+      white-space: pre;
+      max-width: 640px;
     }
+    .hero-word { color: var(--acento); }
     .typewriter-cursor {
       display: inline-block; width: 3px; height: 0.78em;
       background: var(--acento); margin-left: 5px;
@@ -205,35 +306,64 @@
     }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
     .hero-sub {
-      font-size: clamp(13px, 1.2vw, 15px); font-weight: 300; line-height: 1.8;
-      color: rgba(255,252,235,0.5); max-width: 480px; margin-bottom: 52px;
-      opacity: 0; animation: fadeUp 0.8s 1.8s forwards;
+      font-size: clamp(14px, 1.2vw, 16px); font-weight: 300; line-height: 1.8;
+      color: rgba(255,252,235,0.85); max-width: 480px; margin-bottom: 52px;
     }
     @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+    /* ── SPLASH SCREEN — mismo fondo animado que el hero ── */
+    #splash {
+      position: fixed; inset: 0; z-index: 9999;
+      /* glow naranja centrado: da contraste al verde del pin (truco de degradé) */
+      background: radial-gradient(circle at 50% 50%, rgba(238,122,19,0.28) 0%, rgba(238,122,19,0.08) 32%, transparent 55%), #1a2a10;
+      overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: row; gap: 20px;
+      transition: opacity 0.7s ease, visibility 0.7s ease;
+    }
+    #splash::before, #splash::after { content: ''; position: absolute; inset: 0; pointer-events: none; }
+    #splash::before {
+      background:
+        radial-gradient(ellipse 75% 60% at 20% 40%, #3B5220 0%, transparent 70%),
+        radial-gradient(ellipse 55% 70% at 80% 70%, #2e4718 0%, transparent 65%),
+        radial-gradient(ellipse 40% 50% at 60% 20%, #4a6128 0%, transparent 60%);
+      animation: blobA 14s ease-in-out infinite alternate;
+      filter: blur(40px);
+    }
+    #splash::after {
+      background:
+        radial-gradient(ellipse 50% 45% at 75% 30%, rgba(238,122,19,0.22) 0%, transparent 65%),
+        radial-gradient(ellipse 65% 55% at 10% 75%, #243d12 0%, transparent 70%),
+        radial-gradient(ellipse 45% 60% at 50% 90%, #3d5520 0%, transparent 60%);
+      animation: blobB 18s ease-in-out infinite alternate;
+      filter: blur(50px);
+    }
+    #splash.hide { opacity: 0; visibility: hidden; pointer-events: none; }
+    #splash-logo {
+      position: relative; z-index: 2;
+      height: 150px; width: auto;
+      opacity: 0;
+      animation: splashPulse 0.9s 0.1s ease forwards;
+    }
+    #splash-wordmark {
+      position: relative; z-index: 2;
+      height: 100px; width: auto;
+      filter: sepia(0.25) brightness(0.97); /* crema, igual que el nav */
+      opacity: 0;
+      animation: fadeUp 0.6s 0.5s forwards;
+    }
+    @keyframes splashPulse {
+      from { opacity: 0; transform: scale(0.82); }
+      to   { opacity: 1; transform: scale(1); }
+    }
 
     /* SEARCH SECTION — continúa el degradé del hero */
     .search-section {
       position: relative; overflow: visible;
-      background: #1a2a10;
-      padding: 52px 56px 72px;
-    }
-    /* Blobs del hero se extienden aquí */
-    .search-section::before, .search-section::after {
-      content: ''; position: absolute; inset: 0; pointer-events: none;
-    }
-    .search-section::before {
-      background:
-        radial-gradient(ellipse 80% 120% at 15% 80%, #3B5220 0%, transparent 65%),
-        radial-gradient(ellipse 60% 100% at 85% 30%, #2e4718 0%, transparent 60%);
-      animation: blobA 14s ease-in-out infinite alternate;
-      filter: blur(45px);
-    }
-    .search-section::after {
-      background:
-        radial-gradient(ellipse 55% 90% at 70% 10%, rgba(238,122,19,0.15) 0%, transparent 60%),
-        radial-gradient(ellipse 70% 80% at 5% 50%, #243d12 0%, transparent 65%);
-      animation: blobB 18s ease-in-out infinite alternate;
-      filter: blur(55px);
+      background: var(--crema-dark);
+      padding: 48px 56px 64px;
+      border-top: 1px solid var(--gris-suave);
+      border-bottom: 1px solid var(--gris-suave);
     }
     .search-section-inner {
       position: relative; z-index: 1;
@@ -241,15 +371,15 @@
     }
     .search-label {
       font-size: 10px; font-weight: 700; letter-spacing: 0.32em; text-transform: uppercase;
-      color: rgba(255,252,235,0.28); margin-bottom: 20px;
+      color: var(--gris-texto); margin-bottom: 20px;
     }
     .search-bar {
       display: flex; align-items: center;
-      background: rgba(255,252,235,0.06);
-      border: 1px solid rgba(255,252,235,0.12);
+      background: #fff;
+      border: 1.5px solid var(--gris-suave);
       border-radius: 8px;
-      overflow: visible; /* para que los dropdowns salgan */
-      box-shadow: 0 8px 40px rgba(0,0,0,0.35);
+      overflow: visible;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.07);
       position: relative;
     }
     .search-bar-inner {
@@ -273,7 +403,7 @@
     .search-btn:hover { background: var(--acento-dark); }
     .search-btn svg { width: 15px; height: 15px; stroke: var(--crema); fill: none; }
     .search-sep {
-      width: 1px; height: 30px; background: rgba(255,252,235,0.12); flex-shrink: 0;
+      width: 1px; height: 30px; background: var(--gris-suave); flex-shrink: 0;
     }
     /* Filtro genérico */
     .search-filter {
@@ -282,38 +412,38 @@
       position: relative; cursor: pointer;
       transition: background 0.2s; user-select: none;
     }
-    .search-filter:hover { background: rgba(255,252,235,0.05); }
+    .search-filter:hover { background: var(--verde-mist); }
     .search-filter label {
       font-size: 9px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase;
-      color: rgba(255,252,235,0.35); white-space: nowrap; flex-shrink: 0; pointer-events: none;
+      color: var(--gris-texto); white-space: nowrap; flex-shrink: 0; pointer-events: none;
     }
     /* Valor mostrado (custom select) */
     .sf-value {
       font-family: var(--font-body); font-size: 13px; font-weight: 400;
-      color: rgba(255,252,235,0.82); flex: 1; white-space: nowrap;
+      color: var(--negro); flex: 1; white-space: nowrap;
       overflow: hidden; text-overflow: ellipsis; pointer-events: none;
     }
     /* Input texto (ubicación) */
     .search-filter input {
       font-family: var(--font-body); font-size: 13px; font-weight: 400;
-      color: rgba(255,252,235,0.82); background: transparent;
+      color: var(--negro); background: transparent;
       border: none; outline: none; width: 100%; cursor: text;
     }
-    .search-filter input::placeholder { color: rgba(255,252,235,0.28); }
+    .search-filter input::placeholder { color: var(--gris-texto); }
     .search-chevron {
-      width: 14px; height: 14px; flex-shrink: 0; opacity: 0.3;
-      stroke: var(--crema); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+      width: 14px; height: 14px; flex-shrink: 0; opacity: 0.4;
+      stroke: var(--verde); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
       pointer-events: none; transition: transform 0.25s, opacity 0.2s;
     }
-    .search-filter.open .search-chevron { transform: rotate(180deg); opacity: 0.6; }
+    .search-filter.open .search-chevron { transform: rotate(180deg); opacity: 0.8; }
 
     /* DROPDOWN PANEL */
     .sf-dropdown {
       position: absolute; top: calc(100% + 8px); left: 0;
-      min-width: 100%; background: #1e2e17;
-      border: 1px solid rgba(255,252,235,0.14);
+      min-width: 100%; background: #fff;
+      border: 1.5px solid var(--gris-suave);
       border-radius: 6px;
-      box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
       z-index: 500;
       overflow: hidden;
       max-height: 0; opacity: 0;
@@ -326,12 +456,14 @@
     .sf-option {
       padding: 13px 18px;
       font-family: var(--font-body); font-size: 13px; font-weight: 400;
-      color: rgba(255,252,235,0.75);
+      color: var(--negro);
       cursor: pointer;
       transition: background 0.15s, color 0.15s;
       white-space: nowrap;
+      border-bottom: 1px solid var(--gris-suave);
     }
-    .sf-option:hover { background: var(--acento); color: #fff; }
+    .sf-option:last-child { border-bottom: none; }
+    .sf-option:hover { background: var(--verde-mist); color: var(--verde); }
     .sf-option.selected { color: var(--acento); font-weight: 600; }
 
     /* SECCIÓN PROPIEDADES */
@@ -351,10 +483,11 @@
       color: var(--gris-texto); font-size: 14px; letter-spacing: 0.05em;
     }
     .prop-card {
-      background: var(--crema); border-radius: 4px;
+      background: #fff; border-radius: 6px;
       overflow: hidden; text-decoration: none; color: var(--negro);
       display: flex; flex-direction: column;
-      border: 1px solid rgba(54,81,43,0.1);
+      border: 1px solid rgba(54,81,43,0.08);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
       transition: transform 0.22s cubic-bezier(0.23,1,0.32,1), box-shadow 0.22s;
     }
     .prop-card:hover {
@@ -657,18 +790,32 @@
 <body>
 
 <!-- NAV -->
+<!-- SPLASH: pin arriba grande, texto blanco abajo -->
+<div id="splash">
+  <img id="splash-logo" src="fotos/LOGO.PNG" alt="Solar Propiedades"/>
+  <img id="splash-wordmark" src="fotos/ISOLOGO_VECTOR.svg" alt="Solar Propiedades"/>
+</div>
+
 <nav id="mainNav">
   <!-- Marca: logo + isologo juntos a la izquierda -->
   <a href="#inicio" class="nav-logo">
     <img src="fotos/LOGO.PNG" alt="Solar Propiedades" class="nav-logo-img" />
-    <img src="fotos/ISOLOGO.PNG" alt="Solar Propiedades" class="nav-isologo-img" />
+    <img src="fotos/ISOLOGO_VECTOR.svg" alt="Solar Propiedades" class="nav-isologo-img" />
   </a>
 
   <!-- Links a la derecha -->
   <ul class="nav-links">
     <li><a href="#inicio">Inicio</a></li>
     <li><a href="#servicios">Servicios</a></li>
-    <li><a href="#propiedades">Propiedades</a></li>
+    <li class="nav-dropdown">
+      <a href="#propiedades">Propiedades <span class="nav-chevron">▼</span></a>
+      <div class="nav-dropdown-menu">
+        <div class="nav-dropdown-menu-inner">
+          <a href="#propiedades">Destacadas</a>
+          <a href="/propiedades">Ver todas</a>
+        </div>
+      </div>
+    </li>
     <li><a href="#valores">Nuestra esencia</a></li>
     <li><a href="#sobre">Sobre mí</a></li>
     <li><a href="#faq">FAQ</a></li>
@@ -687,98 +834,323 @@
     <p class="hero-eyebrow">Neuquén · Patagonia Argentina</p>
     <p class="hero-welcome">Bienvenido a Solar Propiedades.</p>
     <h1 class="hero-title" id="heroTitle"><span class="typewriter-cursor"></span></h1>
-    <p class="hero-sub">Asesoramiento inmobiliario con respaldo contable real. Comprá, vendé o alquilá sabiendo exactamente qué vale cada propiedad.</p>
+    <p class="hero-sub">Asesoramiento inmobiliario con respaldo contable real.<br/>Comprá, vendé o alquilá sabiendo cuánto vale cada propiedad.</p>
   </div><!-- fin hero-content -->
 
   <!-- COLUMNA DERECHA: ilustraciones animadas -->
   <div class="hero-illus-wrap">
 
-    <!-- 0. CASA — coords del SVG fuente -->
-    <svg class="illus-svg" id="illus-0"
-      viewBox="0 14 250 268"
-      fill="none" stroke="#EE7A13" stroke-width="2"
-      stroke-linecap="round" stroke-linejoin="round"
-      xmlns="http://www.w3.org/2000/svg">
-      <polyline points="13.8 123.5 62.8 95.1 121 189.1 121 277.4 13.8 217.2 13.8 123.5 1 130.9"/>
-      <polyline points="62.8 95.1 184.8 20.1 246.1 115.7 121 189.1"/>
-      <line x1="140.6" y1="265.8" x2="121" y2="277.4"/>
-      <polyline points="233.1 123.4 233.1 210.8 180.8 241.9"/>
-      <polygon points="157.3 265.5 157.3 274.5 140.6 265.8 140.6 256.5 148.8 260.9 157.3 265.5"/>
-      <polygon points="189 246.9 189 256.9 157.3 274.5 157.3 265.5 189 246.9"/>
-      <polygon points="189 246.9 157.3 265.5 148.8 260.9 140.6 256.5 174.9 238.2 180.8 241.9 189 246.9"/>
-      <polygon points="145.1 254.1 145.1 197.1 170.5 181.8 170.5 240.6 145.1 254.1"/>
-      <circle cx="165.4" cy="215.7" r="1.3"/>
-      <polygon points="73.9 142.4 73.9 170.2 51.7 159.7 51.7 131.6 69.8 140.4 73.9 142.4"/>
-      <polygon points="82.9 201.4 82.9 229.3 42.6 209 42.6 180.9 78.8 199.4 82.9 201.4"/>
+    <!-- Gradiente compartido para los rellenos (crema → naranja sutil) = profundidad -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <defs>
+        <linearGradient id="faceGrad" gradientUnits="objectBoundingBox" x1="0" y1="0" x2="0.85" y2="1">
+          <stop offset="0"    stop-color="#FFFCEB"/>
+          <stop offset="0.55" stop-color="#FBE6C9"/>
+          <stop offset="1"    stop-color="#F2C599"/>
+        </linearGradient>
+      </defs>
     </svg>
 
-    <!-- 1. EDIFICIO — viewBox expandido para tamaño más pequeño -->
-    <svg class="illus-svg" id="illus-1"
-      viewBox="240 -40 340 470"
-      fill="none" stroke="#EE7A13" stroke-width="2"
+    <!-- 0. CASA -->
+    <svg class="illus-svg" id="illus-0"
+      viewBox="520 3650 395 372"
+      fill="none" stroke="#EE7A13" stroke-width="4.5"
       stroke-linecap="round" stroke-linejoin="round"
       xmlns="http://www.w3.org/2000/svg">
-      <polygon points="413.9 125.3 413.9 380.6 366.8 357.4 366.8 299.8 335.7 285.5 335.7 342.1 301.9 325.4 305.2 65.1 413.9 125.3"/>
-      <polygon points="305.2 65.1 413.9 2 519.6 65.1 413.9 125.3 305.2 65.1"/>
-      <polygon points="493.8 162.5 493.8 119.2 453.1 138.8 453.1 180.7 435 171.9 435 200 457.3 210.5 519.6 177.5 519.6 226 499.6 217.4 499.6 242.5 493.8 245.8 493.8 202.4 453.1 222.1 453.1 263.9 435 255.2 435 283.3 457.3 293.8 519.6 260.7 519.6 327.2 413.9 380.6 413.9 125.3 519.6 65.1 519.6 142.7 499.6 134.1 499.6 159.2 493.8 162.5"/>
-      <polygon points="457.3 265.9 457.3 293.8 435 283.3 435 255.2 453.1 263.9 457.3 265.9"/>
-      <polygon points="389 228.1 389 256 366.8 245.5 366.8 217.4 384.9 226.2 389 228.1"/>
-      <polygon points="354.2 211.3 354.2 239.2 313.9 218.9 313.9 190.8 350.1 209.3 354.2 211.3"/>
-      <polygon points="389 145.1 389 172.9 366.8 162.4 366.8 134.4 384.9 143.1 389 145.1"/>
-      <polygon points="354.2 128.3 354.2 156.1 313.9 135.8 313.9 107.7 350.1 126.3 354.2 128.3"/>
-      <polygon points="525.2 228.4 525.2 257.8 519.6 260.7 457.3 293.8 457.3 265.9 493.8 245.8 499.6 242.5 519.6 231.5 525.2 228.4"/>
-      <polygon points="525.2 228.4 519.6 231.5 499.6 242.5 499.6 217.4 519.6 226 525.2 228.4"/>
-      <polygon points="493.8 202.4 493.8 245.8 457.3 265.9 453.1 263.9 453.1 222.1 493.8 202.4"/>
-      <polygon points="457.3 182.7 457.3 210.5 435 200 435 171.9 453.1 180.7 457.3 182.7"/>
-      <polygon points="525.2 145.1 525.2 174.5 519.6 177.5 457.3 210.5 457.3 182.7 493.8 162.5 499.6 159.2 519.6 148.2 525.2 145.1"/>
-      <polygon points="525.2 145.1 519.6 148.2 499.6 159.2 499.6 134.1 519.6 142.7 525.2 145.1"/>
-      <polygon points="493.8 119.2 493.8 162.5 457.3 182.7 453.1 180.7 453.1 138.8 493.8 119.2"/>
+      <!-- Árbol DETRÁS de la casa (derecha): se dibuja primero para quedar atrás -->
+      <g transform="translate(-1136 -1878) scale(1.5)"><g class="ill-grow">
+        <path class="gfill" d="M1379.48,3811.03s-2.48.9-6.91.7c-4.42.2-6.9-.7-6.9-.7-16.32-6.39-11.19-18.7-6.9-32.18,1.92-6.06,4.91-9.6,7.61-11.66,3.65-2.79,8.76-2.79,12.4,0,2.7,2.06,5.69,5.6,7.61,11.66,4.29,13.48,9.41,25.79-6.9,32.18Z"/>
+        <line x1="1372.58" y1="3827.07" x2="1372.58" y2="3780.43"/>
+        <line x1="1372.58" y1="3799.14" x2="1364.22" y2="3790.72"/>
+        <line x1="1372.58" y1="3789.5" x2="1378.47" y2="3783.56"/>
+        <line x1="1372.58" y1="3805.07" x2="1378.47" y2="3799.14"/>
+      </g></g>
+      <g class="ill-fill">
+        <path d="M701.97,3783.69l-49.02,28.36v93.68l107.23,60.26v-88.34l-58.21-93.96ZM690.86,3820.21l18.09,8.73,4.13,1.99v27.83l-22.22-10.47v-28.08ZM722.13,3917.82l-40.32-20.29v-28.08l36.19,18.55,4.13,1.99v27.83Z"/>
+        <polygon points="885.29 3804.29 872.27 3811.92 760.18 3877.65 701.97 3783.69 824.01 3708.63 885.29 3804.29"/>
+        <polygon points="872.27 3811.92 872.27 3899.35 820 3930.42 814.05 3926.8 809.71 3929.11 809.71 3870.33 784.33 3885.65 784.33 3942.63 779.79 3945.05 779.79 3954.33 760.18 3965.99 760.18 3877.65 872.27 3811.92"/>
+        <polygon points="796.52 3954.03 796.52 3963.01 779.79 3954.33 779.79 3945.05 787.99 3949.45 796.52 3954.03"/>
+        <polygon points="828.22 3935.42 828.22 3945.44 796.52 3963.01 796.52 3954.03 828.22 3935.42"/>
+        <polygon points="828.22 3935.42 796.52 3954.03 787.99 3949.45 779.79 3945.05 784.33 3942.63 809.71 3929.11 814.05 3926.8 820 3930.42 828.22 3935.42"/>
+        <!-- chimenea: caras -->
+        <polygon points="719.2 3773.09 719.2 3684.98 737.98 3695.54 737.98 3761.54"/>
+        <polygon points="737.98 3695.54 757.63 3684.03 757.63 3749.46 737.98 3761.54"/>
+        <polygon points="719.2 3684.98 738.84 3673.47 757.63 3684.03 737.98 3695.54"/>
+        <!-- caminito: relleno -->
+        <path d="M796.52,3963.01l14.02,7.28c15.6,8.1,26.21,23.36,28.36,40.81h0c1.45,11.8,6.81,22.78,15.22,31.19l11.03,11.03,31.7-17.57-11.03-11.03c-8.41-8.41-13.76-19.39-15.22-31.19h0c-2.15-17.45-12.76-32.72-28.36-40.81l-14.02-7.28"/>
+      </g>
+      <g class="ill-stroke">
+        <polyline points="701.97 3783.69 824.01 3708.63 885.29 3804.29 872.27 3811.92 760.18 3877.65"/>
+        <polyline points="872.27 3811.92 872.27 3899.35 820 3930.42 814.05 3926.8 809.71 3929.11 809.71 3870.33 784.33 3885.65 784.33 3942.63 779.79 3945.05 779.79 3954.33 760.18 3965.99"/>
+        <line x1="701.97" y1="3783.69" x2="640.18" y2="3819.44"/>
+        <line x1="803.34" y1="3906.91" x2="800.49" y2="3908.63"/>
+        <polygon points="796.52 3954.03 796.52 3963.01 779.79 3954.33 779.79 3945.05 787.99 3949.45 796.52 3954.03"/>
+        <polygon points="828.22 3935.42 828.22 3945.44 796.52 3963.01 796.52 3954.03 828.22 3935.42"/>
+        <polyline points="779.79 3945.05 784.33 3942.63 809.71 3929.11 814.05 3926.8 820 3930.42 828.22 3935.42"/>
+        <path d="M652.95,3812.05v93.68l107.23,60.26v-88.34l-58.21-93.96M690.86,3820.21l18.09,8.73,4.13,1.99v27.83l-22.22-10.47v-28.08ZM722.13,3917.82l-40.32-20.29v-28.08l36.19,18.55,4.13,1.99v27.83Z"/>
+        <!-- chimenea: contornos -->
+        <polyline points="719.2 3773.09 719.2 3684.98 737.21 3695.1 737.98 3695.54"/>
+        <polyline points="757.63 3749.46 757.63 3684.03 737.98 3695.54 737.98 3761.54"/>
+        <polyline points="719.2 3684.98 738.84 3673.47 757.63 3684.03"/>
+        <!-- caminito desde la puerta (se dibuja al final) -->
+        <path d="M796.52,3963.01l14.02,7.28c15.6,8.1,26.21,23.36,28.36,40.81h0c1.45,11.8,6.81,22.78,15.22,31.19l11.03,11.03,31.7-17.57-11.03-11.03c-8.41-8.41-13.76-19.39-15.22-31.19h0c-2.15-17.45-12.76-32.72-28.36-40.81l-14.02-7.28"/>
+      </g>
+      <!-- Árboles al costado izquierdo (crecen con plop) -->
+      <g transform="translate(-1723 -2541) scale(1.7)"><g class="ill-grow">
+        <path class="gfill" d="M1379.48,3811.03s-2.48.9-6.91.7c-4.42.2-6.9-.7-6.9-.7-16.32-6.39-11.19-18.7-6.9-32.18,1.92-6.06,4.91-9.6,7.61-11.66,3.65-2.79,8.76-2.79,12.4,0,2.7,2.06,5.69,5.6,7.61,11.66,4.29,13.48,9.41,25.79-6.9,32.18Z"/>
+        <line x1="1372.58" y1="3827.07" x2="1372.58" y2="3780.43"/>
+        <line x1="1372.58" y1="3799.14" x2="1364.22" y2="3790.72"/>
+        <line x1="1372.58" y1="3789.5" x2="1378.47" y2="3783.56"/>
+        <line x1="1372.58" y1="3805.07" x2="1378.47" y2="3799.14"/>
+      </g></g>
+      <g transform="translate(-1374 -1423) scale(1.4)"><g class="ill-grow">
+        <path class="gfill" d="M1379.48,3811.03s-2.48.9-6.91.7c-4.42.2-6.9-.7-6.9-.7-16.32-6.39-11.19-18.7-6.9-32.18,1.92-6.06,4.91-9.6,7.61-11.66,3.65-2.79,8.76-2.79,12.4,0,2.7,2.06,5.69,5.6,7.61,11.66,4.29,13.48,9.41,25.79-6.9,32.18Z"/>
+        <line x1="1372.58" y1="3827.07" x2="1372.58" y2="3780.43"/>
+        <line x1="1372.58" y1="3799.14" x2="1364.22" y2="3790.72"/>
+        <line x1="1372.58" y1="3789.5" x2="1378.47" y2="3783.56"/>
+        <line x1="1372.58" y1="3805.07" x2="1378.47" y2="3799.14"/>
+      </g></g>
+      <g class="smoke" aria-hidden="true">
+        <circle class="puff" cx="742" cy="3674" r="6"/>
+        <circle class="puff" cx="742" cy="3674" r="7.5"/>
+        <circle class="puff" cx="742" cy="3674" r="9"/>
+      </g>
+    </svg>
+
+    <!-- 1. EDIFICIO -->
+    <svg class="illus-svg" id="illus-1"
+      viewBox="855 3684 395 456"
+      fill="none" stroke="#EE7A13" stroke-width="4.5"
+      stroke-linecap="round" stroke-linejoin="round"
+      xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="bldgGlintGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0"   stop-color="#fff" stop-opacity="0"/>
+          <stop offset="0.5" stop-color="#fff" stop-opacity="1"/>
+          <stop offset="1"   stop-color="#fff" stop-opacity="0"/>
+        </linearGradient>
+        <clipPath id="bldgClip">
+          <!-- recortado a las ventanas: el destello flashea en ellas -->
+          <path d="M993.4,3927.72l-40.32-20.28v-28.08l36.19,18.54,4.13,1.99v27.83Z"/>
+          <path d="M993.4,3844.66l-40.32-20.29v-28.08l36.19,18.55,4.13,1.99v27.83Z"/>
+          <path d="M1028.18,3944.54l-22.22-10.47v-28.08l18.09,8.73,4.13,1.99v27.83Z"/>
+          <path d="M1028.18,3861.48l-22.22-10.47v-28.08l18.09,8.73,4.13,1.99v27.83Z"/>
+          <path d="M1132.95,3807.74 1092.31,3827.35 1092.31,3869.24 1132.95,3851.05Z"/>
+          <path d="M1132.95,3891.01 1092.31,3910.62 1092.31,3952.51 1132.95,3934.32Z"/>
+        </clipPath>
+      </defs>
+      <g class="ill-fill">
+        <polyline points="1132.95 3934.32 1132.95 3891.01 1092.31 3910.62 1092.31 3952.51 1074.22 3943.78 1074.22 3971.86 1096.44 3982.33 1158.74 3949.3 1158.74 4015.78 1053.12 4069.14 1053.12 3813.88 1158.74 3753.63 1158.74 3831.29 1138.82 3822.72 1138.82 3847.81 1132.95 3851.05 1132.95 3807.74 1092.31 3827.35 1092.31 3869.24 1074.22 3860.51 1074.22 3888.59 1096.44 3899.06 1158.74 3866.03 1158.74 3914.56 1138.82 3905.99 1138.82 3931.08"/>
+        <polygon points="1158.74 3753.63 1053.12 3813.88 944.35 3753.63 1053.12 3690.56 1158.74 3753.63"/>
+        <path d="M944.35,3753.63l-3.23,260.36,33.77,16.63v-56.52l31.07,14.3v57.52l47.16,23.22v-255.26l-108.77-60.25ZM993.4,3927.72l-40.32-20.28v-28.08l36.19,18.54,4.13,1.99v27.83ZM993.4,3844.66l-40.32-20.29v-28.08l36.19,18.55,4.13,1.99v27.83ZM1028.18,3944.54l-22.22-10.47v-28.08l18.09,8.73,4.13,1.99v27.83ZM1028.18,3861.48l-22.22-10.47v-28.08l18.09,8.73,4.13,1.99v27.83Z"/>
+        <polygon points="1164.35 3916.97 1164.35 3946.33 1158.74 3949.3 1096.44 3982.33 1096.44 3954.5 1132.95 3934.32 1138.82 3931.08 1158.74 3920.07 1164.35 3916.97"/>
+        <polygon points="1096.44 3954.5 1096.44 3982.33 1074.22 3971.86 1074.22 3943.78 1096.44 3954.5"/>
+        <polygon points="1164.35 3916.97 1158.74 3920.07 1138.82 3931.08 1138.82 3905.99 1158.74 3914.56 1164.35 3916.97"/>
+        <polygon points="1164.35 3833.7 1164.35 3863.06 1158.74 3866.03 1096.44 3899.06 1096.44 3871.23 1132.95 3851.05 1138.82 3847.81 1158.74 3836.8 1164.35 3833.7"/>
+        <polygon points="1096.44 3871.23 1096.44 3899.06 1074.22 3888.59 1074.22 3860.51 1096.44 3871.23"/>
+        <polygon points="1164.35 3833.7 1158.74 3836.8 1138.82 3847.81 1138.82 3822.72 1158.74 3831.29 1164.35 3833.7"/>
+      </g>
+      <!-- LUCES: ventanas que se encienden. Primero las 4 de la izquierda,
+           después las 2 de la derecha (detrás de los balcones). -->
+      <g class="ill-lights">
+        <path d="M993.4,3927.72l-40.32-20.28v-28.08l36.19,18.54,4.13,1.99v27.83Z"/>
+        <path d="M993.4,3844.66l-40.32-20.29v-28.08l36.19,18.55,4.13,1.99v27.83Z"/>
+        <path d="M1028.18,3944.54l-22.22-10.47v-28.08l18.09,8.73,4.13,1.99v27.83Z"/>
+        <path d="M1028.18,3861.48l-22.22-10.47v-28.08l18.09,8.73,4.13,1.99v27.83Z"/>
+        <path d="M1132.95,3807.74 1092.31,3827.35 1092.31,3869.24 1132.95,3851.05Z"/>
+        <path d="M1132.95,3891.01 1092.31,3910.62 1092.31,3952.51 1132.95,3934.32Z"/>
+      </g>
+      <!-- DESTELLO en las ventanas (barre, recortado a las ventanas) -->
+      <g clip-path="url(#bldgClip)">
+        <g transform="rotate(18 1053 3880)">
+          <rect class="bldg-glint" x="925" y="3640" width="55" height="520" fill="url(#bldgGlintGrad)"/>
+        </g>
+      </g>
+      <g class="ill-stroke">
+        <path d="M944.35,3753.63l-3.23,260.36,33.77,16.63v-56.52l31.07,14.3v57.52l47.16,23.22v-255.26l-108.77-60.25ZM993.4,3927.72l-40.32-20.28v-28.08l36.19,18.54,4.13,1.99v27.83ZM993.4,3844.66l-40.32-20.29v-28.08l36.19,18.55,4.13,1.99v27.83ZM1028.18,3944.54l-22.22-10.47v-28.08l18.09,8.73,4.13,1.99v27.83ZM1028.18,3861.48l-22.22-10.47v-28.08l18.09,8.73,4.13,1.99v27.83Z"/>
+        <polyline points="944.35 3753.63 1053.12 3690.56 1158.74 3753.63"/>
+        <polyline points="1053.12 3813.88 1158.74 3753.63 1158.74 3831.29"/>
+        <line x1="1158.74" y1="3914.56" x2="1158.74" y2="3866.03"/>
+        <polyline points="1092.31 3952.51 1092.31 3910.62 1132.95 3891.01 1132.95 3934.32"/>
+        <polyline points="1053.12 4069.14 1158.74 4015.78 1158.74 3949.3"/>
+        <polyline points="1164.35 3916.97 1164.35 3946.33 1158.74 3949.3 1096.44 3982.33 1096.44 3954.5 1132.95 3934.32 1138.82 3931.08 1158.74 3920.07 1164.35 3916.97"/>
+        <polyline points="1096.44 3954.5 1074.22 3943.78 1074.22 3971.86 1096.44 3982.33"/>
+        <polyline points="1138.82 3931.08 1138.82 3905.99 1158.74 3914.56 1164.35 3916.97"/>
+        <polyline points="1092.31 3869.24 1092.31 3827.35 1132.95 3807.74 1132.95 3851.05"/>
+        <polyline points="1164.35 3833.7 1164.35 3863.06 1158.74 3866.03 1096.44 3899.06 1096.44 3871.23 1132.95 3851.05 1138.82 3847.81 1158.74 3836.8 1164.35 3833.7"/>
+        <polyline points="1096.44 3871.23 1074.22 3860.51 1074.22 3888.59 1096.44 3899.06"/>
+        <polyline points="1138.82 3847.81 1138.82 3822.72 1158.74 3831.29 1164.35 3833.7"/>
+      </g>
+      <!-- AUTO + CANTEROS (vereda) — TRANSFORM a ajustar (posición/escala) -->
+      <g transform="translate(855 3970) scale(0.85)">
+        <!-- AUTO: se dibuja + rellena -->
+        <g class="ill-fill">
+          <path d="M292.94,129.81l-.54,29.69,53.21,30.66.53-28.85-53.2-31.5ZM305.06,152.27c-.34,2.14-1.99,3.45-4.08,2.96-2.52-.6-4.64-3.53-4.58-6.48.01-.58.1-1.1.26-1.57.65-1.87,2.42-2.72,4.4-1.98,2.29.85,4.08,3.58,4.08,6.21,0,.31-.02.6-.07.87ZM337.94,170.85c-.34,2.14-1.99,3.44-4.07,2.96-2.52-.6-4.65-3.54-4.59-6.49.01-.57.1-1.1.27-1.56.65-1.87,2.42-2.72,4.39-1.98,2.3.85,4.08,3.58,4.09,6.21,0,.3-.02.6-.08.87Z"/>
+          <path d="M382.18,172.23c-.29,7.11-5.37,14.36-11.7,16.45-5.43,1.79-10.14-.69-11.75-5.82-.39-1.27-.58-2.7-.55-4.26.15-8.04,6.21-15.81,13.09-17.17,5.72-1.13,10.08,2.58,10.79,8.43.12.75.15,1.54.12,2.38Z"/>
+          <path d="M451.01,134.87c-.27,6.71-5.09,13.58-11.07,15.54-5.46,1.79-10.19-1.01-11.34-6.53-.2-.92-.29-1.95-.28-3.02.14-7.57,5.88-14.91,12.4-16.2,5.04-1.01,8.95,1.98,10.01,6.87.24,1.01.33,2.14.29,3.33Z"/>
+          <path d="M440.49,103.84l-14.46-18.45-45.65,26.15-13.55,34.6-20.69,15.17-.52,28.86,13.12-7.31c-.39-1.27-.58-2.7-.55-4.26.15-8.04,6.21-15.81,13.09-17.17,5.72-1.13,10.08,2.58,10.79,8.43l46.53-25.97c-.2-.92-.29-1.95-.28-3.02.14-7.57,5.88-14.91,12.4-16.2,5.04-1.01,8.95,1.98,10.01,6.87l6.18-3.44.56-30.51-16.98,6.25ZM402.79,125.89l-28.46,15.64,10.11-25.77,18.72-10.29-.37,20.42ZM407.28,123.42l.37-20.43,15.56-8.56,11.22,14.05-27.15,14.94Z"/>
+          <polygon points="366.82 146.15 346.13 161.31 292.94 129.81 315.49 115.42 366.82 146.15"/>
+          <polygon points="380.38 111.55 366.82 146.15 315.49 115.42 328.67 80.95 380.38 111.55"/>
+          <polygon points="426.03 85.4 380.38 111.55 328.67 80.95 375.93 53.76 399.77 68.81 426.03 85.4"/>
+          <polygon points="457.46 97.59 440.49 103.84 426.03 85.4 399.77 68.81 406.79 65.65 457.46 97.59"/>
+        </g>
+        <g class="ill-stroke">
+          <!-- canteros (planteros, en el piso) -->
+          <polygon points="51.28 104.4 31.94 115.43 12.02 104.4 31.94 92.85 51.28 104.4"/>
+          <polygon points="122.32 141.76 102.97 152.79 83.05 141.76 102.97 130.21 122.32 141.76"/>
+          <polygon points="204.35 180.8 185.01 191.83 165.09 180.8 185.01 169.25 204.35 180.8"/>
+          <!-- auto: contornos -->
+          <polygon points="292.94 129.81 346.13 161.31 345.61 190.16 292.4 159.49 292.94 129.81"/>
+          <path d="M382.18,172.23c-.28,7.11-5.37,14.37-11.7,16.45-5.43,1.79-10.14-.69-11.74-5.83-.4-1.26-.59-2.7-.56-4.26.15-8.03,6.21-15.8,13.1-17.17,5.72-1.13,10.08,2.58,10.79,8.43.12.75.15,1.54.11,2.38Z"/>
+          <path d="M305.13,151.4c0-2.62-1.78-5.35-4.08-6.21-1.97-.73-3.74.12-4.39,1.99-.16.46-.25.98-.26,1.56-.05,2.96,2.07,5.89,4.59,6.49,2.09.49,3.74-.81,4.08-2.96.05-.27.08-.57.07-.87Z"/>
+          <path d="M338.01,169.98c0-2.62-1.78-5.35-4.08-6.21-1.97-.73-3.74.12-4.39,1.99-.16.46-.25.98-.26,1.56-.05,2.96,2.07,5.89,4.59,6.49,2.09.49,3.74-.81,4.08-2.96.05-.27.08-.57.07-.87Z"/>
+          <path d="M451.01,134.87c-.28,6.71-5.09,13.58-11.07,15.54-5.47,1.79-10.2-1-11.35-6.52-.2-.93-.29-1.94-.28-3.02.14-7.57,5.88-14.91,12.4-16.2,5.04-1.01,8.95,1.99,10,6.87.25,1.02.34,2.14.29,3.33Z"/>
+          <path d="M440.49,103.84l-14.46-18.45-45.65,26.16-13.55,34.6-20.69,15.16-.52,28.85,13.12-7.31c-.4-1.26-.59-2.7-.56-4.26.15-8.03,6.21-15.8,13.1-17.17,5.72-1.13,10.08,2.58,10.79,8.43l46.53-25.97c-.2-.93-.29-1.94-.28-3.02.14-7.57,5.88-14.91,12.4-16.2,5.04-1.01,8.95,1.99,10,6.87l6.18-3.43.56-30.52-16.98,6.25ZM374.33,141.53l10.11-25.77,18.72-10.29-.37,20.42-28.46,15.64ZM407.28,123.42l.37-20.42,15.57-8.57,11.21,14.05-27.15,14.94Z"/>
+          <polyline points="292.94 129.81 315.5 115.42 366.83 146.15"/>
+          <polyline points="315.5 115.42 328.68 80.95 375.93 53.75 426.03 85.39"/>
+          <polyline points="399.77 68.81 406.8 65.65 457.46 97.59"/>
+          <line x1="328.68" y1="80.95" x2="380.38" y2="111.55"/>
+        </g>
+        <!-- ÁRBOLES (canteros): crecen como en casa/terreno -->
+        <g class="ill-grow">
+          <path class="gfill" d="M42.97,77.25s-4.07,1.47-11.32,1.15c-7.24.32-11.31-1.15-11.31-1.15C-6.39,66.78,2.01,46.6,9.03,24.53c3.15-9.92,8.04-15.72,12.46-19.1,5.98-4.56,14.35-4.57,20.32,0,4.43,3.38,9.31,9.18,12.47,19.1,7.02,22.08,15.42,42.25-11.31,52.72Z"/>
+          <line x1="31.65" y1="103.51" x2="31.65" y2="27.12"/>
+          <line x1="31.65" y1="57.75" x2="17.96" y2="43.97"/>
+          <line x1="31.65" y1="41.96" x2="39.38" y2="31.63"/>
+          <line x1="31.65" y1="67.47" x2="41.3" y2="57.75"/>
+        </g>
+        <g class="ill-grow">
+          <path class="gfill" d="M114,114.92s-4.07,1.47-11.32,1.15c-7.24.32-11.31-1.15-11.31-1.15-26.73-10.47-18.33-30.64-11.31-52.72,3.15-9.92,8.04-15.72,12.46-19.1,5.98-4.56,14.35-4.57,20.32,0,4.43,3.38,9.31,9.18,12.47,19.1,7.02,22.08,15.42,42.25-11.31,52.72Z"/>
+          <line x1="102.69" y1="141.19" x2="102.69" y2="64.79"/>
+          <line x1="102.69" y1="95.43" x2="89" y2="81.65"/>
+          <line x1="102.69" y1="77.81" x2="110.42" y2="67.47"/>
+          <line x1="102.69" y1="105.15" x2="112.34" y2="95.43"/>
+        </g>
+        <g class="ill-grow">
+          <path class="gfill" d="M196.04,154.27s-4.07,1.47-11.32,1.15c-7.24.32-11.31-1.15-11.31-1.15-26.73-10.47-18.33-30.64-11.31-52.72,3.15-9.92,8.04-15.72,12.46-19.1,5.98-4.56,14.35-4.57,20.32,0,4.43,3.38,9.31,9.18,12.47,19.1,7.02,22.08,15.42,42.25-11.31,52.72Z"/>
+          <line x1="184.72" y1="180.54" x2="184.72" y2="104.14"/>
+          <line x1="184.72" y1="134.78" x2="171.03" y2="120.99"/>
+          <line x1="184.72" y1="119.94" x2="192.45" y2="109.61"/>
+          <line x1="184.72" y1="144.5" x2="194.37" y2="134.78"/>
+        </g>
+      </g>
     </svg>
 
     <!-- 2. LOTE / TERRENO -->
     <svg class="illus-svg" id="illus-2"
-      viewBox="558 60 285 220"
-      fill="none" stroke="#EE7A13" stroke-width="2"
+      viewBox="1202.4 3728.3 278.5 235.7"
+      fill="none" stroke="#EE7A13" stroke-width="4.5"
       stroke-linecap="round" stroke-linejoin="round"
       xmlns="http://www.w3.org/2000/svg">
-      <polygon points="835.6 185.9 835.6 204.1 795.2 224.6 769.4 237.6 706.3 269.5 706.3 251.2 751 228.6 776.8 215.6 835.6 185.9"/>
-      <polygon points="706.3 251.2 706.3 269.5 569.2 201.9 569.2 183.7 706.3 251.2"/>
-      <polyline points="800.9 166.7 835.6 185.9 776.9 215.6 751 228.6 706.3 251.2 569.2 183.7 706.3 114.4 706.3 114.4 772.3 150.9"/>
-      <line x1="664.6" y1="148.4" x2="664.6" y2="72"/>
-      <line x1="664.6" y1="102.7" x2="650.9" y2="88.9"/>
-      <line x1="664.6" y1="86.9" x2="674.2" y2="77.2"/>
-      <line x1="664.6" y1="112.4" x2="674.2" y2="102.7"/>
-      <path d="M675.9,122.2s-4.1,1.5-11.3,1.2c-7.2.3-11.3-1.2-11.3-1.2-26.7-10.5-18.3-30.6-11.3-52.7,3.2-9.9,8-15.7,12.5-19.1,6-4.6,14.3-4.6,20.3,0,4.4,3.4,9.3,9.2,12.5,19.1,7,22.1,15.4,42.2-11.3,52.7Z"/>
-      <line x1="733.4" y1="138.5" x2="733.4" y2="91.9"/>
-      <line x1="733.4" y1="110.6" x2="725" y2="102.2"/>
-      <line x1="733.4" y1="100.9" x2="739.3" y2="95"/>
-      <line x1="733.4" y1="116.5" x2="739.3" y2="110.6"/>
-      <path d="M740.3,122.5s-2.5.9-6.9.7c-4.4.2-6.9-.7-6.9-.7-16.3-6.4-11.2-18.7-6.9-32.2,1.9-6.1,4.9-9.6,7.6-11.7,3.7-2.8,8.8-2.8,12.4,0,2.7,2.1,5.7,5.6,7.6,11.7,4.3,13.5,9.4,25.8-6.9,32.2Z"/>
-      <path d="M776.8,215.6l-25.8,13-33.4-16.4-18.8,9.4c-3.2,1.6-6.9,1.6-10.1,0l-55.4-27.3c-2.1-1-2.1-4,0-5.1l66.5-33.4c2.5-1.3,5.5-1.2,8,.1l27,14.9,22.5,12.4,3.7,2c2,1.1,1.9,4,0,5l-3.6,1.8-13.7,6.9,33.3,16.4Z"/>
-      <line x1="788.9" y1="198.3" x2="788.9" y2="172.7"/>
-      <polygon points="809.6 132.1 809.6 162.3 788.9 172.7 768.2 183.2 768.2 152.9 809.6 132.1"/>
+      <g class="ill-fill">
+        <polygon points="1474.82 3874.42 1474.82 3892.7 1434.35 3913.14 1408.54 3926.19 1345.5 3958.03 1345.5 3939.75 1390.21 3917.16 1416.03 3904.12 1474.82 3874.42"/>
+        <polygon points="1345.5 3939.75 1345.5 3958.03 1208.37 3890.5 1208.37 3872.23 1345.5 3939.75"/>
+        <path d="M1400.1,3874l-3.66-2.02-22.53-12.45-27.01-14.93c-2.46-1.36-5.43-1.42-7.95-.15l-66.49,33.42c-2.09,1.06-2.07,4.04.02,5.08l55.4,27.27c3.2,1.57,6.94,1.55,10.12-.05l18.81-9.45,33.4,16.44-44.71,22.59-137.13-67.52,95.4-48.2,41.73-21.08h.01l27.07,14.96,38.94,21.53-4.1,2.07v30.23l20.68-10.44,12.01-6.07,34.71,19.19-58.79,29.7-33.32-16.41,13.73-6.9,3.57-1.79c2.03-1.03,2.09-3.92.09-5.02Z"/>
+      </g>
+      <g class="ill-stroke">
+        <polygon points="1474.82 3874.42 1474.82 3892.7 1434.35 3913.14 1408.54 3926.19 1345.5 3958.03 1345.5 3939.75 1390.21 3917.16 1416.03 3904.12 1474.82 3874.42"/>
+        <polygon points="1345.5 3939.75 1345.5 3958.03 1208.37 3890.5 1208.37 3872.23 1345.5 3939.75"/>
+        <path d="M1440.11,3855.23l34.71,19.19-58.79,29.7-33.32-16.41,13.73-6.9,3.57-1.79c2.03-1.03,2.09-3.92.09-5.02l-3.66-2.02-22.53-12.45-27.01-14.93c-2.46-1.36-5.43-1.42-7.95-.15l-66.49,33.42c-2.09,1.06-2.07,4.04.02,5.08l55.4,27.27c3.2,1.57,6.94,1.55,10.12-.05l18.81-9.45,33.4,16.44-44.71,22.59-137.13-67.52,95.4-48.2,41.73-21.08h.01l27.07,14.96,38.94,21.53"/>
+      </g>
+      <!-- CARTEL: sale de la tierra con un plop -->
+      <g class="ill-grow">
+        <polygon class="gfill" points="1448.77 3820.63 1448.77 3850.86 1440.11 3855.23 1428.1 3861.3 1407.42 3871.74 1407.42 3841.51 1411.52 3839.44 1411.53 3839.44 1448.77 3820.63"/>
+        <line x1="1428.09" y1="3886.86" x2="1428.09" y2="3861.3"/>
+      </g>
+      <!-- ÁRBOLES: brotan creciendo desde el piso -->
+      <g class="ill-grow">
+        <path class="gfill" d="M1315.08,3810.71s-4.07,1.47-11.32,1.15c-7.24.32-11.31-1.15-11.31-1.15-26.73-10.47-18.33-30.64-11.31-52.72,3.15-9.92,8.04-15.72,12.46-19.1,5.98-4.56,14.35-4.57,20.32,0,4.43,3.38,9.31,9.18,12.47,19.1,7.02,22.08,15.42,42.25-11.31,52.72Z"/>
+        <line x1="1303.76" y1="3836.98" x2="1303.76" y2="3760.59"/>
+        <line x1="1303.76" y1="3791.22" x2="1290.07" y2="3777.44"/>
+        <line x1="1303.76" y1="3775.43" x2="1311.5" y2="3765.1"/>
+        <line x1="1303.76" y1="3800.94" x2="1313.41" y2="3791.22"/>
+      </g>
+      <g class="ill-grow">
+        <path class="gfill" d="M1379.48,3811.03s-2.48.9-6.91.7c-4.42.2-6.9-.7-6.9-.7-16.32-6.39-11.19-18.7-6.9-32.18,1.92-6.06,4.91-9.6,7.61-11.66,3.65-2.79,8.76-2.79,12.4,0,2.7,2.06,5.69,5.6,7.61,11.66,4.29,13.48,9.41,25.79-6.9,32.18Z"/>
+        <line x1="1372.58" y1="3827.07" x2="1372.58" y2="3780.43"/>
+        <line x1="1372.58" y1="3799.14" x2="1364.22" y2="3790.72"/>
+        <line x1="1372.58" y1="3789.5" x2="1378.47" y2="3783.56"/>
+        <line x1="1372.58" y1="3805.07" x2="1378.47" y2="3799.14"/>
+      </g>
     </svg>
 
     <!-- 3. LLAVE -->
     <svg class="illus-svg" id="illus-3"
-      viewBox="858 88 200 135"
-      fill="none" stroke="#EE7A13" stroke-width="2"
+      viewBox="1496.8 3767.2 201.9 143.1"
+      fill="none" stroke="#EE7A13" stroke-width="4.5"
       stroke-linecap="round" stroke-linejoin="round"
       xmlns="http://www.w3.org/2000/svg">
-      <path d="M1006.8,97.3h0c1.9-1.1,4.2-1.1,6.1,0l12.6,7.5c3.8,2.3,3.7,7.8-.1,9.9h0c-1.7,1-3.8,1-5.6,0l-12.8-7.1c-4.1-2.2-4.1-8.1,0-10.4h0Z"/>
-      <path d="M1053.5,118.1c0,1.8-.4,3.5-1.2,5.1-.9,1.8-2.2,3.3-4.1,4.5l-29,18.3c-8.5,5.4-18.5,7.4-28.1,6.2-4.1-.5-8.1-1.6-11.9-3.3l-8.4,5.3-22.8-17.1c-.7-.5-1.2-1.1-1.7-1.7l7.1-4.5-5.4-4.1c-.7-.5-1.2-1.1-1.7-1.7-1.2-1.5-1.7-3.3-1.7-5.1,0-2.8,1.3-5.5,3.9-7.2l30.5-19.5c11.9-7.6,26.6-8.7,39.4-3.4,2.3,1,4.5,2.1,6.7,3.5l20.7,13.4,2.6,1.7c1.9,1.3,3.3,3,4.2,4.9.7,1.5,1,3.1,1,4.7Z"/>
-      <path d="M953.4,130.9l-7.1,4.5c-1.2-1.5-1.7-3.3-1.7-5.1v-10.2c0,1.8.6,3.6,1.7,5.1.5.6,1,1.2,1.7,1.7l5.4,4.1h0Z"/>
-      <path d="M949.5,178.4l30.2-19c12.7,5.4,27.4,4.5,39.5-3.1l29-18.3c3.5-2.2,5.3-5.9,5.3-9.6v-10.3c0,1.8-.4,3.5-1.2,5.1-.9,1.8-2.2,3.3-4.1,4.5l-29,18.3c-8.5,5.4-18.5,7.4-28.1,6.2-4.1-.5-8.1-1.6-11.9-3.3l-8.4,5.3"/>
-      <path d="M890.4,204.9v10.8l-16.1-.7-5.4-.3c-3.1-.2-5.3-2.7-5.3-5.6v-11.2c0,.9.2,1.8.6,2.6.2.5.6.9.9,1.3.9,1,2.2,1.7,3.8,1.8l21.5,1.3h0Z"/>
-      <path d="M970.8,154.2l-21.2,13.4-15,2.5-15.2,9.8-1.5,7.6-9.3-1-5.4,3.7-2.7,8.2h0l-10.2,6.4-21.5-1.3c-1.5,0-2.8-.8-3.8-1.8-.4-.4-.7-.9-.9-1.3-.4-.8-.6-1.6-.6-2.6s0-.9.2-1.3l2.5-10.7,80-50.4c.5.6,1,1.2,1.7,1.7l22.8,17.1h0Z"/>
-      <line x1="944.7" y1="148" x2="864.2" y2="200.5"/>
-      <polygon points="949.5 167.6 949.5 178.4 934.6 181.1 919.4 190.9 918 198.3 908.7 197.5 903.3 201.2 900.7 209.2 890.4 215.7 890.4 204.9 900.6 198.4 903.3 190.2 908.7 186.5 917.9 187.5 919.4 179.9 934.6 170.1 949.5 167.6"/>
-      <line x1="917.7" y1="198.5" x2="917.9" y2="187.5"/>
-      <line x1="900.6" y1="209.3" x2="900.6" y2="198.4"/>
-      <line x1="908.7" y1="186.5" x2="908.7" y2="197.5"/>
-      <line x1="934.6" y1="170.1" x2="934.6" y2="181.1"/>
-      <line x1="919.4" y1="179.9" x2="919.4" y2="190.9"/>
+      <defs>
+        <linearGradient id="glintGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0"    stop-color="#fff" stop-opacity="0"/>
+          <stop offset="0.5"  stop-color="#fff" stop-opacity="0.95"/>
+          <stop offset="1"    stop-color="#fff" stop-opacity="0"/>
+        </linearGradient>
+        <clipPath id="keyClip">
+          <path d="M1691.69,3802.05c-.85-1.9-2.25-3.61-4.19-4.87l-2.58-1.67-20.74-13.44c-2.14-1.39-4.37-2.56-6.67-3.53-12.73-5.34-27.47-4.22-39.37,3.4l-30.45,19.49c-2.6,1.66-3.92,4.41-3.92,7.17,0,1.81.57,3.61,1.72,5.12.46.61,1.02,1.18,1.68,1.67l5.44,4.09-7.13,4.49c.46.61,1.03,1.18,1.69,1.68l22.79,17.13,8.4-5.3c3.8,1.7,7.81,2.81,11.88,3.33,9.6,1.24,19.55-.81,28.1-6.2l29.05-18.32c1.84-1.16,3.2-2.71,4.07-4.46.82-1.6,1.22-3.37,1.22-5.13,0-1.59-.33-3.18-.99-4.65Z"/>
+          <path d="M1692.68,3806.7v10.26c0,3.68-1.77,7.37-5.29,9.59l-29.05,18.32c-12.02,7.57-26.79,8.54-39.46,3.1l-30.16,19.02v-10.82l21.24-13.39,8.4-5.3c3.8,1.7,7.81,2.81,11.88,3.33,9.6,1.24,19.55-.81,28.1-6.2l29.05-18.32c1.84-1.16,3.2-2.71,4.07-4.46.82-1.6,1.22-3.37,1.22-5.13Z"/>
+          <path d="M1609.96,3842.78l-21.24,13.39-14.96,2.54-15.19,9.75-1.45,7.64-9.28-1-5.36,3.7-2.66,8.2h0s-10.22,6.45-10.22,6.45l-21.51-1.34c-1.5-.09-2.81-.76-3.75-1.75-.38-.4-.7-.85-.94-1.34-.4-.78-.62-1.65-.62-2.56,0-.44.05-.88.15-1.32l2.55-10.72,80-50.45c.46.61,1.03,1.18,1.69,1.68l22.79,17.13Z"/>
+          <path d="M1529.6,3893.45v10.82l-16.1-.66-5.41-.34c-3.06-.19-5.31-2.74-5.31-5.65v-11.16c0,.91.22,1.78.62,2.56.24.49.56.94.94,1.34.94.99,2.25,1.66,3.75,1.75l21.51,1.34Z"/>
+        </clipPath>
+      </defs>
+      <g class="ill-fill">
+        <path d="M1691.69,3802.05c-.85-1.9-2.25-3.61-4.19-4.87l-2.58-1.67-20.74-13.44c-2.14-1.39-4.37-2.56-6.67-3.53-12.73-5.34-27.47-4.22-39.37,3.4l-30.45,19.49c-2.6,1.66-3.92,4.41-3.92,7.17,0,1.81.57,3.61,1.72,5.12.46.61,1.02,1.18,1.68,1.67l5.44,4.09-7.13,4.49c.46.61,1.03,1.18,1.69,1.68l22.79,17.13,8.4-5.3c3.8,1.7,7.81,2.81,11.88,3.33,9.6,1.24,19.55-.81,28.1-6.2l29.05-18.32c1.84-1.16,3.2-2.71,4.07-4.46.82-1.6,1.22-3.37,1.22-5.13,0-1.59-.33-3.18-.99-4.65ZM1664.48,3803.31c-.87.49-1.84.73-2.81.73s-1.92-.24-2.79-.72l-12.8-7.09c-4.07-2.25-4.12-8.08-.1-10.41,1.88-1.09,4.2-1.08,6.07.04l12.56,7.5c3.8,2.27,3.72,7.79-.13,9.95Z"/>
+        <path d="M1592.61,3819.48l-7.13,4.49c-1.15-1.51-1.71-3.32-1.71-5.12v-10.25c0,1.81.57,3.61,1.72,5.12.46.61,1.02,1.18,1.68,1.67l5.44,4.09Z"/>
+        <path d="M1692.68,3806.7v10.26c0,3.68-1.77,7.37-5.29,9.59l-29.05,18.32c-12.02,7.57-26.79,8.54-39.46,3.1l-30.16,19.02v-10.82l21.24-13.39,8.4-5.3c3.8,1.7,7.81,2.81,11.88,3.33,9.6,1.24,19.55-.81,28.1-6.2l29.05-18.32c1.84-1.16,3.2-2.71,4.07-4.46.82-1.6,1.22-3.37,1.22-5.13Z"/>
+        <path d="M1529.6,3893.45v10.82l-16.1-.66-5.41-.34c-3.06-.19-5.31-2.74-5.31-5.65v-11.16c0,.91.22,1.78.62,2.56.24.49.56.94.94,1.34.94.99,2.25,1.66,3.75,1.75l21.51,1.34Z"/>
+        <path d="M1609.96,3842.78l-21.24,13.39-14.96,2.54-15.19,9.75-1.45,7.64-9.28-1-5.36,3.7-2.66,8.2h0s-10.22,6.45-10.22,6.45l-21.51-1.34c-1.5-.09-2.81-.76-3.75-1.75-.38-.4-.7-.85-.94-1.34-.4-.78-.62-1.65-.62-2.56,0-.44.05-.88.15-1.32l2.55-10.72,80-50.45c.46.61,1.03,1.18,1.69,1.68l22.79,17.13Z"/>
+        <line x1="1583.92" y1="3836.58" x2="1503.4" y2="3889.02"/>
+        <polygon points="1588.72 3856.17 1588.72 3866.99 1588.41 3867.18 1573.76 3869.67 1573.76 3858.71 1588.72 3856.17"/>
+        <polygon points="1573.76 3858.71 1573.76 3869.67 1558.57 3879.42 1558.57 3868.46 1573.76 3858.71"/>
+        <polygon points="1557.12 3876.1 1556.92 3887.04 1547.84 3886.06 1547.84 3875.1 1557.12 3876.1"/>
+        <polygon points="1547.84 3875.1 1547.84 3886.06 1542.48 3889.76 1539.88 3897.79 1539.82 3897.83 1539.82 3887 1542.48 3878.8 1547.84 3875.1"/>
+        <polygon points="1539.82 3887.01 1539.82 3897.83 1529.6 3904.27 1529.6 3893.45 1539.82 3887.01"/>
+        <polygon points="1558.57 3868.46 1558.57 3879.42 1557.15 3886.9 1556.92 3887.04 1557.12 3876.1 1558.57 3868.46"/>
+        <polygon points="1539.88 3897.79 1539.82 3897.97 1539.82 3897.83 1539.88 3897.79"/>
+        <polygon points="1557.15 3886.9 1557.12 3887.06 1556.92 3887.04 1557.15 3886.9"/>
+        <polygon points="1588.72 3866.99 1588.72 3867.13 1588.41 3867.18 1588.72 3866.99"/>
+      </g>
+      <!-- DESTELLO: barre la llave (recortado a su silueta) -->
+      <g clip-path="url(#keyClip)">
+        <g transform="rotate(24 1598 3838)">
+          <rect class="key-glint" x="1486" y="3735" width="26" height="205" fill="url(#glintGrad)"/>
+        </g>
+      </g>
+      <g class="ill-stroke">
+        <path d="M1664.48,3803.31c-.87.49-1.84.73-2.81.73s-1.92-.24-2.79-.72l-12.8-7.09c-4.07-2.25-4.12-8.08-.1-10.41,1.88-1.09,4.2-1.08,6.07.04l12.56,7.5c3.8,2.27,3.72,7.79-.13,9.95Z"/>
+        <path d="M1691.69,3802.05c-.85-1.9-2.25-3.61-4.19-4.87l-2.58-1.67-20.74-13.44c-2.14-1.39-4.37-2.56-6.67-3.53-12.73-5.34-27.47-4.22-39.37,3.4l-30.45,19.49c-2.6,1.66-3.92,4.41-3.92,7.17,0,1.81.57,3.61,1.72,5.12.46.61,1.02,1.18,1.68,1.67l5.44,4.09-7.13,4.49c.46.61,1.03,1.18,1.69,1.68l22.79,17.13,8.4-5.3c3.8,1.7,7.81,2.81,11.88,3.33,9.6,1.24,19.55-.81,28.1-6.2l29.05-18.32c1.84-1.16,3.2-2.71,4.07-4.46.82-1.6,1.22-3.37,1.22-5.13,0-1.59-.33-3.18-.99-4.65ZM1664.48,3803.31c-.87.49-1.84.73-2.81.73s-1.92-.24-2.79-.72l-12.8-7.09c-4.07-2.25-4.12-8.08-.1-10.41,1.88-1.09,4.2-1.08,6.07.04l12.56,7.5c3.8,2.27,3.72,7.79-.13,9.95Z"/>
+        <path d="M1592.61,3819.48l-7.13,4.49c-1.15-1.51-1.71-3.32-1.71-5.12v-10.25c0,1.81.57,3.61,1.72,5.12.46.61,1.02,1.18,1.68,1.67l5.44,4.09Z"/>
+        <path d="M1692.68,3806.7v10.26c0,3.68-1.77,7.37-5.29,9.59l-29.05,18.32c-12.02,7.57-26.79,8.54-39.46,3.1l-30.16,19.02v-10.82l21.24-13.39,8.4-5.3c3.8,1.7,7.81,2.81,11.88,3.33,9.6,1.24,19.55-.81,28.1-6.2l29.05-18.32c1.84-1.16,3.2-2.71,4.07-4.46.82-1.6,1.22-3.37,1.22-5.13Z"/>
+        <path d="M1529.6,3893.45v10.82l-16.1-.66-5.41-.34c-3.06-.19-5.31-2.74-5.31-5.65v-11.16c0,.91.22,1.78.62,2.56.24.49.56.94.94,1.34.94.99,2.25,1.66,3.75,1.75l21.51,1.34Z"/>
+        <path d="M1609.96,3842.78l-21.24,13.39-14.96,2.54-15.19,9.75-1.45,7.64-9.28-1-5.36,3.7-2.66,8.2h0s-10.22,6.45-10.22,6.45l-21.51-1.34c-1.5-.09-2.81-.76-3.75-1.75-.38-.4-.7-.85-.94-1.34-.4-.78-.62-1.65-.62-2.56,0-.44.05-.88.15-1.32l2.55-10.72,80-50.45c.46.61,1.03,1.18,1.69,1.68l22.79,17.13Z"/>
+        <line x1="1583.92" y1="3836.58" x2="1503.4" y2="3889.02"/>
+        <polygon points="1588.72 3856.17 1588.72 3866.99 1588.41 3867.18 1573.76 3869.67 1573.76 3858.71 1588.72 3856.17"/>
+        <polygon points="1573.76 3858.71 1573.76 3869.67 1558.57 3879.42 1558.57 3868.46 1573.76 3858.71"/>
+        <polygon points="1557.12 3876.1 1556.92 3887.04 1547.84 3886.06 1547.84 3875.1 1557.12 3876.1"/>
+        <polygon points="1547.84 3875.1 1547.84 3886.06 1542.48 3889.76 1539.88 3897.79 1539.82 3897.83 1539.82 3887 1542.48 3878.8 1547.84 3875.1"/>
+        <polygon points="1539.82 3887.01 1539.82 3897.83 1529.6 3904.27 1529.6 3893.45 1539.82 3887.01"/>
+        <polygon points="1558.57 3868.46 1558.57 3879.42 1557.15 3886.9 1556.92 3887.04 1557.12 3876.1 1558.57 3868.46"/>
+        <line x1="1556.92" y1="3887.04" x2="1556.92" y2="3876.06"/>
+        <line x1="1539.82" y1="3897.83" x2="1539.82" y2="3886.84"/>
+        <line x1="1547.84" y1="3875.1" x2="1547.84" y2="3886.1"/>
+        <line x1="1573.76" y1="3858.71" x2="1573.76" y2="3869.71"/>
+        <line x1="1558.57" y1="3868.46" x2="1558.57" y2="3879.46"/>
+      </g>
+      <!-- MANO nueva (Mano.svg): entra desde la derecha y agarra la llave — TRANSFORM a ajustar -->
+      <g class="key-hand">
+        <g transform="translate(1650 3702) scale(0.8)">
+          <path class="hand-fill" d="M488.96,183.97l-2.66,28.18c-2.1,22.3-25.17,36.2-45.87,27.66l-250.3-103.35c-14.26-5.89-29.61-8.72-45.03-8.31h0c-13.32.36-25.97,5.96-35.17,15.6l-10.53,11.02c-8.74,9.15-20.32,15.22-32.89,16.63-9.28,1.04-17.45-.46-18.81-7.96-1.89-10.51,6.01-16.69,13.36-19.71,6.57-2.69,12.04-7.66,14.67-14.25,3.8-9.49,3.44-21.22-11.2-29.72-27.85-16.15-37.54,23.21-42.09,31.82-4.53,8.61-23.17,7.58-20.1-13.02,2.03-13.65,6.34-32.19,21.71-44.31-3.29-12.25-3.41-32.38,12.03-41.52h-.01c3.68-13.1,22.1-38.14,63.88-28.61,31.33,7.15,54.61,15.51,67.89,21.2,19.79,8.48,39.59,16.94,59.49,25.16l241.18,99.58c13.53,5.58,21.82,19.34,20.45,33.91Z"/>
+          <path d="M24.05,74.25c7.82-6.16,18.52-10.67,33.22-12"/>
+          <path d="M36.07,32.71c6.65-3.93,16.19-5.83,29.62-4.19"/>
+        </g>
+      </g>
     </svg>
+
+    <!-- Pájaros (cruzan en casa / depto / terreno) -->
+    <div class="birds" aria-hidden="true">
+      <div class="bird" style="top:11%"><svg viewBox="-17 -12 28 18" fill="none" stroke-linecap="round"><path class="wing" d="M-14,-8 Q-8,-3 -1,4 Q3,-2 8,-5"/></svg></div>
+      <div class="bird" style="top:19%"><svg viewBox="-17 -12 28 18" fill="none" stroke-linecap="round"><path class="wing" d="M-14,-8 Q-8,-3 -1,4 Q3,-2 8,-5"/></svg></div>
+    </div>
 
   </div><!-- fin hero-illus-wrap -->
 
@@ -1065,20 +1437,28 @@
   (function() {
 
     /* ── Tiempos globales (ms) ─────────────────────────────────────────── */
-    var DRAW_MS   = 2000;  // SVG se dibuja en 2s
-    var HOLD_MS   = 4000;  // pausa con todo visible
-    var UNDRAW_MS = 1000;  // SVG se desdibuja en 1s
-    var CHAR_MS   = 75;    // ms por carácter al tipear
+    var DRAW_MS   = 1100;  // SVG se dibuja
+    var HOLD_MS   = 2000;  // pausa con la ilustración rellena (2s)
+    var UNDRAW_MS = 1100;  // la ilustración se desdibuja
+    var ERASE_MS  = 650;   // el texto se borra rápido
+    var CHAR_MS   = 60;    // ms por carácter al tipear
+    var INTRO_MS  = 2000;  // espera inicial: carga del logo + acomodo de textos
+    var FILL_MS   = 400;   // fundido del relleno naranja (entrada/salida)
+    var FILL_ON   = 'rgba(255,252,235,1)'; // crema al 100%
+    var FILL_OFF  = 'rgba(255,252,235,0)';
 
     /* ── Typewriter ────────────────────────────────────────────────────── */
     var titleEl = document.getElementById('heroTitle');
     var BASE    = 'El valor justo de\ntu ';
-    var WORDS   = ['Casa.', 'departamento.', 'terreno.', 'propiedad.'];
+    var WORDS   = ['Casa.', 'Departamento.', 'Terreno.', 'Propiedad.'];
     var curText = '';
 
     function render(text) {
       curText = text;
-      titleEl.innerHTML = text + '<span class="typewriter-cursor"></span>';
+      var html = text.length > BASE.length
+        ? BASE + '<span class="hero-word">' + text.substring(BASE.length) + '</span>'
+        : text;
+      titleEl.innerHTML = html + '<span class="typewriter-cursor"></span>';
     }
 
     // Tipea de a un char cada `ms` hasta llegar a `target`
@@ -1116,58 +1496,261 @@
     */
     var DASH = 9000;
 
+    /* Longitud real de cada trazo → dibujado/desdibujado progresivo y parejo.
+       (Con un DASH fijo gigante, el trazo quedaba visible casi todo el tiempo
+       y solo desaparecía al final: ese era el bug del timing.) */
+    function pathLen(el) {
+      var L = 1000;
+      if (el.getTotalLength) { try { var v = el.getTotalLength(); if (v) L = v; } catch (e) {} }
+      // con non-scaling-stroke el guion se mide en px de pantalla → escalar por el CTM
+      try {
+        var m = el.getScreenCTM();
+        if (m) { var s = Math.hypot(m.a, m.b); if (s) return L * s; }
+      } catch (e) {}
+      return L;
+    }
+
+    /* Contornos = grupo .ill-stroke ; caras = grupo .ill-fill ; crecen = .ill-grow */
+    function strokeEls(svg) { return Array.from(svg.querySelectorAll('.ill-stroke > *')); }
+    function fillEls(svg)   { return Array.from(svg.querySelectorAll('.ill-fill > *')); }
+    function growEls(svg)   { return Array.from(svg.querySelectorAll('.ill-grow')); }
+    function growStrokeEls(svg) { return Array.from(svg.querySelectorAll('.ill-grow path, .ill-grow polyline, .ill-grow polygon, .ill-grow line, .ill-grow circle')); }
+    function gfillEls(svg)  { return Array.from(svg.querySelectorAll('.ill-grow .gfill')); }
+    function lightEls(svg)  { return Array.from(svg.querySelectorAll('.ill-lights > *')); }
+    var LIGHT_ON  = 'rgba(255,252,235,1)';  // crema (mismo que usamos)
+    var LIGHT_OFF = 'rgba(255,252,235,0)';
+
     function initSVG(svg) {
-      svg.querySelectorAll('path,polyline,polygon,line,circle').forEach(function(el) {
-        el.style.transition       = 'none';
-        el.style.strokeDasharray  = DASH;
-        el.style.strokeDashoffset = DASH;
+      strokeEls(svg).forEach(function(el) {
+        var L = pathLen(el);
+        el.style.strokeDasharray  = L + ' ' + (L + 40); // gap grande: evita puntitos al ocultar
+        el.style.strokeDashoffset = L + 12;             // overshoot: limpia la punta redonda
+      });
+      fillEls(svg).forEach(function(el) {
+        el.style.transition = 'fill-opacity ' + (FILL_MS / 1000) + 's ease';
+        el.style.fillOpacity = '0';
+      });
+      // grupos que crecen (árboles/cartel): ocultos bajo tierra, trazos sólidos, relleno puesto
+      growEls(svg).forEach(function(g) {
+        g.getAnimations().forEach(function(a) { a.cancel(); });
+        g.style.transform = 'scaleY(0)';
+      });
+      growStrokeEls(svg).forEach(function(el) {
+        el.getAnimations().forEach(function(a) { a.cancel(); });
+        el.style.strokeDasharray  = 'none';
+        el.style.strokeDashoffset = '0';
+      });
+      gfillEls(svg).forEach(function(el) {
+        el.style.transition = 'fill-opacity ' + (FILL_MS / 1000) + 's ease';
+        el.style.fillOpacity = '1'; // arranca relleno (oculto por la escala 0)
+      });
+      lightEls(svg).forEach(function(el) { el.style.fill = LIGHT_OFF; }); // ventanas apagadas
+      var glint = svg.querySelector('.key-glint');
+      if (glint) { glint.getAnimations().forEach(function(a) { a.cancel(); }); glint.style.transform = 'translateX(-40px)'; }
+      var bglint = svg.querySelector('.bldg-glint');
+      if (bglint) { bglint.getAnimations().forEach(function(a) { a.cancel(); }); bglint.style.transform = 'translateX(-60px)'; }
+      var hand = svg.querySelector('.key-hand');
+      if (hand) {
+        hand.getAnimations().forEach(function(a) { a.cancel(); });
+        hand.style.transform = 'translateX(500px)'; hand.style.opacity = '0';
+        Array.from(hand.querySelectorAll('path,polyline,polygon,line,circle')).forEach(function(el) {
+          el.getAnimations().forEach(function(a) { a.cancel(); });
+          el.style.strokeDasharray = 'none'; el.style.strokeDashoffset = '0';
+        });
+        var hf = hand.querySelector('.hand-fill'); if (hf) hf.style.fillOpacity = '1';
+      }
+    }
+    /* lightsOn(): las primeras 4 ventanas (izquierda) en orden aleatorio,
+       las que siguen (derecha) se encienden DESPUÉS, en orden. */
+    function lightsOn(svg) {
+      var els = lightEls(svg);
+      var first = [], rest = [];
+      els.forEach(function(_, i) { (i < 4 ? first : rest).push(i); });
+      first.sort(function() { return Math.random() - 0.5; });
+      first.concat(rest).forEach(function(idx, k) {
+        setTimeout(function() { els[idx].style.fill = LIGHT_ON; }, 100 + k * 110);
+      });
+    }
+    function lightsOff(svg) { lightEls(svg).forEach(function(el) { el.style.fill = LIGHT_OFF; }); }
+    /* bldgGlint(): un destello barre las ventanas del edificio (recortado a ellas) */
+    function bldgGlint(svg) {
+      var g = svg.querySelector('.bldg-glint');
+      if (!g) return;
+      g.getAnimations().forEach(function(a) { a.cancel(); });
+      g.style.transform = 'translateX(-60px)';
+      g.animate(
+        [{ transform: 'translateX(-60px)' }, { transform: 'translateX(330px)' }],
+        { duration: 750, delay: 1050, easing: 'ease-in-out', fill: 'forwards' }
+      );
+    }
+    /* Humo de la chimenea: se enciende después de los fills */
+    function smokeOn(svg)  { var s = svg.querySelector('.smoke'); if (s) s.classList.add('on'); }
+    function smokeOff(svg) { var s = svg.querySelector('.smoke'); if (s) s.classList.remove('on'); }
+    /* keyShine(): la llave gira apenas y un destello la barre (destaque) */
+    function keyShine(svg) {
+      // (giro removido: con la mano quedaba raro) — solo el destello barre la llave
+      var g = svg.querySelector('.key-glint');
+      if (g) {
+        g.getAnimations().forEach(function(a) { a.cancel(); });
+        g.style.transform = 'translateX(-40px)';
+        g.animate(
+          [{ transform: 'translateX(-40px)' }, { transform: 'translateX(260px)' }],
+          { duration: 1000, delay: 450, easing: 'ease-in-out', fill: 'forwards' }
+        );
+      }
+    }
+    /* handIn(): la mano entra desde la derecha y agarra la llave */
+    function handIn(svg) {
+      var h = svg.querySelector('.key-hand');
+      if (!h) return;
+      h.getAnimations().forEach(function(a) { a.cancel(); });
+      h.style.transform = 'translateX(0px)';
+      h.style.opacity = '1';
+      h.animate(
+        [{ transform: 'translateX(500px)', opacity: 0 }, { transform: 'translateX(0px)', opacity: 1 }],
+        { duration: 700, easing: 'cubic-bezier(.2,.7,.3,1)', fill: 'backwards' }
+      );
+      // al agarrar: leve "tirón" + rotación del conjunto y vuelve (reacción del agarre)
+      svg.animate(
+        [
+          { transform: 'translateX(-50px) rotate(0deg)' },
+          { transform: 'translateX(-64px) rotate(-3.5deg)', offset: 0.45 },
+          { transform: 'translateX(-50px) rotate(0deg)' }
+        ],
+        { duration: 520, delay: 620, easing: 'ease-out' }
+      );
+    }
+    /* handOut(): la mano se DESDIBUJA al salir (retrae trazos + desvanece relleno) */
+    function handOut(svg) {
+      var h = svg.querySelector('.key-hand');
+      if (!h) return;
+      Array.from(h.querySelectorAll('path,polyline,polygon,line,circle')).forEach(function(el) {
+        el.getAnimations().forEach(function(a) { a.cancel(); });
+        var L = pathLen(el);
+        el.style.strokeDasharray  = L + ' ' + (L + 40);
+        el.style.strokeDashoffset = String(L + 12);
+        el.animate([{ strokeDashoffset: 0 }, { strokeDashoffset: L + 12 }], { duration: UNDRAW_MS, easing: 'ease-in-out' });
+      });
+      var hf = h.querySelector('.hand-fill');
+      if (hf) hf.style.fillOpacity = '0';
+    }
+    /* grow(): los árboles/cartel "brotan" creciendo desde su base con un rebotecito */
+    function grow(svg) {
+      return new Promise(function(res) {
+        var gs = growEls(svg);
+        if (!gs.length) { res(); return; }
+        // brotan de izquierda a derecha (orden por posición horizontal en pantalla)
+        gs.sort(function(a, b) { return a.getBoundingClientRect().left - b.getBoundingClientRect().left; });
+        gs.forEach(function(g, i) {
+          g.getAnimations().forEach(function(a) { a.cancel(); });
+          g.style.transform = 'scaleY(1)'; // reposo = crecido
+          g.animate(
+            [{ transform: 'scaleY(0)' }, { transform: 'scaleY(1.1)', offset: 0.72 }, { transform: 'scaleY(1)' }],
+            { duration: 560, delay: i * 130, easing: 'cubic-bezier(.2,.7,.3,1)', fill: 'backwards' }
+          );
+        });
+        setTimeout(res, 560 + (gs.length - 1) * 130 + 80);
+      });
+    }
+    /* undrawGrow(): al salir, los árboles/cartel se DESDIBUJAN (no se encogen):
+       se retraen sus trazos y se desvanece su relleno, manteniendo la escala. */
+    function undrawGrow(svg) {
+      return new Promise(function(res) {
+        var els = growStrokeEls(svg);
+        if (!els.length) { res(); return; }
+        els.forEach(function(el) {
+          el.getAnimations().forEach(function(a) { a.cancel(); });
+          var L = pathLen(el);
+          el.style.strokeDasharray  = L + ' ' + (L + 40);
+          el.style.strokeDashoffset = String(L + 12);
+          el.animate(
+            [{ strokeDashoffset: 0 }, { strokeDashoffset: L + 12 }],
+            { duration: UNDRAW_MS, easing: 'ease-in-out' }
+          );
+        });
+        gfillEls(svg).forEach(function(el) { el.style.fillOpacity = '0'; });
+        setTimeout(res, UNDRAW_MS + 120);
+      });
+    }
+    function fillIn(svg) {
+      return new Promise(function(res) {
+        fillEls(svg).forEach(function(el) { el.style.fillOpacity = '1'; });
+        setTimeout(res, FILL_MS);
+      });
+    }
+    function fillOut(svg) {
+      return new Promise(function(res) {
+        fillEls(svg).forEach(function(el) { el.style.fillOpacity = '0'; });
+        setTimeout(res, FILL_MS);
       });
     }
 
     /*
-      draw(): el ÚLTIMO trazo termina exactamente en DRAW_MS.
-      perPath = DRAW_MS - (n-1)*STAGGER → último trazo: start=(n-1)*40, end=DRAW_MS ✓
+      draw() / undraw() usan la Web Animations API (el.animate()) en vez de
+      transiciones CSS + reflow. WAAPI anima directamente sobre el motor de render,
+      sin depender de que el browser "detecte" el cambio de estilo — esto evita el
+      bug de non-scaling-stroke que hacía que el undraw desapareciera de golpe.
+
+      Patrón: fijamos el strokeDashoffset inline al valor FINAL (estado de reposo)
+      y animamos por encima con fill controlado. Cuando la animación termina
+      (fill por defecto = none), revierte al inline, que ya coincide con el final
+      → sin saltos.
     */
     function draw(svg) {
       return new Promise(function(res) {
-        var els     = Array.from(svg.querySelectorAll('path,polyline,polygon,line,circle'));
-        var STAGGER = 40;
+        var els     = strokeEls(svg);
+        // stagger capado: con muchos trazos, evita que perPath quede negativo (rompía animate())
+        var STAGGER = Math.min(40, Math.floor(DRAW_MS * 0.6 / Math.max(1, els.length - 1)));
         var perPath = DRAW_MS - (els.length - 1) * STAGGER;
 
-        els.forEach(function(el) {
-          el.style.transition       = 'none';
-          el.style.strokeDashoffset = DASH;
-        });
-        void svg.getBoundingClientRect(); // fuerza reflow para commitear estado inicial
-
         els.forEach(function(el, i) {
-          setTimeout(function() {
-            el.style.transition       = 'stroke-dashoffset ' + (perPath / 1000) + 's ease-in-out';
-            el.style.strokeDashoffset = '0';
-          }, i * STAGGER);
+          el.getAnimations().forEach(function(a) { a.cancel(); });
+          var L = pathLen(el);
+          el.style.strokeDasharray  = L + ' ' + (L + 40);
+          el.style.strokeDashoffset = '0'; // reposo = dibujado
+          el.animate(
+            [{ strokeDashoffset: L + 12 }, { strokeDashoffset: 0 }],
+            { duration: perPath, delay: i * STAGGER, easing: 'ease-in-out', fill: 'backwards' }
+          );
         });
 
         setTimeout(res, DRAW_MS + 120);
       });
     }
 
-    /*
-      undraw(): los trazos vuelven de 0 → DASH (desaparecen).
-      El delay de 20ms garantiza que el browser haya pintado dashoffset=0
-      antes de intentar la transición de regreso. Sin ese frame,
-      el browser puede no detectar el cambio y no disparar la animación.
-    */
     function undraw(svg) {
       return new Promise(function(res) {
-        var els = Array.from(svg.querySelectorAll('path,polyline,polygon,line,circle'));
-        void svg.getBoundingClientRect(); // asegura estado actual (dashoffset=0) committed
-        setTimeout(function() {
-          els.forEach(function(el) {
-            el.style.transition       = 'stroke-dashoffset ' + (UNDRAW_MS / 1000) + 's ease-in';
-            el.style.strokeDashoffset = DASH;
-          });
-        }, 20); // 1 frame de espera para que el browser vea el punto de partida
-        setTimeout(res, UNDRAW_MS + 140);
+        var els = strokeEls(svg);
+        els.forEach(function(el) {
+          el.getAnimations().forEach(function(a) { a.cancel(); });
+          var L = pathLen(el);
+          el.style.strokeDasharray  = L + ' ' + (L + 40);
+          el.style.strokeDashoffset = String(L + 12); // reposo = borrado (overshoot)
+          el.animate(
+            [{ strokeDashoffset: 0 }, { strokeDashoffset: L + 12 }],
+            { duration: UNDRAW_MS, easing: 'ease-in-out' }
+          );
+        });
+        setTimeout(res, UNDRAW_MS + 180);
+      });
+    }
+
+    /* flyBirds(): 3 pájaros cruzan en diagonal y se van (aleteo por CSS) */
+    var birdEls = Array.from(document.querySelectorAll('.bird'));
+    var illusWrap = document.querySelector('.hero-illus-wrap');
+    function flyBirds() {
+      if (!illusWrap) return;
+      var W = illusWrap.clientWidth;
+      birdEls.forEach(function(b, i) {
+        b.getAnimations().forEach(function(a) { a.cancel(); });
+        var y0 = 12 + i * 5;
+        // cruzan solo un tramo, en diagonal hacia arriba, entrando y saliendo con fade
+        b.animate([
+          { transform: 'translate(' + (W * 0.30) + 'px, ' + y0 + 'px)',        opacity: 0 },
+          { transform: 'translate(' + (W * 0.37) + 'px, ' + (y0 - 8) + 'px)',  opacity: 0.95, offset: 0.25 },
+          { transform: 'translate(' + (W * 0.52) + 'px, ' + (y0 - 22) + 'px)', opacity: 0.95, offset: 0.75 },
+          { transform: 'translate(' + (W * 0.58) + 'px, ' + (y0 - 30) + 'px)', opacity: 0 }
+        ], { duration: 2200 + i * 300, delay: i * 350, easing: 'ease-in-out', fill: 'forwards' });
       });
     }
 
@@ -1180,33 +1763,61 @@
     /* ── Loop principal ─────────────────────────────────────────────────── */
     async function loop() {
       var idx = 0;
-      await sleep(800);
+      await sleep(INTRO_MS); // deja que el splash se vaya y se acomode todo
 
-      /*
-        ARRANQUE: BASE(21 chars) + "Casa."(5) = 26 chars × 75ms = 1950ms ≈ DRAW_MS
-        → typewriter y SVG terminan prácticamente al mismo tiempo.
-      */
+      /* SECUENCIA DE ENTRADA */
+      // 1. Fade-up de "Neuquén · Patagonia" + "Bienvenido a Solar Propiedades"
+      document.querySelector('.hero-eyebrow').classList.add('is-in');
+      await sleep(220);
+      document.querySelector('.hero-welcome').classList.add('is-in');
+      await sleep(750);
+
+      // 2. Se revela el título y se escribe la primera frase + ilustración (juntos)
+      document.querySelector('.hero-title').classList.add('is-in');
       svgs[0].style.opacity = '1';
       await Promise.all([
         draw(svgs[0]),
         typeTo(BASE + WORDS[0], CHAR_MS)
       ]);
+      // Árboles/cartel crecen al mismo tiempo que se rellenan las caras
+      await Promise.all([grow(svgs[0]), fillIn(svgs[0])]);
+      lightsOn(svgs[0]); // (si hay ventanas; casa no tiene)
+      smokeOn(svgs[0]);  // humo de la chimenea (casa)
+
+      // 3. Fade-up del subtexto "Asesoramiento inmobiliario…"
+      document.querySelector('.hero-sub').classList.add('is-in');
 
       while (true) {
-        // HOLD: 4 segundos con SVG al 100% y texto completo
+        // Pájaros (terreno), destello de ventanas (edificio), destello + mano (llave)
+        if (idx === 1) bldgGlint(svgs[1]);
+        if (idx === 2) flyBirds();
+        if (idx === 3) { keyShine(svgs[3]); handIn(svgs[3]); }
+        // HOLD: ilustración rellena + texto completo
         await sleep(HOLD_MS);
 
         var nextIdx  = (idx + 1) % svgs.length;
         var nextWord = WORDS[nextIdx];
 
+        // SALIDA paso 1: se apagan ventanas/humo
+        lightsOff(svgs[idx]);
+        smokeOff(svgs[idx]);
+        // el relleno se vacía AL MISMO TIEMPO que los árboles/cartel desaparecen
+        handOut(svgs[idx]); // la mano (si hay) se va a la derecha
+        var fOut  = fillOut(svgs[idx]);
+        var grOut = undrawGrow(svgs[idx]);
+
         /*
-          SALIDA: borrar palabra + desdibujar SVG en paralelo (~1s ambos).
-          eraseMs = UNDRAW_MS / longitud_palabra → ambos terminan juntos.
+          SALIDA paso 2: la ilustración se desdibuja lento (UNDRAW_MS) y el texto
+          se borra rápido (ERASE_MS). El texto arranca tarde (eraseDelay) para que
+          AMBOS terminen al mismo tiempo.
         */
-        var eraseMs = Math.floor(UNDRAW_MS / WORDS[idx].length);
+        var eraseMs    = Math.floor(ERASE_MS / WORDS[idx].length); // por carácter
+        var eraseDelay = Math.max(0, UNDRAW_MS - ERASE_MS);
         await Promise.all([
-          eraseTo(BASE.length, eraseMs),
-          undraw(svgs[idx])
+          (async function() { await sleep(eraseDelay); await eraseTo(BASE.length, eraseMs); })(),
+          undraw(svgs[idx]),
+          grOut,
+          fOut
         ]);
 
         svgs[idx].style.opacity = '0';
@@ -1214,8 +1825,8 @@
         await sleep(150);
 
         /*
-          ENTRADA: dibujar SVG (2s) + tipear nueva palabra.
-          La palabra empieza tarde para que ambos terminen juntos:
+          ENTRADA: dibujar SVG + tipear nueva palabra (terminan juntos),
+          luego se rellenan las caras.
           wordDelay = DRAW_MS - wordLength×CHAR_MS - 50ms margen
         */
         var wordDelay = Math.max(0, DRAW_MS - nextWord.length * CHAR_MS - 50);
@@ -1227,6 +1838,12 @@
             await typeTo(BASE + word, CHAR_MS);
           }(nextWord, wordDelay))
         ]);
+        // Terreno (2): el plop (cartel/árboles) sucede ANTES del relleno.
+        // El resto: crecen y rellenan al mismo tiempo.
+        if (nextIdx === 2) { await grow(svgs[nextIdx]); await fillIn(svgs[nextIdx]); }
+        else { await Promise.all([grow(svgs[nextIdx]), fillIn(svgs[nextIdx])]); }
+        lightsOn(svgs[nextIdx]); // ventanas del edificio se encienden de a una
+        smokeOn(svgs[nextIdx]);  // humo de la chimenea (casa)
 
         idx = nextIdx;
       }
@@ -1451,5 +2068,13 @@
   }
 </script>
 <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+<script>
+  // Splash: mostrar 2s luego ocultar
+  window.addEventListener('load', function() {
+    setTimeout(function() {
+      document.getElementById('splash').classList.add('hide');
+    }, 2000);
+  });
+</script>
 </body>
 </html>

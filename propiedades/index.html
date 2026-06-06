@@ -29,16 +29,28 @@
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       height: var(--nav-h); display: flex; align-items: center; padding: 0 56px;
+      background: transparent;
+      transition: background 0.4s, box-shadow 0.4s;
+    }
+    nav.scrolled {
       background: rgba(255,252,235,0.97); backdrop-filter: blur(14px);
       box-shadow: 0 1px 0 rgba(54,81,43,0.10);
     }
-    .nav-logo { display: flex; align-items: center; gap: 14px; text-decoration: none; }
-    .nav-logo img { height: 36px; width: auto; }
+    .nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; flex-shrink: 0; }
+    .nav-logo:hover { opacity: 0.85; }
+    .nav-logo-img { height: 42px; width: auto; object-fit: contain; }
+    .nav-isologo-img {
+      height: 32px; width: auto; object-fit: contain;
+      filter: sepia(0.25) brightness(0.97); /* crema sobre fondo oscuro */
+      transition: filter 0.4s;
+    }
+    nav.scrolled .nav-isologo-img { filter: brightness(0) saturate(100%) invert(25%) sepia(35%) saturate(700%) hue-rotate(65deg) brightness(88%); }
     .nav-back {
       margin-left: auto; display: flex; align-items: center; gap: 8px;
       font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--verde); text-decoration: none; transition: color 0.2s;
+      color: rgba(255,252,235,0.85); text-decoration: none; transition: color 0.2s;
     }
+    nav.scrolled .nav-back { color: var(--verde); }
     .nav-back:hover { color: var(--acento); }
     .nav-back svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
@@ -218,9 +230,48 @@
     }
 
     /* ── LISTING MODE ─────────────────────────────────────── */
+    .listing-dark-zone {
+      position: relative; overflow: hidden; background: #1a2a10;
+    }
+    /* Blobs animados — igual que el hero del sitio principal */
+    .listing-dark-zone::before,
+    .listing-dark-zone::after { content: ''; position: absolute; inset: 0; pointer-events: none; }
+    .listing-dark-zone::before {
+      background:
+        radial-gradient(ellipse 75% 60% at 20% 40%, #3B5220 0%, transparent 70%),
+        radial-gradient(ellipse 55% 70% at 80% 70%, #2e4718 0%, transparent 65%),
+        radial-gradient(ellipse 40% 50% at 60% 20%, #4a6128 0%, transparent 60%);
+      animation: blobA 14s ease-in-out infinite alternate;
+      filter: blur(40px);
+    }
+    .listing-dark-zone::after {
+      background:
+        radial-gradient(ellipse 50% 45% at 75% 30%, rgba(238,122,19,0.22) 0%, transparent 65%),
+        radial-gradient(ellipse 65% 55% at 10% 75%, #243d12 0%, transparent 70%),
+        radial-gradient(ellipse 45% 60% at 50% 90%, #3d5520 0%, transparent 60%);
+      animation: blobB 18s ease-in-out infinite alternate;
+      filter: blur(50px);
+    }
+    @keyframes blobA {
+      0%   { transform: translate(0px,    0px)   scale(1);    }
+      33%  { transform: translate(40px,  -30px)  scale(1.08); }
+      66%  { transform: translate(-25px,  45px)  scale(0.95); }
+      100% { transform: translate(30px,   20px)  scale(1.05); }
+    }
+    @keyframes blobB {
+      0%   { transform: translate(0px,    0px)   scale(1);    }
+      33%  { transform: translate(-50px,  25px)  scale(1.1);  }
+      66%  { transform: translate(35px,  -40px)  scale(0.92); }
+      100% { transform: translate(-20px,  30px)  scale(1.06); }
+    }
+    .listing-noise {
+      position: absolute; inset: 0; pointer-events: none; z-index: 1; opacity: 0.055;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      background-size: 260px 260px;
+    }
     .listing-hero {
-      background: var(--verde-oscuro);
       padding: calc(var(--nav-h) + 56px) 56px 48px;
+      position: relative; z-index: 2;
     }
     .listing-hero-inner { max-width: 1100px; margin: 0 auto; }
     .listing-eyebrow {
@@ -232,7 +283,7 @@
       color: var(--crema); line-height: 1.1;
     }
     .listing-search-wrap {
-      background: #1a2a10; padding: 32px 56px; position: relative; overflow: visible;
+      padding: 32px 56px 40px; position: relative; z-index: 2; overflow: visible;
     }
     .listing-search-inner { max-width: 1100px; margin: 0 auto; }
     .listing-props-wrap {
@@ -414,7 +465,8 @@
 
 <nav>
   <a class="nav-logo" href="/">
-    <img src="/fotos/LOGO.PNG" alt="Solar Propiedades"/>
+    <img src="/fotos/LOGO.PNG" alt="Solar Propiedades" class="nav-logo-img"/>
+    <img src="/fotos/ISOLOGO_VECTOR.svg" alt="Solar Propiedades" class="nav-isologo-img"/>
   </a>
   <a class="nav-back" id="navBack" href="/propiedades">
     <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
@@ -424,12 +476,14 @@
 
 <!-- ═══ LISTING MODE ═══════════════════════════════════════════════════════ -->
 <div id="modeListing" style="display:none">
-  <div class="listing-hero">
-    <div class="listing-hero-inner">
-      <p class="listing-eyebrow">Solar Propiedades</p>
-      <h1 class="listing-title">Todas las propiedades</h1>
+  <div class="listing-dark-zone">
+    <div class="listing-noise"></div>
+    <div class="listing-hero">
+      <div class="listing-hero-inner">
+        <p class="listing-eyebrow">Solar Propiedades</p>
+        <h1 class="listing-title">Todas las propiedades</h1>
+      </div>
     </div>
-  </div>
 
   <div class="listing-search-wrap">
     <div class="listing-search-inner">
@@ -497,6 +551,7 @@
       </div>
     </div>
   </div>
+  </div><!-- /listing-dark-zone -->
 
   <div class="listing-props-wrap">
     <p class="listing-status" id="lstStatus"></p>
@@ -580,6 +635,14 @@
 </footer>
 
 <script>
+// Nav scroll: transparente al top, crema al bajar
+(function() {
+  var nav = document.querySelector('nav');
+  function updateNav() { nav.classList.toggle('scrolled', window.scrollY > 10); }
+  window.addEventListener('scroll', updateNav, { passive: true });
+  updateNav();
+})();
+
 (function() {
   var REPO    = 'Maticornara/CODIGO_VS';
   var API_DIR = 'https://api.github.com/repos/' + REPO + '/contents/content/propiedades?ref=main';
