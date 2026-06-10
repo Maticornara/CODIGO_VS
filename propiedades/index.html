@@ -56,13 +56,13 @@
 
     /* PÁGINA PROPIEDAD */
     .prop-page {
-      max-width: 1100px; margin: 0 auto;
+      max-width: 1280px; margin: 0 auto;
       padding: calc(var(--nav-h) + 56px) 40px 80px;
     }
 
     /* BREADCRUMB */
     .breadcrumb {
-      font-size: 12px; color: var(--gris-texto); margin-bottom: 28px;
+      font-size: 13px; color: var(--gris-texto); margin-bottom: 28px;
       display: flex; align-items: center; gap: 8px;
     }
     .breadcrumb a { color: var(--verde-claro); text-decoration: none; }
@@ -70,18 +70,18 @@
     .breadcrumb span { opacity: 0.5; }
 
     /* GALERÍA */
-    .gallery { margin-bottom: 48px; }
+    .gallery { margin-bottom: 0; }
     .gallery-main {
-      position: relative; width: 100%; border-radius: 6px;
-      overflow: hidden; background: #1c1c1c;
+      position: relative; width: 100%; aspect-ratio: 16/9; border-radius: 6px;
+      overflow: hidden; background: var(--verde);
       margin-bottom: 10px;
       display: flex; align-items: center; justify-content: center;
-      min-height: 280px; max-height: 75vh;
     }
     .gallery-main img {
-      display: block; max-width: 100%; max-height: 75vh;
+      display: block; max-width: 100%; max-height: 100%;
       width: auto; height: auto;
       object-fit: contain; cursor: zoom-in;
+      transition: opacity 0.35s ease;
     }
     .gallery-no-img {
       width: 100%; padding: 80px 0;
@@ -92,33 +92,42 @@
     /* Flechas galería */
     .gallery-arrow {
       position: absolute; top: 50%; transform: translateY(-50%);
-      background: rgba(0,0,0,0.45); color: #fff; border: none;
+      background: var(--acento); color: var(--crema); border: none;
       width: 44px; height: 44px; border-radius: 50%;
       font-size: 22px; line-height: 1; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
-      transition: background 0.2s; z-index: 2; user-select: none;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s; z-index: 2; user-select: none;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.25);
     }
-    .gallery-arrow:hover { background: rgba(0,0,0,0.72); }
+    .gallery-arrow:hover { background: var(--acento-dark); transform: translateY(-50%) scale(1.1); box-shadow: 0 4px 16px rgba(0,0,0,0.32); }
+    .gallery-arrow svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
     .gallery-arrow.prev { left: 14px; }
     .gallery-arrow.next { right: 14px; }
     .gallery-arrow:disabled { opacity: 0.2; cursor: default; }
     .gallery-thumbs {
-      display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;
+      display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 8px;
     }
     .gallery-thumbs::-webkit-scrollbar { height: 4px; }
     .gallery-thumbs::-webkit-scrollbar-thumb { background: var(--gris-suave); border-radius: 2px; }
     .gallery-thumb {
       width: 80px; height: 60px; border-radius: 4px; overflow: hidden;
-      cursor: pointer; opacity: 0.6; transition: opacity 0.2s;
+      cursor: pointer; opacity: 0.6; transition: opacity 0.2s, transform 0.2s, border-color 0.2s;
       flex-shrink: 0; border: 2px solid transparent;
     }
-    .gallery-thumb:hover { opacity: 0.9; }
+    .gallery-thumb:hover { opacity: 1; transform: scale(1.08); }
     .gallery-thumb.active { opacity: 1; border-color: var(--acento); }
     .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; }
 
     /* LAYOUT 2 COLS */
-    .prop-layout { display: grid; grid-template-columns: 1fr 340px; gap: 48px; align-items: start; }
-    @media (max-width: 860px) { .prop-layout { grid-template-columns: 1fr; } }
+    /* Fila superior: galería (izq) + card de precio/contacto (der), a la misma altura */
+    .prop-top { display: grid; grid-template-columns: 1fr 360px; gap: 40px; align-items: stretch; margin-bottom: 48px; }
+    /* Debajo: datos + descripción, con ancho legible */
+    .prop-body { max-width: 820px; }
+    @media (max-width: 860px) { .prop-top { grid-template-columns: 1fr; } }
+
+    /* ENCABEZADO (badge + título arriba de las fotos) */
+    .prop-header { margin-bottom: 24px; }
+    .prop-header .prop-titulo { margin-bottom: 0; }
 
     /* COLUMNA IZQUIERDA */
     .prop-tipo-badge {
@@ -133,24 +142,28 @@
       margin-bottom: 20px;
     }
     .prop-meta-row {
-      display: flex; gap: 28px; flex-wrap: wrap; margin-bottom: 28px;
+      display: flex; flex-direction: column; gap: 18px; margin-bottom: 28px;
     }
+    .prop-superficie { font-family: var(--font-display); font-weight: 900; color: var(--negro); line-height: 1; }
+    .prop-superficie-num { font-size: 34px; }
+    .prop-superficie-u { font-size: 18px; color: var(--gris-texto); }
+    .prop-ubic-row { display: flex; gap: 40px; flex-wrap: wrap; }
     .prop-meta-item {
       display: flex; flex-direction: column; gap: 3px;
     }
     .prop-meta-label {
-      font-size: 9px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
       color: var(--gris-texto);
     }
     .prop-meta-val {
-      font-size: 14px; font-weight: 500; color: var(--negro);
+      font-size: 16px; font-weight: 500; color: var(--negro);
     }
     .prop-desc-title {
       font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
       color: var(--verde); margin-bottom: 12px; margin-top: 32px;
     }
     .prop-desc {
-      font-size: 14px; line-height: 1.8; color: #444;
+      font-size: 16px; line-height: 1.8; color: #444;
     }
     .prop-desc p { margin-bottom: 12px; }
     .prop-desc ul { padding-left: 20px; margin-bottom: 12px; }
@@ -167,7 +180,8 @@
     /* COLUMNA DERECHA — PRECIO + CONTACTO */
     .prop-sidebar {
       background: var(--verde); color: var(--crema);
-      border-radius: 6px; padding: 32px 28px; position: sticky; top: calc(var(--nav-h) + 24px);
+      border-radius: 6px; padding: 32px 28px;
+      display: flex; flex-direction: column;
     }
     .prop-sidebar-codigo {
       font-size: 10px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase;
@@ -178,10 +192,11 @@
       color: var(--crema); line-height: 1.1; margin-bottom: 6px;
     }
     .prop-precio-sub {
-      font-size: 12px; color: rgba(255,252,235,0.5); margin-bottom: 28px;
+      font-size: 13px; color: rgba(255,252,235,0.55); margin-bottom: 28px;
     }
     .prop-sidebar-divider {
-      width: 100%; height: 1px; background: rgba(255,252,235,0.12); margin-bottom: 24px;
+      width: 100%; height: 1px; background: rgba(255,252,235,0.12);
+      margin-top: auto; margin-bottom: 24px;
     }
     .prop-wa-btn {
       display: flex; align-items: center; justify-content: center; gap: 10px;
@@ -231,43 +246,8 @@
 
     /* ── LISTING MODE ─────────────────────────────────────── */
     .listing-dark-zone {
-      position: relative; overflow: hidden; background: #1a2a10;
-    }
-    /* Blobs animados — igual que el hero del sitio principal */
-    .listing-dark-zone::before,
-    .listing-dark-zone::after { content: ''; position: absolute; inset: 0; pointer-events: none; }
-    .listing-dark-zone::before {
-      background:
-        radial-gradient(ellipse 75% 60% at 20% 40%, #3B5220 0%, transparent 70%),
-        radial-gradient(ellipse 55% 70% at 80% 70%, #2e4718 0%, transparent 65%),
-        radial-gradient(ellipse 40% 50% at 60% 20%, #4a6128 0%, transparent 60%);
-      animation: blobA 14s ease-in-out infinite alternate;
-      filter: blur(40px);
-    }
-    .listing-dark-zone::after {
-      background:
-        radial-gradient(ellipse 50% 45% at 75% 30%, rgba(238,122,19,0.22) 0%, transparent 65%),
-        radial-gradient(ellipse 65% 55% at 10% 75%, #243d12 0%, transparent 70%),
-        radial-gradient(ellipse 45% 60% at 50% 90%, #3d5520 0%, transparent 60%);
-      animation: blobB 18s ease-in-out infinite alternate;
-      filter: blur(50px);
-    }
-    @keyframes blobA {
-      0%   { transform: translate(0px,    0px)   scale(1);    }
-      33%  { transform: translate(40px,  -30px)  scale(1.08); }
-      66%  { transform: translate(-25px,  45px)  scale(0.95); }
-      100% { transform: translate(30px,   20px)  scale(1.05); }
-    }
-    @keyframes blobB {
-      0%   { transform: translate(0px,    0px)   scale(1);    }
-      33%  { transform: translate(-50px,  25px)  scale(1.1);  }
-      66%  { transform: translate(35px,  -40px)  scale(0.92); }
-      100% { transform: translate(-20px,  30px)  scale(1.06); }
-    }
-    .listing-noise {
-      position: absolute; inset: 0; pointer-events: none; z-index: 1; opacity: 0.055;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-      background-size: 260px 260px;
+      position: relative; background: var(--crema);
+      border-bottom: 1px solid var(--gris-suave);
     }
     .listing-hero {
       padding: calc(var(--nav-h) + 56px) 56px 48px;
@@ -275,12 +255,12 @@
     }
     .listing-hero-inner { max-width: 1100px; margin: 0 auto; }
     .listing-eyebrow {
-      font-size: 10px; font-weight: 700; letter-spacing: 0.32em; text-transform: uppercase;
-      color: rgba(255,252,235,0.35); margin-bottom: 14px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.32em; text-transform: uppercase;
+      color: var(--gris-texto); margin-bottom: 14px;
     }
     .listing-title {
       font-family: var(--font-display); font-size: clamp(28px, 4vw, 48px);
-      color: var(--crema); line-height: 1.1;
+      color: var(--negro); line-height: 1.1;
     }
     .listing-search-wrap {
       padding: 32px 56px 40px; position: relative; z-index: 2; overflow: visible;
@@ -297,13 +277,13 @@
       padding: 80px 0; text-align: center; color: var(--gris-texto); font-size: 14px;
     }
 
-    /* ── Search bar (reused in listing) ── */
+    /* ── Search bar (estilo claro, igual al home) ── */
     .search-bar {
       display: flex; align-items: center;
-      background: rgba(255,252,235,0.06);
-      border: 1px solid rgba(255,252,235,0.12);
+      background: #fff;
+      border: 1.5px solid var(--gris-suave);
       border-radius: 8px; overflow: visible;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.35);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.07);
       position: relative;
     }
     .search-bar-inner {
@@ -324,7 +304,7 @@
     .search-btn:hover { background: var(--acento-dark); }
     .search-btn svg { width: 15px; height: 15px; stroke: var(--crema); fill: none; }
     .search-sep {
-      width: 1px; height: 30px; background: rgba(255,252,235,0.12); flex-shrink: 0;
+      width: 1px; height: 30px; background: var(--gris-suave); flex-shrink: 0;
     }
     .search-filter {
       display: flex; align-items: center; gap: 8px;
@@ -332,34 +312,35 @@
       position: relative; cursor: pointer;
       transition: background 0.2s; user-select: none;
     }
-    .search-filter:hover { background: rgba(255,252,235,0.05); }
+    .search-filter:hover { background: rgba(54,81,43,0.09); }
     .search-filter label {
-      font-size: 9px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase;
-      color: rgba(255,252,235,0.35); white-space: nowrap; flex-shrink: 0; pointer-events: none;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--gris-texto); white-space: nowrap; flex-shrink: 0; pointer-events: none;
     }
     .sf-value {
-      font-family: var(--font-body); font-size: 13px; font-weight: 400;
-      color: rgba(255,252,235,0.82); flex: 1; white-space: nowrap;
+      font-family: var(--font-body); font-size: 14px; font-weight: 400;
+      color: var(--negro); flex: 1; white-space: nowrap;
       overflow: hidden; text-overflow: ellipsis; pointer-events: none;
     }
     .search-filter input {
       background: transparent; border: none; outline: none; width: 100%;
-      font-family: var(--font-body); font-size: 13px; color: rgba(255,252,235,0.82);
+      font-family: var(--font-body); font-size: 14px; color: var(--negro);
       font-weight: 400; caret-color: var(--acento);
     }
-    .search-filter input::placeholder { color: rgba(255,252,235,0.3); }
+    .search-filter input::placeholder { color: rgba(107,104,96,0.45); }
+    #lstPrecio::placeholder, #lstM2::placeholder { font-style: italic; }
     .search-chevron {
-      width: 14px; height: 14px; stroke: rgba(255,252,235,0.35);
+      width: 14px; height: 14px; stroke: var(--verde);
       fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;
-      flex-shrink: 0; pointer-events: none;
+      flex-shrink: 0; pointer-events: none; opacity: 0.4;
       transition: transform 0.2s;
     }
     .search-filter.open .search-chevron { transform: rotate(180deg); }
     .sf-dropdown {
       position: absolute; top: calc(100% + 8px); left: 0;
-      min-width: 100%; background: #1e2e17;
-      border: 1px solid rgba(255,252,235,0.14);
-      border-radius: 6px; box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+      min-width: 100%; background: #fff;
+      border: 1.5px solid var(--gris-suave);
+      border-radius: 6px; box-shadow: 0 8px 24px rgba(0,0,0,0.1);
       z-index: 500; overflow: hidden;
       max-height: 0; opacity: 0;
       transition: max-height 0.32s cubic-bezier(0.4,0,0.2,1), opacity 0.22s ease;
@@ -369,10 +350,12 @@
     .sf-option {
       padding: 13px 18px;
       font-family: var(--font-body); font-size: 13px;
-      color: rgba(255,252,235,0.75);
+      color: var(--negro);
       cursor: pointer; transition: background 0.15s, color 0.15s; white-space: nowrap;
+      border-bottom: 1px solid var(--gris-suave);
     }
-    .sf-option:hover { background: var(--acento); color: #fff; }
+    .sf-option:last-child { border-bottom: none; }
+    .sf-option:hover { background: rgba(54,81,43,0.09); color: var(--verde); }
     .sf-option.selected { color: var(--acento); font-weight: 600; }
 
     /* ── Property cards (listing) ── */
@@ -409,14 +392,20 @@
       font-size: 9px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
       padding: 4px 10px; border-radius: 2px;
     }
+    .prop-card-destacada {
+      position: absolute; top: 12px; right: 12px;
+      background: var(--acento); color: var(--crema);
+      font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 4px 10px; border-radius: 2px;
+    }
     .prop-card-body { padding: 20px; display: flex; flex-direction: column; flex: 1; }
     .prop-card-titulo {
-      font-family: var(--font-display); font-size: 16px; font-weight: 900;
+      font-family: var(--font-display); font-size: 17px; font-weight: 900;
       line-height: 1.25; margin-bottom: 10px; color: var(--negro);
     }
     .prop-card-meta {
       display: flex; flex-wrap: wrap; gap: 6px 14px; margin-bottom: 14px;
-      font-size: 11px; color: var(--gris-texto);
+      font-size: 13px; color: var(--gris-texto);
     }
     .prop-card-meta span { display: flex; gap: 4px; }
     .prop-card-meta b { color: var(--verde-claro); font-weight: 600; }
@@ -429,12 +418,17 @@
       margin-top: 14px; padding-top: 14px;
       border-top: 1px solid var(--gris-suave);
     }
-    .prop-card-codigo { font-size: 10px; color: var(--gris-texto); letter-spacing: 0.1em; font-weight: 600; }
+    .prop-card-codigo { font-size: 11px; color: var(--gris-texto); letter-spacing: 0.1em; font-weight: 600; }
     .prop-card-ver {
-      font-size: 9px; font-weight: 700; letter-spacing: 0.15em;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
       color: var(--acento); transition: letter-spacing 0.2s;
     }
     .prop-card:hover .prop-card-ver { letter-spacing: 0.22em; }
+
+    /* Animación de entrada de las cards (fade + slide escalonado) */
+    @keyframes cardIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+    .propiedades-grid .prop-card { animation: cardIn 0.5s cubic-bezier(0.23,1,0.32,1) backwards; }
+    @media (prefers-reduced-motion: reduce) { .propiedades-grid .prop-card { animation: none; } }
 
     @media (max-width: 860px) { .propiedades-grid { grid-template-columns: repeat(2,1fr); } }
     @media (max-width: 600px) {
@@ -477,7 +471,6 @@
 <!-- ═══ LISTING MODE ═══════════════════════════════════════════════════════ -->
 <div id="modeListing" style="display:none">
   <div class="listing-dark-zone">
-    <div class="listing-noise"></div>
     <div class="listing-hero">
       <div class="listing-hero-inner">
         <p class="listing-eyebrow">Solar Propiedades</p>
@@ -512,32 +505,16 @@
 
           <span class="search-sep"></span>
 
-          <div class="search-filter" data-custom-select id="lsf-precio">
-            <label>Precio máx.</label>
-            <span class="sf-value">Sin límite</span>
-            <svg class="search-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-            <div class="sf-dropdown">
-              <div class="sf-option selected" data-value="">Sin límite</div>
-              <div class="sf-option" data-value="100000">U$S 100.000</div>
-              <div class="sf-option" data-value="250000">U$S 250.000</div>
-              <div class="sf-option" data-value="500000">U$S 500.000</div>
-              <div class="sf-option" data-value="1000000">U$S 1.000.000</div>
-            </div>
+          <div class="search-filter" style="flex:1.4; cursor:text;">
+            <label>Precio U$S</label>
+            <input id="lstPrecio" type="number" min="0" inputmode="numeric" placeholder="Sin especificar"/>
           </div>
 
           <span class="search-sep"></span>
 
-          <div class="search-filter" data-custom-select id="lsf-m2">
-            <label>m² mín.</label>
-            <span class="sf-value">Sin límite</span>
-            <svg class="search-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-            <div class="sf-dropdown">
-              <div class="sf-option selected" data-value="">Sin límite</div>
-              <div class="sf-option" data-value="100">100 m²</div>
-              <div class="sf-option" data-value="300">300 m²</div>
-              <div class="sf-option" data-value="1000">1.000 m²</div>
-              <div class="sf-option" data-value="5000">5.000 m²</div>
-            </div>
+          <div class="search-filter" style="flex:0.9; cursor:text;">
+            <label>m²</label>
+            <input id="lstM2" type="number" min="0" inputmode="numeric" placeholder="Sin especificar"/>
           </div>
 
           <span class="search-sep"></span>
@@ -576,28 +553,18 @@
       <span id="bcCodigo"></span>
     </div>
 
-    <div class="gallery" id="gallery">
-      <div class="gallery-main" id="galleryMain"></div>
-      <div class="gallery-thumbs" id="galleryThumbs"></div>
+    <!-- Encabezado: badge + título (arriba de las fotos) -->
+    <div class="prop-header">
+      <span class="prop-tipo-badge" id="propTipo"></span>
+      <h1 class="prop-titulo" id="propTitulo"></h1>
     </div>
 
-    <div class="prop-layout">
+    <!-- Fila superior: galería a la izquierda + card de precio/contacto a la derecha -->
+    <div class="prop-top">
 
-      <!-- Columna izquierda -->
-      <div>
-        <span class="prop-tipo-badge" id="propTipo"></span>
-        <h1 class="prop-titulo" id="propTitulo"></h1>
-        <div class="prop-meta-row" id="propMeta"></div>
-        <div id="propDescWrap" style="display:none">
-          <p class="prop-desc-title">Descripción</p>
-          <div class="prop-desc" id="propDesc"></div>
-        </div>
-        <div id="propReelWrap" style="display:none">
-          <a class="prop-reel" id="propReel" target="_blank" rel="noopener">
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-            Ver reel / video
-          </a>
-        </div>
+      <div class="gallery" id="gallery">
+        <div class="gallery-main" id="galleryMain"></div>
+        <div class="gallery-thumbs" id="galleryThumbs"></div>
       </div>
 
       <!-- Sidebar -->
@@ -610,9 +577,24 @@
           <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
           Consultar por WhatsApp
         </a>
-        <a class="prop-mail-btn" href="mailto:solar@solarpropiedades.com">Enviar consulta por email</a>
+        <a class="prop-mail-btn" id="mailBtn" href="mailto:matyy.cornara@gmail.com">Enviar consulta por email</a>
       </div>
 
+    </div>
+
+    <!-- Debajo: datos + descripción + reel -->
+    <div class="prop-body">
+      <div class="prop-meta-row" id="propMeta"></div>
+      <div id="propDescWrap" style="display:none">
+        <p class="prop-desc-title">Descripción</p>
+        <div class="prop-desc" id="propDesc"></div>
+      </div>
+      <div id="propReelWrap" style="display:none">
+        <a class="prop-reel" id="propReel" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          Ver reel / video
+        </a>
+      </div>
     </div>
 
     <!-- Mapa -->
@@ -635,12 +617,9 @@
 </footer>
 
 <script>
-// Nav scroll: transparente al top, crema al bajar
+// Nav siempre sólido: la página es de fondo claro
 (function() {
-  var nav = document.querySelector('nav');
-  function updateNav() { nav.classList.toggle('scrolled', window.scrollY > 10); }
-  window.addEventListener('scroll', updateNav, { passive: true });
-  updateNav();
+  document.querySelector('nav').classList.add('scrolled');
 })();
 
 (function() {
@@ -659,9 +638,20 @@
 
     function flushBlock() {
       if (!blockKey) return;
-      var content = blockFold
-        ? blockLines.join(' ').replace(/ +$/, '')
-        : blockLines.join('\n');
+      var content;
+      if (blockFold) {
+        // Folded (>): líneas consecutivas se unen con espacio; las líneas en blanco
+        // se convierten en saltos de línea (así se respetan listas y párrafos).
+        content = '';
+        for (var bi = 0; bi < blockLines.length; bi++) {
+          var bl = blockLines[bi];
+          if (bl === '') content += '\n';
+          else content += (content && content.charAt(content.length - 1) !== '\n' ? ' ' : '') + bl;
+        }
+        content = content.replace(/^\n+|\n+$/g, '');
+      } else {
+        content = blockLines.join('\n');
+      }
       result[blockKey] = content;
       blockKey = null; blockLines = [];
     }
@@ -704,20 +694,44 @@
     return (p.moneda === 'ARS' ? '$ ' : 'U$S ') + n.toLocaleString('es-AR') + (esAlq ? ' / mes' : '');
   }
 
-  function renderCard(p) {
+  // Convierte coordenadas DMS ("40°44'59.8\"S 71°39'22.4\"W") a decimal ("-40.749944,-71.656222")
+  // para que el embed de Google Maps las ubique bien. Si ya es decimal, las devuelve normalizadas.
+  function dmsToDecimal(str) {
+    if (!str) return null;
+    str = String(str).trim();
+    if (/^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$/.test(str)) return str.replace(/\s+/g, '');
+    var tokens = str.match(/\d+(?:\.\d+)?\s*°\s*\d+(?:\.\d+)?\s*'\s*\d+(?:\.\d+)?\s*"?\s*[NSEWnsew]/g);
+    if (!tokens || tokens.length < 2) return null;
+    function conv(tok) {
+      var m = tok.match(/(\d+(?:\.\d+)?)\s*°\s*(\d+(?:\.\d+)?)\s*'\s*(\d+(?:\.\d+)?)\s*"?\s*([NSEWnsew])/);
+      if (!m) return null;
+      var dec = Number(m[1]) + Number(m[2]) / 60 + Number(m[3]) / 3600;
+      var dir = m[4].toUpperCase();
+      if (dir === 'S' || dir === 'W') dec = -dec;
+      return dec;
+    }
+    var lat = conv(tokens[0]), lng = conv(tokens[1]);
+    if (lat === null || lng === null) return null;
+    return lat.toFixed(6) + ',' + lng.toFixed(6);
+  }
+
+  function renderCard(p, i) {
     var foto = p.fotos && p.fotos.length ? p.fotos[0] : null;
     var imgHtml = foto
       ? '<img src="' + foto + '" alt="' + (p.titulo || '') + '" loading="lazy"/>'
       : '<div class="prop-card-no-img"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>';
-    return '<a class="prop-card" href="/propiedades/' + (p._slug || p.codigo || '') + '">' +
+    var delay = Math.min(i || 0, 12) * 0.06;
+    var ubic = [p.zona, p.localidad].filter(Boolean).join(', ') || p.ubicacion || '';
+    return '<a class="prop-card" style="animation-delay:' + delay + 's" href="/propiedades/?p=' + (p._slug || p.codigo || '') + '">' +
       '<div class="prop-card-img">' + imgHtml +
         '<span class="prop-card-tipo">' + (p.tipo || '') + '</span>' +
+        (p.destacada ? '<span class="prop-card-destacada">★ Destacada</span>' : '') +
       '</div>' +
       '<div class="prop-card-body">' +
         '<h3 class="prop-card-titulo">' + (p.titulo || '') + '</h3>' +
         '<div class="prop-card-meta">' +
           (p.metros_cuadrados ? '<span><b>m²</b> ' + p.metros_cuadrados + '</span>' : '') +
-          (p.ubicacion ? '<span><b>Zona</b> ' + p.ubicacion + '</span>' : '') +
+          (ubic ? '<span><b>Zona</b> ' + ubic + '</span>' : '') +
         '</div>' +
         '<p class="prop-card-precio">' + fmtPrecio(p) + '</p>' +
         '<div class="prop-card-footer">' +
@@ -729,9 +743,14 @@
   }
 
   // ── Mode detection ────────────────────────────────────────────────────────
+  // El slug puede venir por query (?p=slug, funciona en cualquier servidor, incl. localhost)
+  // o por path (/propiedades/slug, URLs limpias en Vercel vía rewrite). Se soportan ambos.
+  var qSlug    = new URLSearchParams(window.location.search).get('p');
   var pathParts = window.location.pathname.replace(/\/$/, '').split('/').filter(Boolean);
   var lastPart  = pathParts[pathParts.length - 1];
-  var isListing = !lastPart || lastPart === 'propiedades' || lastPart === 'index.html';
+  var pathSlug  = (lastPart && lastPart !== 'propiedades' && lastPart !== 'index.html') ? lastPart : '';
+  var slug      = qSlug || pathSlug;
+  var isListing = !slug;
 
   if (isListing) {
     // ── LISTING MODE ────────────────────────────────────────────────────────
@@ -746,21 +765,20 @@
     }
     selects.forEach(function(sel) {
       var valEl = sel.querySelector('.sf-value');
-      var opts  = sel.querySelectorAll('.sf-option');
+      // Delegación: funciona aunque las opciones se regeneren dinámicamente
       sel.addEventListener('click', function(e) {
         e.stopPropagation();
-        var wasOpen = this.classList.contains('open');
-        closeAllSelects(this);
-        this.classList.toggle('open', !wasOpen);
-      });
-      opts.forEach(function(opt) {
-        opt.addEventListener('click', function(e) {
-          e.stopPropagation();
-          opts.forEach(function(o) { o.classList.remove('selected'); });
-          this.classList.add('selected');
-          valEl.textContent = this.textContent;
+        var opt = e.target.closest('.sf-option');
+        if (opt) {
+          sel.querySelectorAll('.sf-option').forEach(function(o) { o.classList.remove('selected'); });
+          opt.classList.add('selected');
+          if (valEl) valEl.textContent = opt.textContent;
           sel.classList.remove('open');
-        });
+          return;
+        }
+        var wasOpen = sel.classList.contains('open');
+        closeAllSelects(sel);
+        sel.classList.toggle('open', !wasOpen);
       });
     });
     document.addEventListener('click', function() { closeAllSelects(null); });
@@ -784,28 +802,31 @@
 
     function filtrarListing() {
       var tipoOpt  = document.querySelector('#lsf-tipo .sf-option.selected');
-      var precioOpt = document.querySelector('#lsf-precio .sf-option.selected');
-      var m2Opt    = document.querySelector('#lsf-m2 .sf-option.selected');
-      var ubicVal  = (document.getElementById('lstUbic') || {}).value || '';
-
-      var tipoVal  = tipoOpt  ? tipoOpt.dataset.value  : '';
-      var precioMax = precioOpt ? Number(precioOpt.dataset.value || 0) : 0;
-      var m2Min    = m2Opt    ? Number(m2Opt.dataset.value   || 0) : 0;
-      var ubic     = ubicVal.toLowerCase().trim();
+      var tipoVal  = tipoOpt ? tipoOpt.dataset.value : '';
+      var ubic     = ((document.getElementById('lstUbic') || {}).value || '').toLowerCase().trim();
+      var precioRef = Number((document.getElementById('lstPrecio') || {}).value) || 0;
+      var m2Ref    = Number((document.getElementById('lstM2') || {}).value) || 0;
+      var F = 0.3; // tolerancia ±30%: el valor ingresado es una referencia (aprox.)
 
       var filtered = allProps.filter(function(p) {
         if (tipoVal && !(p.tipo || '').toLowerCase().includes(tipoVal)) return false;
-        if (ubic && !((p.titulo || '') + ' ' + (p.ubicacion || '')).toLowerCase().includes(ubic)) return false;
-        if (precioMax && p.moneda === 'USD' && Number(p.precio) > precioMax) return false;
-        if (m2Min && Number(p.metros_cuadrados) < m2Min) return false;
+        if (ubic && !((p.titulo || '') + ' ' + (p.zona || '') + ' ' + (p.localidad || '') + ' ' + (p.ubicacion || '')).toLowerCase().includes(ubic)) return false;
+        if (precioRef && p.moneda === 'USD') {
+          var pr = Number(p.precio);
+          if (!(pr >= precioRef * (1 - F) && pr <= precioRef * (1 + F))) return false;
+        }
+        if (m2Ref) {
+          var mq = Number(p.metros_cuadrados);
+          if (!(mq >= m2Ref * (1 - F) && mq <= m2Ref * (1 + F))) return false;
+        }
         return true;
       });
       renderListing(filtered);
     }
 
     document.getElementById('lstBuscar').addEventListener('click', filtrarListing);
-    document.getElementById('lstUbic').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') filtrarListing();
+    document.querySelectorAll('.search-filter input').forEach(function(inp) {
+      inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') filtrarListing(); });
     });
 
     fetch(API_DIR)
@@ -823,7 +844,8 @@
       })
       .then(function(props) {
         document.getElementById('lstLoading').style.display = 'none';
-        allProps = props.sort(function(a, b) { return (b.destacada ? 1 : 0) - (a.destacada ? 1 : 0); });
+        // En el listado, las destacadas van al final (abajo), no arriba
+        allProps = props.sort(function(a, b) { return (a.destacada ? 1 : 0) - (b.destacada ? 1 : 0); });
         renderListing(allProps);
       })
       .catch(function() {
@@ -836,7 +858,7 @@
     document.getElementById('navBack').href = '/propiedades';
     document.getElementById('navBackLabel').textContent = 'Todas las propiedades';
 
-    var codigo = lastPart;
+    var codigo = slug;
     var url = 'https://api.github.com/repos/' + REPO + '/contents/content/propiedades/' + codigo + '.md?ref=main';
 
   fetch(url)
@@ -863,9 +885,9 @@
         var currentIdx = 0;
 
         mainEl.innerHTML =
-          '<button class="gallery-arrow prev" id="gPrev" aria-label="Anterior">&#8249;</button>' +
+          '<button class="gallery-arrow prev" id="gPrev" aria-label="Anterior"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>' +
           '<img id="mainImg" src="' + fotos[0] + '" alt="' + (p.titulo||'') + '"/>' +
-          '<button class="gallery-arrow next" id="gNext" aria-label="Siguiente">&#8250;</button>';
+          '<button class="gallery-arrow next" id="gNext" aria-label="Siguiente"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>';
 
         var mainImg = document.getElementById('mainImg');
         var btnPrev = document.getElementById('gPrev');
@@ -874,7 +896,13 @@
 
         function goTo(idx) {
           currentIdx = (idx + fotos.length) % fotos.length;
-          mainImg.src = fotos[currentIdx];
+          var newSrc = fotos[currentIdx];
+          // Fade entre foto y foto (solo si realmente cambia la imagen)
+          if (mainImg.getAttribute('src') !== newSrc) {
+            mainImg.style.opacity = '0';
+            mainImg.onload = function() { mainImg.style.opacity = '1'; };
+            mainImg.src = newSrc;
+          }
           thumbDivs.forEach(function(td, ti) {
             td.classList.toggle('active', ti === currentIdx);
           });
@@ -884,6 +912,13 @@
 
         btnPrev.addEventListener('click', function() { goTo(currentIdx - 1); });
         btnNext.addEventListener('click', function() { goTo(currentIdx + 1); });
+
+        // Navegar la galería con las flechas del teclado (← →)
+        document.addEventListener('keydown', function(e) {
+          if (document.getElementById('lightbox').classList.contains('open')) return;
+          if (e.key === 'ArrowLeft')  goTo(currentIdx - 1);
+          else if (e.key === 'ArrowRight') goTo(currentIdx + 1);
+        });
 
         mainImg.addEventListener('click', function() {
           document.getElementById('lightboxImg').src = mainImg.src;
@@ -916,14 +951,23 @@
 
       // Meta row
       var meta = document.getElementById('propMeta');
-      var items = [];
-      if (p.metros_cuadrados) items.push({ label: 'Superficie', val: p.metros_cuadrados + ' m²' });
-      if (p.ubicacion)        items.push({ label: 'Zona',       val: p.ubicacion });
-      if (p.tipo)             items.push({ label: 'Tipo',       val: p.tipo });
-      if (p.moneda)           items.push({ label: 'Moneda',     val: p.moneda });
-      meta.innerHTML = items.map(function(it) {
-        return '<div class="prop-meta-item"><span class="prop-meta-label">' + it.label + '</span><span class="prop-meta-val">' + it.val + '</span></div>';
-      }).join('');
+      // Zona / Localidad: usa los campos separados; si solo hay 'ubicacion' (datos viejos),
+      // la separa por la última coma → zona = lo de antes, localidad = lo de después.
+      var zona = p.zona, localidad = p.localidad;
+      if (!zona && !localidad && p.ubicacion) {
+        var partes = String(p.ubicacion).split(',');
+        if (partes.length >= 2) { localidad = partes.pop().trim(); zona = partes.join(', ').trim(); }
+        else { zona = String(p.ubicacion).trim(); }
+      }
+      var metaHtml = '';
+      if (p.metros_cuadrados) {
+        metaHtml += '<div class="prop-superficie"><span class="prop-superficie-num">' + p.metros_cuadrados + '</span> <span class="prop-superficie-u">m²</span></div>';
+      }
+      var ubicHtml = '';
+      if (zona)      ubicHtml += '<div class="prop-meta-item"><span class="prop-meta-label">Zona</span><span class="prop-meta-val">' + zona + '</span></div>';
+      if (localidad) ubicHtml += '<div class="prop-meta-item"><span class="prop-meta-label">Localidad</span><span class="prop-meta-val">' + localidad + '</span></div>';
+      if (ubicHtml) metaHtml += '<div class="prop-ubic-row">' + ubicHtml + '</div>';
+      meta.innerHTML = metaHtml;
 
       // Reel
       if (p.link_reel) {
@@ -949,14 +993,23 @@
         document.getElementById('propDescWrap').style.display = 'block';
       }
 
-      // WhatsApp
-      var msg = 'Hola Antonella, me comunico desde Solar Propiedades por la propiedad ' + (p.codigo || '') + ' — ' + (p.titulo || '') + '.';
+      // Mensaje de consulta (mismo texto para WhatsApp y email), con el link de la ficha
+      var link = window.location.href;
+      var msg = '¡Hola! Estoy interesado en la propiedad que vi en su web: ' + (p.titulo || '') +
+                ' - ' + (p.codigo || '') + '. ¿Me podrían brindar más información? Aquí está el enlace del inmueble: ' + link;
       document.getElementById('waBtn').href = 'https://wa.me/5492994029148?text=' + encodeURIComponent(msg);
 
+      var mailBtn = document.getElementById('mailBtn');
+      if (mailBtn) {
+        var asunto = 'Consulta propiedad ' + (p.codigo || '') + ' — ' + (p.titulo || '');
+        mailBtn.href = 'mailto:matyy.cornara@gmail.com?subject=' + encodeURIComponent(asunto) + '&body=' + encodeURIComponent(msg);
+      }
+
       // Mapa — acepta coordenadas únicas (decimal o DMS) o lat/lng por separado
-      var coords = p.coordenadas || (p.coordenadas_lat && p.coordenadas_lng ? p.coordenadas_lat + ',' + p.coordenadas_lng : null);
+      var rawCoords = p.coordenadas || (p.coordenadas_lat && p.coordenadas_lng ? p.coordenadas_lat + ',' + p.coordenadas_lng : null);
+      var coords = dmsToDecimal(rawCoords) || rawCoords;
       if (coords) {
-        var mapUrl = 'https://maps.google.com/maps?q=' + encodeURIComponent(coords) + '&z=15&output=embed';
+        var mapUrl = 'https://www.google.com/maps?q=' + encodeURIComponent(coords) + '&z=15&output=embed';
         document.getElementById('propMap').src = mapUrl;
         document.getElementById('propMapSection').style.display = 'block';
       }
