@@ -7,6 +7,9 @@ public_folder: "/fotos/propiedades"
 
 locale: es
 
+# Logo de Solar en la pantalla de login y el header del panel
+logo_url: /fotos/LOGO.PNG
+
 collections:
   - name: propiedades
     label: Propiedades
@@ -53,24 +56,84 @@ collections:
           - ARS
         default: "USD"
 
-      - label: "Metros cuadrados"
+      - label: "Superficie total (m²)"
         name: metros_cuadrados
         widget: number
         required: false
         value_type: int
         min: 0
+        hint: "Metros cuadrados totales"
 
-      - label: "Ubicación"
-        name: ubicacion
+      - label: "Superficie cubierta (m²)"
+        name: metros_cubiertos
+        widget: number
+        required: false
+        value_type: int
+        min: 0
+
+      - label: "Superficie del terreno (m²)"
+        name: metros_terreno
+        widget: number
+        required: false
+        value_type: int
+        min: 0
+
+      - label: "Ambientes"
+        name: ambientes
+        widget: number
+        required: false
+        value_type: int
+        min: 0
+
+      - label: "Dormitorios"
+        name: dormitorios
+        widget: number
+        required: false
+        value_type: int
+        min: 0
+
+      - label: "Baños"
+        name: banos
+        widget: number
+        required: false
+        value_type: int
+        min: 0
+
+      - label: "Antigüedad (años)"
+        name: antiguedad
+        widget: number
+        required: false
+        value_type: int
+        min: 0
+        hint: "Años de antigüedad. Dejar vacío si es a estrenar."
+
+      - label: "Zona / Barrio"
+        name: zona
         widget: string
         required: false
-        hint: "Ej: Chapelco Ski, San Martín de los Andes"
+        hint: "Ej: Barrio Norte"
+
+      - label: "Localidad"
+        name: localidad
+        widget: string
+        required: false
+        hint: "Ej: Villa La Angostura"
 
       - label: "Coordenadas (Google Maps)"
         name: coordenadas
         widget: string
         required: false
         hint: "Pegá las coordenadas de Google Maps. Ej: -40.749944, -71.656222 o 40°44'59.8\"S 71°39'22.4\"W"
+
+      - label: "Características"
+        name: caracteristicas
+        widget: list
+        required: false
+        hint: "Una característica por ítem (ej: Cochera, Pileta, Vista al lago). Aparecen como #hashtags y se pueden filtrar en el buscador."
+        field:
+          label: Característica
+          name: caracteristica
+          widget: string
 
       - label: "Descripción"
         name: descripcion

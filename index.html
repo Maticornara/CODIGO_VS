@@ -384,6 +384,16 @@
       font-size: 10px; font-weight: 700; letter-spacing: 0.32em; text-transform: uppercase;
       color: var(--gris-texto); margin-bottom: 20px;
     }
+    /* Fila de chips de características (filtro) */
+    .tag-filter { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .tag-chip {
+      font-size: 13px; font-weight: 600; color: var(--verde);
+      background: #fff; border: 1.5px solid var(--gris-suave);
+      border-radius: 999px; padding: 7px 14px; cursor: pointer;
+      transition: background 0.18s, border-color 0.18s, color 0.18s; user-select: none;
+    }
+    .tag-chip:hover { border-color: var(--acento); color: var(--acento); }
+    .tag-chip.active { background: var(--acento); border-color: var(--acento); color: #fff; }
     .search-bar {
       display: flex; align-items: center;
       background: #fff;
@@ -543,6 +553,8 @@
     }
     .prop-card-meta span { display: flex; gap: 4px; }
     .prop-card-meta b { color: var(--verde-claro); font-weight: 600; }
+    .prop-card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+    .prop-card-tag { font-size: 11px; font-weight: 600; color: var(--verde); background: rgba(54,81,43,0.07); border: 1px solid rgba(54,81,43,0.12); border-radius: 999px; padding: 3px 9px; }
     .prop-card-precio {
       font-family: var(--font-display); font-size: 22px;
       font-weight: 900; color: var(--verde);
@@ -874,6 +886,16 @@
     <li><a href="#valores">Nuestra esencia</a></li>
     <li><a href="#sobre">Sobre mí</a></li>
     <li><a href="#faq">FAQ</a></li>
+    <li class="nav-dropdown">
+      <a href="#contacto">Contacto <span class="nav-chevron">▼</span></a>
+      <div class="nav-dropdown-menu">
+        <div class="nav-dropdown-menu-inner">
+          <a href="https://wa.me/5492994029148?text=Hola%20Antonella%2C%20me%20comunico%20desde%20la%20P%C3%A1gina%20web%20de%20Solar%20Propiedades." target="_blank" rel="noopener">WhatsApp</a>
+          <a href="mailto:matyy.cornara@gmail.com">Email</a>
+          <a href="https://www.instagram.com/solar_propiedades/" target="_blank" rel="noopener">Instagram</a>
+        </div>
+      </div>
+    </li>
     <li><a href="#contacto" class="nav-cta">Consultar</a></li>
   </ul>
 </nav>
@@ -1267,6 +1289,7 @@
 
       </div><!-- fin search-bar-inner -->
     </div>
+    <div class="tag-filter" id="tagFilterHome"></div>
   </div>
 </section>
 
@@ -1983,6 +2006,13 @@
       return result;
     }
 
+    // Normaliza texto para buscar/comparar: minúsculas + sin acentos
+    function normTxt(s) {
+      return String(s == null ? '' : s).toLowerCase()
+        .replace(/[áàä]/g, 'a').replace(/[éèë]/g, 'e').replace(/[íìï]/g, 'i')
+        .replace(/[óòö]/g, 'o').replace(/[úùü]/g, 'u').replace(/ñ/g, 'n').trim();
+    }
+
     function fmtPrecio(prop) {
       var n = Number(prop.precio);
       if (isNaN(n)) return prop.precio || '';
@@ -2008,6 +2038,9 @@
             (p.metros_cuadrados ? '<span><b>m²</b> ' + p.metros_cuadrados + '</span>' : '') +
             (ubic ? '<span><b>Zona</b> ' + ubic + '</span>' : '') +
           '</div>' +
+          (Array.isArray(p.caracteristicas) && p.caracteristicas.length
+            ? '<div class="prop-card-tags">' + p.caracteristicas.slice(0, 4).map(function(t) { return '<span class="prop-card-tag"># ' + t + '</span>'; }).join('') + '</div>'
+            : '') +
           '<p class="prop-card-precio">' + fmtPrecio(p) + '</p>' +
           '<div class="prop-card-footer">' +
             '<span class="prop-card-codigo">' + (p.codigo || '') + '</span>' +
@@ -2054,19 +2087,23 @@
     };
 
     // Filtrar por búsqueda — llamado por el botón Buscar
-    window.filtrarPropiedades = function() {
+    window.filtrarPropiedades = function(scroll) {
       var tipoOpt   = document.querySelector('#sf-tipo .sf-option.selected');
       var tipoVal   = tipoOpt ? tipoOpt.dataset.value : '';
-      var ubic = ((document.getElementById('hUbic') || {}).value || '').toLowerCase().trim();
+      var ubic = normTxt((document.getElementById('hUbic') || {}).value || '');
       var precioRef = Number((document.getElementById('hPrecio') || {}).value) || 0;
       var m2Ref     = Number((document.getElementById('hM2') || {}).value) || 0;
       var F = 0.3; // tolerancia ±30%: el valor ingresado es una referencia (aprox.)
+      var selTags = Array.prototype.map.call(
+        document.querySelectorAll('#tagFilterHome .tag-chip.active'),
+        function(c) { return c.dataset.tag; }
+      );
 
       var filtered = allProps.filter(function(p) {
         if (tipoVal && !(p.tipo || '').toLowerCase().includes(tipoVal)) return false;
         if (ubic) {
-          var hay = ((p.titulo || '') + ' ' + (p.zona || '') + ' ' + (p.localidad || '') + ' ' + (p.ubicacion || '')).toLowerCase();
-          if (!hay.includes(ubic)) return false;
+          var hay = normTxt((p.titulo || '') + ' ' + (p.zona || '') + ' ' + (p.localidad || '') + ' ' + (p.ubicacion || ''));
+          if (hay.indexOf(ubic) === -1) return false;
         }
         if (precioRef && p.moneda === 'USD') {
           var pr = Number(p.precio);
@@ -2075,6 +2112,10 @@
         if (m2Ref) {
           var mq = Number(p.metros_cuadrados);
           if (!(mq >= m2Ref * (1 - F) && mq <= m2Ref * (1 + F))) return false;
+        }
+        if (selTags.length) {
+          var propTags = (p.caracteristicas || []).map(function(t) { return normTxt(t); });
+          if (!selTags.some(function(t) { return propTags.indexOf(t) !== -1; })) return false;
         }
         return true;
       });
@@ -2085,8 +2126,27 @@
         document.getElementById('btn-ver-todas').onclick = function() { window.verTodasPropiedades(); };
       };
       renderGrid(filtered);
-      document.getElementById('propiedades').scrollIntoView({ behavior: 'smooth' });
+      if (scroll !== false) document.getElementById('propiedades').scrollIntoView({ behavior: 'smooth' });
     };
+
+    // Arma los chips de características del home con todas las etiquetas presentes
+    function buildTagChipsHome() {
+      var cont = document.getElementById('tagFilterHome');
+      if (!cont) return;
+      var seen = {}, tags = [];
+      allProps.forEach(function(p) {
+        (p.caracteristicas || []).forEach(function(t) {
+          var key = normTxt(t);
+          if (key && !seen[key]) { seen[key] = true; tags.push({ norm: key, label: String(t).trim() }); }
+        });
+      });
+      cont.innerHTML = tags.map(function(t) {
+        return '<button type="button" class="tag-chip" data-tag="' + t.norm.replace(/"/g, '&quot;') + '"># ' + t.label + '</button>';
+      }).join('');
+      cont.querySelectorAll('.tag-chip').forEach(function(chip) {
+        chip.addEventListener('click', function() { chip.classList.toggle('active'); window.filtrarPropiedades(false); });
+      });
+    }
 
     // Conectar botón Buscar
     var btn = document.querySelector('.search-btn');
@@ -2112,6 +2172,7 @@
       .then(function(props) {
         document.getElementById('propiedades-loading').style.display = 'none';
         allProps = props.sort(function(a, b) { return (b.destacada ? 1 : 0) - (a.destacada ? 1 : 0); });
+        buildTagChipsHome();
         mostrarDestacadas();
       })
       .catch(function() {

@@ -76,3 +76,74 @@ Es HTML puro, sin build. Servidor local: `python -m http.server 3000` (o `npx se
 
 ## Notas de memoria
 - Este `CLAUDE.md` es la "memoria" del proyecto: se lee automáticamente en cada chat del agente en esta carpeta. Mantenerlo actualizado con decisiones y preferencias nuevas.
+
+---
+
+# Sesión de trabajo — secciones, propiedades, admin y contacto
+
+> Todo lo de abajo se agregó en una sesión larga. **Importante:** muchos cambios todavía requieren **deploy** para verse (ver "Deploy y datos en vivo").
+
+## Deploy y datos en vivo ⚠️ (clave para no confundirse)
+- Las propiedades se leen **EN VIVO desde la GitHub API** (`Maticornara/CODIGO_VS`, rama `main`, carpeta `content/propiedades`). Por eso **un cambio local en un `.md` NO se ve hasta hacer push**. Si algo nuevo (ej. características/chips) "no aparece" en local, es porque los datos viven en GitHub.
+- **Sitio público → Vercel** (push a `main`). **Admin → Netlify** (builds PAUSADOS; hay que hacer **deploy manual** para ver cambios de `admin/`).
+
+## Routing de fichas (importante)
+- La ficha individual ahora se abre con **query param**: `/propiedades/?p=slug`. Funciona en **cualquier server** (localhost incluido), sin depender del rewrite de Vercel. Se mantiene compatibilidad con `/propiedades/slug` (path) por las dudas. Las cards (home y listado) linkean a `?p=`.
+
+## Sección "Lo que nos define" (Valores)
+- Animaciones al hacer scroll con **IntersectionObserver** (NO scroll listeners): líneas divisorias verticales que crecen, y columnas con fade+slide escalonado. Threshold 0.7 + pausa de 0.5s al entrar (si no, no se llega a ver).
+- La **barra de navegación se vuelve transparente** sobre esta sección (clase `over-dark`), como en el hero. Y la sección tiene el **mismo degradé animado (blobs) del hero** (capa `.hero-pattern` reutilizada, recortada por una capa interna para no cortar dropdowns).
+
+## Sección "Sobre mí"
+- Foto real: `fotos/foto_antonella.jpeg` (3/4, sin recuadro naranja desfasado).
+- Secuencia con IntersectionObserver: espera ~1s al entrar → foto + eyebrow fade → typewriter del título "Hola, soy Antonella Gutiérrez" → bio → badges escalonados.
+- **Typewriter SIN layout shift:** todo el texto ya está renderizado (cada carácter en un `<span class="ch">` transparente) y se "revela" cambiando color, no insertando texto. El bio mantiene `<strong>` (negrita) por carácter. El typing total dura ~3s (revelado por `requestAnimationFrame`, duración exacta).
+
+## FAQ
+- Se abre con **click/tap** (antes era hover), clase `.open`. Soporta teclado.
+- Hover sobre la pregunta: **reborde naranja de 3px** que aparece/desaparece por **opacidad** (fade 0.5s), solo en items cerrados (`:not(.open)`).
+
+## Navegación
+- Orden: **Inicio · Propiedades▾ · Servicios · Nuestra esencia · Sobre mí · FAQ · Contacto▾ · Consultar**.
+- **Propiedades** va destacado (naranja + bold, clase `nav-destacado`).
+- **Contacto▾** es una bandeja desplegable con WhatsApp / Email / Instagram (por ahora solo en el nav del home).
+- Favicon: `fotos/LOGO.PNG`.
+
+## Sistema tipográfico (desktop, consistente en las 3 páginas)
+- Referencias "buenas" del usuario: hero-sub (~16px) y bio de Sobre mí (15px).
+- **Cuerpo / desarrollo = 16px** (descripciones, FAQ, bio, datos de ficha). **Labels mayúscula = 11px** (eyebrows, ZONA, etc.). Subtítulos/cards 17px, pregunta FAQ 20px. Precios/m² grandes sin cambios. Se subió el contraste de varios textos apagados.
+
+## Propiedades — listado y ficha
+- **Buscadores (home + listado) iguales (estilo barra blanca)** y filtran igual. El header del listado quedó en **claro/crema** (no verde).
+- **Precio y m² son inputs libres** (no dropdowns). El valor que pone el usuario es una **referencia ±30%** (aparecen propiedades alrededor, no un tope). Placeholder "Sin especificar" en itálica. Label "Precio U$S".
+- **Búsqueda sin tildes ni mayúsculas:** función `normTxt()` (minúsculas + saca acentos). Se usa en ubicación y características.
+- **Listado:** las **destacadas van al FINAL** (abajo) y muestran badge **"★ Destacada"** (naranja, arriba-der).
+- **Ficha (layout desktop):** contenedor **1280px**. Arriba el **título**. Después **galería a la izquierda + card de precio/contacto a la derecha** (`.prop-top`, la card NO se estira: su alto se acomoda al contenido). Debajo (`.prop-body`, max-width 820px para que la descripción tenga aire): datos (Superficie grande arriba, **Zona / Localidad** separadas en un renglón — si solo hay `ubicacion` viejo, se separa por la coma), descripción, reel. Mapa abajo.
+- **Galería:** foto principal **16:9** con relleno **verde** si la foto es vertical. **Flechas naranjas** (SVG, con hover scale) + **teclado ← →**. **Fade** al cambiar de foto. Miniaturas con hover scale. Lightbox al click.
+- **Mapa:** acepta coordenadas DMS o decimal; `dmsToDecimal()` las convierte para el embed de Google Maps.
+- **Sin "Moneda"** en los datos (ya está implícita en el precio).
+
+## Características (hashtags) — feature completo
+- Campo nuevo en el admin: **"Características"** = lista de **texto libre** (Antonella agrega: Cochera, Pileta, Vista al lago…).
+- Se muestran como **#hashtags**: en la **card verde de la ficha** (clickeables → llevan al listado filtrado, `?tag=`) y en las **cards** (no clickeables porque la card ya es un link).
+- **Búsqueda por características** en home y listado: una **fila de chips** que se arma **sola** con las etiquetas existentes. Filtro **OR** (muestra las que tengan **alguna**). Decidido: texto libre (no lista cerrada). La normalización (`normTxt`) agrupa por minúsculas/sin acentos, pero sinónimos distintos ("Cochera" vs "Garage") quedan como chips distintos.
+
+## Contacto
+- **Formulario → WhatsApp:** al enviar, abre WhatsApp con los datos (nombre, tel, email, consulta). (Se probó mailto y no es confiable en desktop sin cliente de correo; por eso WhatsApp.)
+- Además, visibles como otros medios: **Email** y **Instagram** (`@solar_propiedades` → https://www.instagram.com/solar_propiedades/).
+- **Email temporal de prueba: `matyy.cornara@gmail.com`** (reemplazar por el de la inmobiliaria; aparece en el form del home, en `var DEST`, y en la ficha 2 veces).
+- Los mensajes (WhatsApp y mail) dicen explícito **"desde la Página web de Solar Propiedades"**. En la ficha, el mensaje sigue el ejemplo de Antonella: *"¡Hola! Estoy interesado en la propiedad que vi en su web: (TÍTULO) - (CÓDIGO). ¿Me podrían brindar más información? Aquí está el enlace del inmueble: (LINK)"*.
+
+## Admin (Decap CMS)
+- **Verde de marca `#36512B`** en header y acentos (antes #1F3216).
+- Botón corregido a **"Nueva propiedad"** (era "Nuevo Propiedad").
+- **Logo** en login/header: `logo_url: /fotos/LOGO.PNG`.
+- **Vista previa en vivo** (`CMS.registerPreviewTemplate` + `registerPreviewStyle`): muestra la propiedad con el estilo real del sitio (foto 16:9 verde, badges, título Archivo Black, superficie, zona/localidad, precio, #hashtags, descripción) mientras Antonella edita.
+- Límite honesto: Decap es la "cáscara" de React; reestilizar componentes internos profundos es frágil (clases ofuscadas). Lo robusto: branding (logo/colores/fuente) + preview custom.
+
+## Pendientes (cuando se retome)
+- **Mobile:** menú hamburguesa (hoy en celular NO hay menú) + repaso mobile completo (home, listado, ficha).
+- **Servicios** (sección nunca revisada), footer.
+- Reemplazar email de prueba por el real.
+- Open Graph / SEO para compartir lindo por WhatsApp/redes.
+- Opcional: características estructuradas (dormitorios, baños) como datos, no como tags.
