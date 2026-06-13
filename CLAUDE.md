@@ -147,3 +147,48 @@ Es HTML puro, sin build. Servidor local: `python -m http.server 3000` (o `npx se
 - Reemplazar email de prueba por el real.
 - Open Graph / SEO para compartir lindo por WhatsApp/redes.
 - Opcional: características estructuradas (dormitorios, baños) como datos, no como tags.
+
+---
+
+# Sesión — Rediseño ficha (Remax) + GRAN FILTRO + campos nuevos del admin
+
+## Modelo de datos / Admin (campos nuevos en `admin/config.yml`)
+Además de los ya existentes (codigo, titulo, tipo, precio, moneda, zona, localidad, coordenadas, descripcion, fotos, link_reel, destacada), se agregaron:
+- **tipo:** se sumó **Departamento** (opciones: Lote, Casa, Departamento, Alquiler permanente, Alquiler turístico).
+- **metros_cuadrados** (= "Superficie total"), **metros_cubiertos**, **metros_semicubiertos**, **metros_terreno**.
+- **ambientes** (número) + **ambientes_detalle** (lista de nombres: Living, Cocina…; texto libre con sugerencias en el `hint`).
+- **dormitorios**, **banos**, **antiguedad** (años).
+- **servicios** (lista texto libre, sugerencias en `hint`: Luz, Gas, Agua, Cloacas…).
+- **caracteristicas** (lista texto libre, ya existía; ahora SIN # en las cards).
+- ⚠️ Decap no tiene autocompletado real en listas → las "sugerencias" son el `hint`. Para sugerencias clickeables habría que usar checkboxes fijos.
+
+## Ficha de propiedad (`propiedades/index.html`) — estructura tipo Remax (vertical, todo apilado)
+Orden: **1)** Hero (breadcrumb + badge + título + ubicación 📍) **2)** Galería **3)** Card de datos (precio + íconos) **4)** Descripción **5)** Detalles **6)** Reel **7)** Mapa **8)** Similares. Todo en `.prop-page` (max-width **1200px**).
+- **Galería:** foto **16:9** (siempre) a la izquierda + **carrusel vertical de thumbnails a la derecha** (columna 240px) con **scroll local sin barra**. Degradés arriba/abajo que aparecen/desaparecen por opacity según haya más fotos (clases `show-top`/`show-bottom` en `.gallery-thumbs`, vía `updateThumbFade()`). En mobile el carrusel pasa a fila horizontal. El hero usa `.prop-hero { min-height: calc(100vh - nav) }` para que la card de precio no asome en la 1ª pantalla.
+- **Robustez de imágenes:** `keepValidImages()` precarga y descarta fotos rotas (nunca se ve un recuadro roto); en cards, `imgFallback()` reemplaza por placeholder.
+- **Card de datos** (`.prop-datacard`, borde naranja): código + precio + grid de stats con íconos SVG (m² totales/cubiertos/terreno, ambientes, dormitorios, baños, antigüedad). Contacto (WhatsApp/Email) debajo.
+- **Sección "Detalles de la propiedad"** (recuadro solo-borde, igual que Descripción): subsecciones **Superficies y datos** (label: valor), **Servicios** (✓), **Ambientes** (✓), **Características** (✓, clickeables → `?tag=`). Cada lista aparece solo si hay datos.
+- **Propiedades similares:** `renderSimilares(p)` trae todas, puntúa (mismo **tipo** pesa fuerte + precio parecido misma moneda + características compartidas), deduplica por código, muestra top 3 (más parecida a la izquierda). Aparece vacía si solo hay una propiedad.
+
+## GRAN FILTRO — en home (`index.html`) y listado (`propiedades/index.html`)
+**Misma barra en las dos pages** (ancho **1280px = --max-w**, margen lateral 56px; en el listado el hero/cards quedan en 1100 pero la barra es 1280).
+- **Filtros principales (barra):** Tipo (dropdown) · Ubicación (input con **autocompletado** que sugiere localidades/zonas existentes; igual permite texto libre) · **Precio** (dropdown con selector **U$S / $** + inputs **Desde/Hasta**) · **Superficie m²** (dropdown con **Desde/Hasta**).
+- **"Más filtros"** (botón que despliega `.more-filters`): Ambientes/Dormitorios/Baños (mín., selects), m² cubiertos/terreno (mín.), Antigüedad (máx.), y **Servicios** + **Características** como **botones colapsables** (`.mf-chips-toggle`; no aparecen de una).
+- **Reglas clave (decisiones del usuario):**
+  - **Nada es obligatorio:** input vacío = NO filtra. Las etiquetas de Precio/m² quedan **vacías** (no dicen "Cualquiera").
+  - **Moneda sin toggle global:** el selector U$S/$ vive dentro del filtro de Precio; solo define en qué moneda se interpreta el rango. Sin cotización/conversión (filtra por `moneda` que coincida).
+  - **El filtrado se ejecuta SOLO al tocar "Buscar"** (o Enter), NO en vivo. Los filtros **no se borran** al buscar (solo con "Limpiar filtros").
+- **Listado:** filtra sobre `allProps` y **lee parámetros de la URL** (`tipo, ubic, cur, pmin, pmax, mmin, mmax, amb, dorm, banos, cub, ter, ant, tags, serv`). Si vienen chips por URL, abre "Más filtros" y el grupo correspondiente.
+- **Home:** la barra **no filtra ahí** (las destacadas son vidriera). "Buscar" (`irABusqueda`) **junta todo y redirige a `/propiedades?...`**. Las destacadas siguen con `mostrarDestacadas()`.
+- Se quitó el slider de dos perillas (el usuario lo encontró limitante) → inputs Desde/Hasta.
+
+## Cards (home + listado)
+- Muestran las **características principales como píldoras** (`60 m²` · `3 amb.` · `2 dorm.` · `1 baño`), **sin #** (`cardStats(p)` / `statsStr`). Ubicación arriba en texto plano.
+
+## Home (`index.html`) — ajustes varios
+- **Nav blanca/sólida sobre la sección de esencia** (antes se transparentaba): `navDarkSections = []`.
+- Bloques 1/2/3 de "Lo que nos define" **subidos** (menos margen del título y padding de los items).
+- Botón **"Ver todas"** de destacadas **destacado** (relleno naranja, `.btn-ver-todas-dest`).
+
+## Deploy de esta sesión
+- Push a `main` → Vercel (sitio) ✅. Para el **admin** (campos nuevos) hace falta **deploy de Netlify** (estaba pausado; el usuario lo habilitó para publicar).
