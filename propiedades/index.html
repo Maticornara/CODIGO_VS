@@ -56,8 +56,12 @@
 
     /* ═══ PÁGINA PROPIEDAD (ficha) — columna única, inmobiliaria moderna ═══ */
     .prop-page {
-      max-width: 1040px; margin: 0 auto;
-      padding: calc(var(--nav-h) + 24px) 28px 90px;
+      max-width: 1200px; margin: 0 auto;
+      padding: calc(var(--nav-h) + 22px) 24px 90px;
+    }
+    /* Zona "above the fold": empuja la card de precio fuera de la 1ª pantalla */
+    @media (min-width: 861px) {
+      .prop-hero { min-height: calc(100vh - var(--nav-h) - 30px); }
     }
 
     /* BREADCRUMB */
@@ -69,16 +73,14 @@
     .breadcrumb a:hover { color: var(--acento); }
     .breadcrumb span { opacity: 0.5; }
 
-    /* ═══ GALERÍA: imagen 16:9 (entra en 1ª pantalla) + thumbnails verticales a la derecha ═══ */
+    /* ═══ GALERÍA: imagen 16:9 (entra completa en pantalla) + thumbnails verticales con scroll ═══ */
     .gallery {
-      display: flex; gap: 14px; margin-bottom: 36px;
-      /* Alto acotado al viewport → la foto entra completa sin scroll */
-      height: calc(100vh - var(--nav-h) - 250px);
-      max-height: 620px; min-height: 340px;
+      display: flex; gap: 14px; margin-bottom: 30px; align-items: stretch;
     }
-    .gallery-stage { flex: 1; min-width: 0; height: 100%; display: flex; justify-content: center; }
+    /* La foto principal llena el ancho disponible (llega al margen izquierdo);
+       los thumbnails quedan pegados al margen derecho del contenido. 16:9. */
     .gallery-main {
-      position: relative; height: 100%; aspect-ratio: 16/9; max-width: 100%;
+      position: relative; flex: 1; min-width: 0; aspect-ratio: 16/9;
       border-radius: 10px; overflow: hidden; background: var(--verde);
       display: flex; align-items: center; justify-content: center;
     }
@@ -109,30 +111,49 @@
     .gallery-arrow.prev { left: 14px; }
     .gallery-arrow.next { right: 14px; }
     .gallery-arrow:disabled { opacity: 0.2; cursor: default; }
-    /* Thumbnails en columna vertical */
-    .gallery-thumbs {
-      flex: 0 0 92px; display: flex; flex-direction: column; gap: 8px;
-      overflow-y: auto; height: 100%; padding-right: 2px;
+    /* Columna de thumbnails (a la IZQUIERDA de la foto): el contenedor externo se
+       estira al alto de la foto, y el scroller interno (absoluto) hace el scroll local. */
+    .gallery-thumbs { flex: 0 0 240px; position: relative; }
+    .gallery-thumbs-inner {
+      position: absolute; inset: 0; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 10px;
+      scrollbar-width: none; scroll-behavior: smooth;
     }
-    .gallery-thumbs::-webkit-scrollbar { width: 4px; }
-    .gallery-thumbs::-webkit-scrollbar-thumb { background: var(--gris-suave); border-radius: 2px; }
+    .gallery-thumbs-inner::-webkit-scrollbar { display: none; }
+    /* Degradés arriba/abajo que aparecen/desaparecen (opacity) según haya más fotos
+       para scrollear en esa dirección. La foto del borde se funde con el fondo. */
+    .gallery-thumbs::before,
+    .gallery-thumbs::after {
+      content: ''; position: absolute; left: 0; right: 0; height: 64px;
+      pointer-events: none; z-index: 3; opacity: 0; transition: opacity 0.35s ease;
+    }
+    .gallery-thumbs::before { top: 0; background: linear-gradient(to bottom, var(--crema) 12%, transparent); }
+    .gallery-thumbs::after  { bottom: 0; background: linear-gradient(to top, var(--crema) 12%, transparent); }
+    .gallery-thumbs.show-top::before    { opacity: 1; }
+    .gallery-thumbs.show-bottom::after  { opacity: 1; }
     .gallery-thumb {
-      width: 92px; height: 64px; border-radius: 6px; overflow: hidden;
-      cursor: pointer; opacity: 0.55; transition: opacity 0.2s, border-color 0.2s;
+      width: 100%; aspect-ratio: 16/10; border-radius: 7px; overflow: hidden;
+      cursor: pointer; opacity: 0.5; transition: opacity 0.2s, border-color 0.2s;
       flex-shrink: 0; border: 2px solid transparent;
     }
-    .gallery-thumb:hover { opacity: 1; }
+    .gallery-thumb:hover { opacity: 0.85; }
     .gallery-thumb.active { opacity: 1; border-color: var(--acento); }
     .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; }
     /* Mobile: foto arriba, thumbnails en fila debajo */
     @media (max-width: 720px) {
-      .gallery { flex-direction: column; height: auto; max-height: none; min-height: 0; }
-      .gallery-stage { height: auto; }
-      .gallery-main { height: auto; width: 100%; }
-      .gallery-thumbs {
-        flex: 0 0 auto; flex-direction: row; width: 100%; height: auto;
-        overflow-x: auto; overflow-y: hidden; padding: 2px 0 4px;
+      .gallery { flex-direction: column; height: auto; min-height: 0; }
+      .gallery-main { order: 1; flex: 0 0 auto; height: auto; width: 100%; max-width: 100%; }
+      .gallery-thumbs { order: 2; flex: 0 0 auto; height: 80px; }
+      .gallery-thumbs-inner {
+        flex-direction: row; overflow-x: auto; overflow-y: hidden;
       }
+      /* En mobile los degradés van a los costados (izq/der) */
+      .gallery-thumbs::before, .gallery-thumbs::after {
+        top: 0; bottom: 0; height: auto; width: 64px; left: auto; right: auto;
+      }
+      .gallery-thumbs::before { left: 0; background: linear-gradient(to right, var(--crema) 12%, transparent); }
+      .gallery-thumbs::after  { right: 0; background: linear-gradient(to left, var(--crema) 12%, transparent); }
+      .gallery-thumb { width: auto; height: 100%; aspect-ratio: 16/10; }
     }
 
     /* ═══ ENCABEZADO: badge + título + ubicación ═══ */
@@ -156,9 +177,9 @@
 
     /* ═══ CARD DE DATOS: precio + stats con íconos (estilo Remax) ═══ */
     .prop-datacard {
-      background: #fff; border: 1px solid var(--gris-suave); border-radius: 14px;
+      background: #fff; border: 1.5px solid var(--acento); border-radius: 14px;
       padding: 30px 34px; margin-bottom: 18px;
-      box-shadow: 0 4px 24px rgba(54,81,43,0.05);
+      box-shadow: 0 4px 24px rgba(238,122,19,0.08);
     }
     .prop-precio-block { padding-left: 16px; border-left: 4px solid var(--acento); margin-bottom: 26px; }
     .prop-pricebar-codigo {
@@ -199,6 +220,11 @@
     /* ═══ SECCIONES (características, descripción, mapa) ═══ */
     .prop-section { margin-bottom: 52px; }
     .prop-section:last-child { margin-bottom: 0; }
+    /* Recuadro (solo borde) para Descripción y Detalles → separan y dan ritmo de lectura */
+    #propDescWrap, #propDetallesWrap {
+      border: 1.5px solid var(--gris-suave); border-radius: 14px;
+      padding: 30px 32px;
+    }
     .prop-section-title {
       font-family: var(--font-display); font-size: 20px; color: var(--negro);
       margin-bottom: 22px; padding-bottom: 13px; border-bottom: 2px solid var(--gris-suave);
@@ -219,8 +245,22 @@
     .prop-caract-item .check svg { width: 13px; height: 13px; stroke: var(--acento); fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
     a.prop-caract-item:hover { color: var(--acento); }
 
+    /* Detalles de la propiedad: subsecciones (superficies, servicios, ambientes, características) */
+    .prop-detalle-sub { margin-bottom: 36px; }
+    .prop-detalle-sub:last-child { margin-bottom: 0; }
+    .prop-detalle-sub:empty { display: none; }
+    .prop-subtitle {
+      font-size: 13px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--verde); margin-bottom: 16px;
+    }
+    .prop-detalle-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 13px 36px; }
+    .prop-detalle-item { display: flex; align-items: center; gap: 8px; font-size: 16px; color: var(--negro); }
+    .prop-detalle-item .lbl { color: var(--gris-texto); }
+    .prop-detalle-item .val { font-weight: 700; }
+    @media (max-width: 720px) { .prop-detalle-grid { grid-template-columns: 1fr; } }
+
     /* Descripción */
-    .prop-desc { font-size: 16px; line-height: 1.85; color: #3a3a3a; }
+    .prop-desc { font-size: 16px; line-height: 1.85; color: #3a3a3a; max-width: 860px; }
     .prop-desc p { margin-bottom: 14px; }
     .prop-desc ul { padding-left: 22px; margin-bottom: 14px; }
     .prop-desc li { margin-bottom: 6px; }
@@ -237,6 +277,11 @@
     .prop-map-frame {
       width: 100%; height: 420px; border-radius: 10px; overflow: hidden; border: none;
     }
+
+    /* Propiedades similares: ranking de 3, la más parecida a la izquierda */
+    .prop-similares-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+    @media (max-width: 860px) { .prop-similares-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 560px) { .prop-similares-grid { grid-template-columns: 1fr; } }
 
     /* Responsive ficha */
     @media (max-width: 720px) {
@@ -297,6 +342,86 @@
     }
     .tag-chip:hover { border-color: var(--acento); color: var(--acento); }
     .tag-chip.active { background: var(--acento); border-color: var(--acento); color: #fff; }
+
+    /* ── Ubicación: autocompletado ── */
+    .sf-ubic { position: relative; }
+    .ac-list {
+      position: absolute; top: 100%; left: 0; right: 0; z-index: 40;
+      background: #fff; border: 1px solid var(--gris-suave); border-radius: 0 0 8px 8px;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.12); max-height: 240px; overflow-y: auto; display: none;
+    }
+    .ac-list.open { display: block; }
+    .ac-item { padding: 11px 16px; font-size: 14px; color: var(--negro); cursor: pointer; }
+    .ac-item:hover { background: rgba(54,81,43,0.08); color: var(--verde); }
+
+    /* ── Filtros de rango (precio / m²): dropdown con slider ── */
+    .search-filter[data-range-filter] { cursor: pointer; }
+    /* Doble clase para ganarle en especificidad a .sf-dropdown (min-width:100%) */
+    .sf-dropdown.rng-dropdown { padding: 18px 20px 16px; min-width: 300px; }
+    /* El dropdown de m² está cerca del borde derecho → lo alineamos a la derecha */
+    #lsf-m2 .sf-dropdown { left: auto; right: 0; }
+    .cur-toggle { display: flex; gap: 6px; margin-bottom: 16px; }
+    .cur-opt {
+      flex: 1; padding: 7px 0; font-size: 12px; font-weight: 700; cursor: pointer;
+      background: #fff; border: 1.5px solid var(--gris-suave); border-radius: 6px;
+      color: var(--gris-texto); transition: background 0.18s, border-color 0.18s, color 0.18s;
+    }
+    .cur-opt.active { background: var(--verde); border-color: var(--verde); color: var(--crema); }
+    .rng-inputs { display: flex; gap: 12px; }
+    .rng-in { flex: 1; display: flex; flex-direction: column; gap: 5px; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gris-texto); }
+    /* Especificidad alta para ganarle a `.search-filter input` (transparente/sin borde) */
+    .rng-dropdown .rng-in input {
+      font-family: var(--font-body); font-size: 14px; font-weight: 400; text-transform: none; letter-spacing: 0;
+      padding: 9px 11px; border: 1.5px solid var(--gris-suave); border-radius: 6px; background: #fff; color: var(--negro);
+      width: 100%; pointer-events: auto; -webkit-user-select: text; user-select: text;
+    }
+    .rng-dropdown .rng-in input:focus { outline: none; border-color: var(--acento); }
+
+    /* ── Más filtros ── */
+    .more-toggle {
+      display: inline-flex; align-items: center; gap: 8px; margin-top: 16px;
+      background: none; border: 1.5px solid var(--gris-suave); border-radius: 8px;
+      padding: 9px 16px; font-family: var(--font-body); font-size: 13px; font-weight: 700;
+      color: var(--verde); cursor: pointer; transition: border-color 0.2s, color 0.2s;
+    }
+    .more-toggle:hover, .more-toggle.open { border-color: var(--acento); color: var(--acento); }
+    .more-toggle svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
+    .more-filters {
+      display: none; margin-top: 16px; padding: 22px 24px;
+      background: #fff; border: 1px solid var(--gris-suave); border-radius: 12px;
+    }
+    .more-filters.open { display: block; }
+    .mf-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px 22px; }
+    @media (max-width: 760px) { .mf-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 480px) { .mf-grid { grid-template-columns: 1fr; } }
+    .mf-field { display: flex; flex-direction: column; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; color: var(--gris-texto); text-transform: uppercase; }
+    .mf-field select, .mf-field input {
+      font-family: var(--font-body); font-size: 14px; font-weight: 400; text-transform: none; letter-spacing: 0;
+      padding: 9px 11px; border: 1.5px solid var(--gris-suave); border-radius: 7px; background: #fff; color: var(--negro);
+    }
+    .mf-field select:focus, .mf-field input:focus { outline: none; border-color: var(--acento); }
+    .mf-chips-group { margin-top: 18px; }
+    .mf-chips-toggle {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #fff; border: 1.5px solid var(--gris-suave); border-radius: 8px;
+      cursor: pointer; padding: 9px 16px;
+      font-family: var(--font-body); font-size: 12px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--verde);
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+    .mf-chips-toggle:hover { border-color: var(--acento); color: var(--acento); }
+    .mf-chips-group.open .mf-chips-toggle { border-color: var(--acento); color: var(--acento); }
+    .mf-chips-plus { font-size: 16px; line-height: 1; transition: transform 0.2s; }
+    .mf-chips-group.open .mf-chips-plus { transform: rotate(45deg); }
+    .mf-chips-list { display: none; margin-top: 10px; }
+    .mf-chips-group.open .mf-chips-list { display: flex; }
+    .mf-actions { margin-top: 22px; }
+    .mf-clear {
+      background: none; border: none; color: var(--gris-texto); font-family: var(--font-body);
+      font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: underline;
+    }
+    .mf-clear:hover { color: var(--acento); }
+
     .listing-props-wrap {
       max-width: 1100px; margin: 0 auto; padding: 48px 40px 80px;
     }
@@ -440,8 +565,9 @@
     }
     .prop-card-meta span { display: flex; gap: 4px; }
     .prop-card-meta b { color: var(--verde-claro); font-weight: 600; }
-    .prop-card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
-    .prop-card-tag { font-size: 11px; font-weight: 600; color: var(--verde); background: rgba(54,81,43,0.07); border: 1px solid rgba(54,81,43,0.12); border-radius: 999px; padding: 3px 9px; }
+    .prop-card-ubic { font-size: 13px; color: var(--gris-texto); margin-bottom: 10px; }
+    .prop-card-stats { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+    .prop-card-stat { font-size: 12px; font-weight: 600; color: var(--verde); background: rgba(54,81,43,0.07); border: 1px solid rgba(54,81,43,0.14); border-radius: 999px; padding: 4px 11px; }
     .prop-card-precio {
       font-size: 17px; font-weight: 700; color: var(--negro);
       margin-top: auto; padding-top: 10px;
@@ -516,6 +642,7 @@
       <div class="search-bar">
         <div class="search-bar-inner">
 
+          <!-- TIPO -->
           <div class="search-filter" data-custom-select id="lsf-tipo">
             <label>Tipo</label>
             <span class="sf-value">Cualquier tipo</span>
@@ -524,6 +651,7 @@
               <div class="sf-option selected" data-value="">Cualquier tipo</div>
               <div class="sf-option" data-value="lote">Lotes</div>
               <div class="sf-option" data-value="casa">Casas</div>
+              <div class="sf-option" data-value="departamento">Departamentos</div>
               <div class="sf-option" data-value="alquiler permanente">Alquiler permanente</div>
               <div class="sf-option" data-value="alquiler turístico">Alquiler turístico</div>
             </div>
@@ -531,23 +659,45 @@
 
           <span class="search-sep"></span>
 
-          <div class="search-filter" style="flex:1.4; cursor:text;">
+          <!-- UBICACIÓN (con autocompletado) -->
+          <div class="search-filter sf-ubic" style="flex:1.4; cursor:text;">
             <label>Ubicación</label>
-            <input id="lstUbic" type="text" placeholder="Villa La Angostura…"/>
+            <input id="lstUbic" type="text" placeholder="Villa La Angostura…" autocomplete="off"/>
+            <div class="ac-list" id="lstUbicAC"></div>
           </div>
 
           <span class="search-sep"></span>
 
-          <div class="search-filter" style="flex:1.4; cursor:text;">
-            <label>Precio U$S</label>
-            <input id="lstPrecio" type="number" min="0" inputmode="numeric" placeholder="Sin especificar"/>
+          <!-- PRECIO (moneda + slider de rango) -->
+          <div class="search-filter" data-range-filter id="lsf-precio" style="flex:1.3;">
+            <label>Precio</label>
+            <span class="sf-value" id="lsf-precio-val"></span>
+            <svg class="search-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+            <div class="sf-dropdown rng-dropdown">
+              <div class="cur-toggle" id="curToggle">
+                <button type="button" class="cur-opt active" data-cur="USD">U$S</button>
+                <button type="button" class="cur-opt" data-cur="ARS">$ ARS</button>
+              </div>
+              <div class="rng-inputs">
+                <label class="rng-in"><span>Desde</span><input type="number" id="precioMin" min="0" inputmode="numeric" placeholder="Sin mínimo"></label>
+                <label class="rng-in"><span>Hasta</span><input type="number" id="precioMax" min="0" inputmode="numeric" placeholder="Sin máximo"></label>
+              </div>
+            </div>
           </div>
 
           <span class="search-sep"></span>
 
-          <div class="search-filter" style="flex:0.9; cursor:text;">
-            <label>m²</label>
-            <input id="lstM2" type="number" min="0" inputmode="numeric" placeholder="Sin especificar"/>
+          <!-- SUPERFICIE m² (slider de rango) -->
+          <div class="search-filter" data-range-filter id="lsf-m2" style="flex:1;">
+            <label>Superficie m²</label>
+            <span class="sf-value" id="lsf-m2-val"></span>
+            <svg class="search-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+            <div class="sf-dropdown rng-dropdown">
+              <div class="rng-inputs">
+                <label class="rng-in"><span>Desde</span><input type="number" id="supMin" min="0" inputmode="numeric" placeholder="Sin mínimo"></label>
+                <label class="rng-in"><span>Hasta</span><input type="number" id="supMax" min="0" inputmode="numeric" placeholder="Sin máximo"></label>
+              </div>
+            </div>
           </div>
 
           <span class="search-sep"></span>
@@ -559,7 +709,47 @@
 
         </div>
       </div>
-      <div class="tag-filter" id="tagFilter"></div>
+
+      <!-- Botón Más filtros -->
+      <button type="button" class="more-toggle" id="moreToggle" aria-expanded="false">
+        <svg viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+        <span>Más filtros</span>
+      </button>
+
+      <!-- Panel Más filtros -->
+      <div class="more-filters" id="moreFilters">
+        <div class="mf-grid">
+          <label class="mf-field"><span>Ambientes (mín.)</span>
+            <select id="mfAmbientes"><option value="">Cualquiera</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
+          </label>
+          <label class="mf-field"><span>Dormitorios (mín.)</span>
+            <select id="mfDormitorios"><option value="">Cualquiera</option><option>1</option><option>2</option><option>3</option><option>4</option></select>
+          </label>
+          <label class="mf-field"><span>Baños (mín.)</span>
+            <select id="mfBanos"><option value="">Cualquiera</option><option>1</option><option>2</option><option>3</option></select>
+          </label>
+          <label class="mf-field"><span>m² cubiertos (mín.)</span>
+            <input id="mfCubiertos" type="number" min="0" inputmode="numeric" placeholder="—"/>
+          </label>
+          <label class="mf-field"><span>m² terreno (mín.)</span>
+            <input id="mfTerreno" type="number" min="0" inputmode="numeric" placeholder="—"/>
+          </label>
+          <label class="mf-field"><span>Antigüedad (máx. años)</span>
+            <input id="mfAntiguedad" type="number" min="0" inputmode="numeric" placeholder="—"/>
+          </label>
+        </div>
+        <div class="mf-chips-group" id="servGroup" style="display:none">
+          <button type="button" class="mf-chips-toggle"><span>Servicios</span><span class="mf-chips-plus">+</span></button>
+          <div class="tag-filter mf-chips-list" id="servFilter"></div>
+        </div>
+        <div class="mf-chips-group" id="caractGroup" style="display:none">
+          <button type="button" class="mf-chips-toggle"><span>Características</span><span class="mf-chips-plus">+</span></button>
+          <div class="tag-filter mf-chips-list" id="tagFilter"></div>
+        </div>
+        <div class="mf-actions">
+          <button type="button" class="mf-clear" id="mfClear">Limpiar filtros</button>
+        </div>
+      </div>
     </div>
   </div>
   </div><!-- /listing-dark-zone -->
@@ -578,6 +768,9 @@
 <div class="prop-page" style="display:none">
   <div class="prop-loading" id="propLoading">Cargando propiedad…</div>
   <div id="propContent" style="display:none">
+
+    <!-- Hero: breadcrumb + título + galería (ocupa la 1ª pantalla) -->
+    <div class="prop-hero">
 
     <!-- 1 · Breadcrumb -->
     <div class="breadcrumb">
@@ -598,15 +791,17 @@
       </p>
     </div>
 
-    <!-- 3 · Galería: foto 16:9 + thumbnails verticales a la derecha -->
+    <!-- 3 · Galería: foto 16:9 + carrusel vertical a la derecha -->
     <div class="gallery" id="gallery">
-      <div class="gallery-stage">
-        <div class="gallery-main" id="galleryMain"></div>
+      <div class="gallery-main" id="galleryMain"></div>
+      <div class="gallery-thumbs">
+        <div class="gallery-thumbs-inner" id="galleryThumbs"></div>
       </div>
-      <div class="gallery-thumbs" id="galleryThumbs"></div>
     </div>
 
-    <!-- 4 · Card de datos: precio + stats con íconos -->
+    </div><!-- /prop-hero -->
+
+    <!-- 4 · Card grande: precio + características principales -->
     <div class="prop-datacard">
       <div class="prop-precio-block">
         <div class="prop-pricebar-codigo" id="sidebarCodigo"></div>
@@ -625,28 +820,39 @@
         <a class="prop-mail-btn" id="mailBtn" href="mailto:matyy.cornara@gmail.com">Enviar consulta por email</a>
     </div><!-- /contacto -->
 
-    <!-- 6 · Características (lista con check) -->
-    <section class="prop-section" id="propCaractWrap" style="display:none">
-      <h2 class="prop-section-title">Características</h2>
-      <ul class="prop-caract-list" id="propCaractList"></ul>
-    </section>
-
-    <!-- 7 · Descripción + reel -->
+    <!-- 5 · Descripción -->
     <section class="prop-section" id="propDescWrap" style="display:none">
       <h2 class="prop-section-title">Descripción</h2>
       <div class="prop-desc" id="propDesc"></div>
-      <div id="propReelWrap" style="display:none">
-        <a class="prop-reel" id="propReel" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-          Ver reel / video
-        </a>
-      </div>
     </section>
+
+    <!-- 6 · Detalles de la propiedad (superficies, servicios, ambientes, características) -->
+    <section class="prop-section" id="propDetallesWrap" style="display:none">
+      <h2 class="prop-section-title">Detalles de la propiedad</h2>
+      <div class="prop-detalle-sub" id="propSupBlock"></div>
+      <div class="prop-detalle-sub" id="propServBlock"></div>
+      <div class="prop-detalle-sub" id="propAmbBlock"></div>
+      <div class="prop-detalle-sub" id="propCaractBlock"></div>
+    </section>
+
+    <!-- Reel / video — siempre justo antes del mapa -->
+    <div id="propReelWrap" style="display:none; margin-bottom:52px">
+      <a class="prop-reel" id="propReel" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        Ver reel / video
+      </a>
+    </div>
 
     <!-- 7 · Mapa -->
     <section class="prop-section" id="propMapSection" style="display:none">
       <h2 class="prop-section-title">Ubicación</h2>
       <iframe class="prop-map-frame" id="propMap" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </section>
+
+    <!-- 8 · Propiedades similares (ranking automático: la más parecida primero) -->
+    <section class="prop-section" id="propSimilaresWrap" style="display:none">
+      <h2 class="prop-section-title">Propiedades similares</h2>
+      <div class="prop-similares-grid" id="propSimilares"></div>
     </section>
 
   </div><!-- fin propContent -->
@@ -733,6 +939,32 @@
     return result;
   }
 
+  // Precarga defensiva de imágenes: devuelve (async) solo las URLs que cargan bien,
+  // conservando el orden original. Descarta cualquier foto rota (nombre mal escrito,
+  // archivo que no se subió, etc.) para que nunca se vea un recuadro roto.
+  function keepValidImages(urls, cb) {
+    if (!urls || !urls.length) { cb([]); return; }
+    var results = new Array(urls.length);
+    var pending = urls.length;
+    function done() {
+      if (--pending === 0) cb(results.filter(function(u) { return !!u; }));
+    }
+    urls.forEach(function(u, i) {
+      var probe = new Image();
+      probe.onload  = function() { results[i] = u;    done(); };
+      probe.onerror = function() { results[i] = null; done(); };
+      probe.src = u;
+    });
+  }
+
+  // Si una <img> de card falla al cargar, la reemplaza por el placeholder "sin foto".
+  function imgFallback(img) {
+    var ph = document.createElement('div');
+    ph.className = 'prop-card-no-img';
+    ph.innerHTML = '<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
+    if (img.parentNode) img.parentNode.replaceChild(ph, img);
+  }
+
   function fmtPrecio(p) {
     var n = Number(p.precio);
     if (isNaN(n)) return p.precio || '';
@@ -771,10 +1003,16 @@
   function renderCard(p, i) {
     var foto = p.fotos && p.fotos.length ? p.fotos[0] : null;
     var imgHtml = foto
-      ? '<img src="' + foto + '" alt="' + (p.titulo || '') + '" loading="lazy"/>'
+      ? '<img src="' + foto + '" alt="' + (p.titulo || '') + '" loading="lazy" onerror="imgFallback(this)"/>'
       : '<div class="prop-card-no-img"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>';
     var delay = Math.min(i || 0, 12) * 0.06;
     var ubic = [p.zona, p.localidad].filter(Boolean).join(', ') || p.ubicacion || '';
+    var statsStr = [
+      p.metros_cuadrados ? p.metros_cuadrados + ' m²' : null,
+      p.ambientes        ? p.ambientes + ' amb.' : null,
+      p.dormitorios      ? p.dormitorios + ' dorm.' : null,
+      p.banos            ? p.banos + (p.banos == 1 ? ' baño' : ' baños') : null
+    ].filter(Boolean).map(function(s) { return '<span class="prop-card-stat">' + s + '</span>'; }).join('');
     return '<a class="prop-card" style="animation-delay:' + delay + 's" href="/propiedades/?p=' + (p._slug || p.codigo || '') + '">' +
       '<div class="prop-card-img">' + imgHtml +
         '<span class="prop-card-tipo">' + (p.tipo || '') + '</span>' +
@@ -782,13 +1020,8 @@
       '</div>' +
       '<div class="prop-card-body">' +
         '<h3 class="prop-card-titulo">' + (p.titulo || '') + '</h3>' +
-        '<div class="prop-card-meta">' +
-          (p.metros_cuadrados ? '<span><b>m²</b> ' + p.metros_cuadrados + '</span>' : '') +
-          (ubic ? '<span><b>Zona</b> ' + ubic + '</span>' : '') +
-        '</div>' +
-        (Array.isArray(p.caracteristicas) && p.caracteristicas.length
-          ? '<div class="prop-card-tags">' + p.caracteristicas.slice(0, 4).map(function(t) { return '<span class="prop-card-tag"># ' + t + '</span>'; }).join('') + '</div>'
-          : '') +
+        (ubic ? '<div class="prop-card-ubic">' + ubic + '</div>' : '') +
+        (statsStr ? '<div class="prop-card-stats">' + statsStr + '</div>' : '') +
         '<p class="prop-card-precio">' + fmtPrecio(p) + '</p>' +
         '<div class="prop-card-footer">' +
           '<span class="prop-card-codigo">' + (p.codigo || '') + '</span>' +
@@ -796,6 +1029,51 @@
         '</div>' +
       '</div>' +
     '</a>';
+  }
+
+  // Propiedades similares: trae todas, puntúa por parecido a la actual y muestra el top 3.
+  // Criterio: mismo TIPO pesa fuerte, después precio parecido (misma moneda) y
+  // características compartidas. La más parecida queda a la izquierda.
+  function renderSimilares(current) {
+    fetch(API_DIR)
+      .then(function(r) { return r.json(); })
+      .then(function(files) {
+        var mds = files.filter(function(f) { return f.name.endsWith('.md'); });
+        return Promise.all(mds.map(function(f) {
+          var slug = f.name.replace(/\.md$/, '');
+          return fetch(f.download_url).then(function(r) { return r.text(); }).then(function(text) {
+            var pp = parseYAML(text); pp._slug = slug; return pp;
+          });
+        }));
+      })
+      .then(function(props) {
+        var curCod = (current.codigo || '').toLowerCase();
+        function score(a) {
+          var s = 0;
+          if ((a.tipo || '').toLowerCase() === (current.tipo || '').toLowerCase()) s += 1000;
+          var pa = Number(a.precio), pt = Number(current.precio);
+          if (pa && pt && a.moneda === current.moneda) {
+            s += Math.max(0, 100 - Math.abs(pa - pt) / pt * 100); // hasta +100 si el precio es igual
+          }
+          var ta = (a.caracteristicas || []).map(normTxt);
+          var tt = (current.caracteristicas || []).map(normTxt);
+          s += tt.filter(function(x) { return ta.indexOf(x) !== -1; }).length * 10;
+          return s;
+        }
+        // Excluir la propiedad actual (mismo código) y deduplicar por código
+        var seen = {}, candidatos = [];
+        props.filter(function(a) { return (a.codigo || '').toLowerCase() !== curCod; })
+             .sort(function(a, b) { return score(b) - score(a); })
+             .forEach(function(a) {
+               var c = (a.codigo || a._slug || '').toLowerCase();
+               if (c && !seen[c]) { seen[c] = true; candidatos.push(a); }
+             });
+        var top = candidatos.slice(0, 3);
+        if (!top.length) return;
+        document.getElementById('propSimilares').innerHTML = top.map(renderCard).join('');
+        document.getElementById('propSimilaresWrap').style.display = 'block';
+      })
+      .catch(function() { /* si falla, simplemente no se muestra la sección */ });
   }
 
   // ── Mode detection ────────────────────────────────────────────────────────
@@ -840,77 +1118,188 @@
     document.addEventListener('click', function() { closeAllSelects(null); });
 
     var allProps = [];
+    var curActual = 'USD';
 
     function renderListing(props) {
       var grid  = document.getElementById('lstGrid');
       var empty = document.getElementById('lstEmpty');
       var stat  = document.getElementById('lstStatus');
       if (!props.length) {
-        grid.innerHTML = '';
-        empty.style.display = 'block';
-        stat.textContent = '';
-        return;
+        grid.innerHTML = ''; empty.style.display = 'block'; stat.textContent = ''; return;
       }
       empty.style.display = 'none';
       stat.textContent = props.length + ' propiedad' + (props.length !== 1 ? 'es' : '') + ' encontrada' + (props.length !== 1 ? 's' : '');
       grid.innerHTML = props.map(renderCard).join('');
     }
 
+    function fmtMiles(n) { return Math.round(n).toLocaleString('es-AR'); }
+    // Devuelve el número del input, o null si está vacío (vacío = NO filtra)
+    function num(id) { var v = (document.getElementById(id).value || '').trim(); return v === '' ? null : Number(v); }
+
+    // Etiquetas de los dropdowns de Precio / m² (muestran lo elegido; no filtran)
+    function updPrecioLabel() {
+      var lo = num('precioMin'), hi = num('precioMax'), s = curActual === 'USD' ? 'U$S ' : '$ ';
+      var el = document.getElementById('lsf-precio-val');
+      if (lo == null && hi == null) el.textContent = '';
+      else if (lo != null && hi != null) el.textContent = s + fmtMiles(lo) + ' – ' + fmtMiles(hi);
+      else if (lo != null) el.textContent = 'Desde ' + s + fmtMiles(lo);
+      else el.textContent = 'Hasta ' + s + fmtMiles(hi);
+    }
+    function updM2Label() {
+      var lo = num('supMin'), hi = num('supMax');
+      var el = document.getElementById('lsf-m2-val');
+      if (lo == null && hi == null) el.textContent = '';
+      else if (lo != null && hi != null) el.textContent = fmtMiles(lo) + ' – ' + fmtMiles(hi) + ' m²';
+      else if (lo != null) el.textContent = 'Desde ' + fmtMiles(lo) + ' m²';
+      else el.textContent = 'Hasta ' + fmtMiles(hi) + ' m²';
+    }
+    ['precioMin','precioMax'].forEach(function(id) { document.getElementById(id).addEventListener('input', updPrecioLabel); });
+    ['supMin','supMax'].forEach(function(id) { document.getElementById(id).addEventListener('input', updM2Label); });
+
+    // Moneda (no filtra sola; define en qué moneda se interpreta el rango de precio)
+    function setCurrency(cur) {
+      curActual = cur;
+      document.querySelectorAll('#curToggle .cur-opt').forEach(function(b) { b.classList.toggle('active', b.dataset.cur === cur); });
+      updPrecioLabel();
+    }
+    document.querySelectorAll('#curToggle .cur-opt').forEach(function(b) {
+      b.addEventListener('click', function(e) { e.stopPropagation(); setCurrency(b.dataset.cur); });
+    });
+
+    // Abrir/cerrar dropdowns de rango (no se cierran al tocar el slider o la moneda)
+    document.querySelectorAll('[data-range-filter]').forEach(function(rf) {
+      rf.addEventListener('click', function(e) {
+        if (e.target.closest('.sf-dropdown')) { e.stopPropagation(); return; }
+        e.stopPropagation();
+        var was = rf.classList.contains('open');
+        closeAllSelects(null);
+        document.querySelectorAll('[data-range-filter]').forEach(function(o) { if (o !== rf) o.classList.remove('open'); });
+        rf.classList.toggle('open', !was);
+      });
+    });
+    document.addEventListener('click', function() {
+      document.querySelectorAll('[data-range-filter].open').forEach(function(o) { o.classList.remove('open'); });
+    });
+    // Los clics dentro del dropdown de rango no deben cerrarlo ni perder el foco del input
+    document.querySelectorAll('.rng-dropdown').forEach(function(d) {
+      ['click','mousedown'].forEach(function(ev) { d.addEventListener(ev, function(e) { e.stopPropagation(); }); });
+    });
+
+    // Botón "Más filtros"
+    document.getElementById('moreToggle').addEventListener('click', function() {
+      var mf = document.getElementById('moreFilters');
+      var open = mf.classList.toggle('open');
+      this.classList.toggle('open', open);
+      this.setAttribute('aria-expanded', open);
+    });
+    // Servicios / Características: se despliegan con su propio botón (no aparecen de una)
+    document.querySelectorAll('.mf-chips-toggle').forEach(function(btn) {
+      btn.addEventListener('click', function() { btn.closest('.mf-chips-group').classList.toggle('open'); });
+    });
+
+    // ── Autocomplete de ubicación ─────────────────────────────────────────────
+    var ubicOpts = [];
+    function buildUbicOptions() {
+      var seen = {}; ubicOpts = [];
+      allProps.forEach(function(p) {
+        [p.localidad, p.zona].forEach(function(u) {
+          if (u) { var k = normTxt(u); if (!seen[k]) { seen[k] = 1; ubicOpts.push(String(u).trim()); } }
+        });
+      });
+    }
+    (function() {
+      var inp = document.getElementById('lstUbic'), ac = document.getElementById('lstUbicAC');
+      inp.addEventListener('input', function() {
+        var q = normTxt(inp.value);
+        if (!q) { ac.classList.remove('open'); return; }
+        var matches = ubicOpts.filter(function(o) { return normTxt(o).indexOf(q) !== -1; }).slice(0, 6);
+        if (!matches.length) { ac.classList.remove('open'); ac.innerHTML = ''; return; }
+        ac.innerHTML = matches.map(function(m) { return '<div class="ac-item">' + m + '</div>'; }).join('');
+        ac.classList.add('open');
+      });
+      ac.addEventListener('click', function(e) {
+        var it = e.target.closest('.ac-item'); if (!it) return;
+        inp.value = it.textContent; ac.classList.remove('open');
+      });
+      document.addEventListener('click', function(e) { if (!e.target.closest('.sf-ubic')) ac.classList.remove('open'); });
+    })();
+
     function filtrarListing() {
-      var tipoOpt  = document.querySelector('#lsf-tipo .sf-option.selected');
-      var tipoVal  = tipoOpt ? tipoOpt.dataset.value : '';
-      var ubic     = normTxt((document.getElementById('lstUbic') || {}).value || '');
-      var precioRef = Number((document.getElementById('lstPrecio') || {}).value) || 0;
-      var m2Ref    = Number((document.getElementById('lstM2') || {}).value) || 0;
-      var F = 0.3; // tolerancia ±30%: el valor ingresado es una referencia (aprox.)
-      // Características seleccionadas (chips activos) — filtro OR (tiene alguna)
-      var selTags = Array.prototype.map.call(
-        document.querySelectorAll('#tagFilter .tag-chip.active'),
-        function(c) { return c.dataset.tag; }
-      );
+      var tipoOpt = document.querySelector('#lsf-tipo .sf-option.selected');
+      var tipoVal = tipoOpt ? tipoOpt.dataset.value : '';
+      var ubic    = normTxt(document.getElementById('lstUbic').value || '');
+      var pMin = num('precioMin'), pMax = num('precioMax');
+      var sMin = num('supMin'), sMax = num('supMax');
+      var minAmb = num('mfAmbientes'), minDorm = num('mfDormitorios'), minBan = num('mfBanos');
+      var minCub = num('mfCubiertos'), minTer = num('mfTerreno'), maxAnt = num('mfAntiguedad');
+      var selTags = Array.prototype.map.call(document.querySelectorAll('#tagFilter .tag-chip.active'),  function(c) { return c.dataset.tag; });
+      var selServ = Array.prototype.map.call(document.querySelectorAll('#servFilter .tag-chip.active'), function(c) { return c.dataset.tag; });
+      var precioOn = pMin != null || pMax != null;
 
       var filtered = allProps.filter(function(p) {
         if (tipoVal && !(p.tipo || '').toLowerCase().includes(tipoVal)) return false;
         if (ubic && normTxt((p.titulo || '') + ' ' + (p.zona || '') + ' ' + (p.localidad || '') + ' ' + (p.ubicacion || '')).indexOf(ubic) === -1) return false;
-        if (precioRef && p.moneda === 'USD') {
-          var pr = Number(p.precio);
-          if (!(pr >= precioRef * (1 - F) && pr <= precioRef * (1 + F))) return false;
+        if (precioOn) {
+          if ((p.moneda || 'USD') !== curActual) return false;
+          var v = Number(p.precio);
+          if (pMin != null && !(v >= pMin)) return false;
+          if (pMax != null && !(v <= pMax)) return false;
         }
-        if (m2Ref) {
+        if (sMin != null || sMax != null) {
           var mq = Number(p.metros_cuadrados);
-          if (!(mq >= m2Ref * (1 - F) && mq <= m2Ref * (1 + F))) return false;
+          if (sMin != null && !(mq >= sMin)) return false;
+          if (sMax != null && !(mq <= sMax)) return false;
         }
-        if (selTags.length) {
-          var propTags = (p.caracteristicas || []).map(function(t) { return normTxt(t); });
-          if (!selTags.some(function(t) { return propTags.indexOf(t) !== -1; })) return false;
-        }
+        if (minAmb  != null && !(Number(p.ambientes) >= minAmb)) return false;
+        if (minDorm != null && !(Number(p.dormitorios) >= minDorm)) return false;
+        if (minBan  != null && !(Number(p.banos) >= minBan)) return false;
+        if (minCub  != null && !(Number(p.metros_cubiertos) >= minCub)) return false;
+        if (minTer  != null && !(Number(p.metros_terreno) >= minTer)) return false;
+        if (maxAnt  != null && !(p.antiguedad !== undefined && p.antiguedad !== '' && Number(p.antiguedad) <= maxAnt)) return false;
+        if (selTags.length) { var pt = (p.caracteristicas || []).map(function(t) { return normTxt(t); }); if (!selTags.some(function(t) { return pt.indexOf(t) !== -1; })) return false; }
+        if (selServ.length) { var ps = (p.servicios || []).map(function(t) { return normTxt(t); }); if (!selServ.some(function(t) { return ps.indexOf(t) !== -1; })) return false; }
         return true;
       });
       renderListing(filtered);
     }
 
-    document.getElementById('lstBuscar').addEventListener('click', filtrarListing);
-    document.querySelectorAll('.search-filter input').forEach(function(inp) {
-      inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') filtrarListing(); });
+    // La búsqueda se ejecuta SOLO al tocar "Buscar" (o Enter). Los filtros NO se borran.
+    function ejecutarBusqueda() {
+      document.getElementById('lstUbicAC').classList.remove('open');
+      closeAllSelects(null);
+      document.querySelectorAll('[data-range-filter].open').forEach(function(o) { o.classList.remove('open'); });
+      filtrarListing();
+    }
+    document.getElementById('lstBuscar').addEventListener('click', ejecutarBusqueda);
+    document.querySelectorAll('#modeListing input').forEach(function(inp) {
+      inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') ejecutarBusqueda(); });
     });
 
-    // Arma los chips de características con todas las etiquetas presentes (texto libre)
-    function buildTagChips() {
-      var cont = document.getElementById('tagFilter');
-      if (!cont) return;
-      var seen = {}, tags = [];
+    // Limpiar todos los filtros
+    document.getElementById('mfClear').addEventListener('click', function() {
+      document.querySelectorAll('#lsf-tipo .sf-option').forEach(function(o, i) { o.classList.toggle('selected', i === 0); });
+      document.querySelector('#lsf-tipo .sf-value').textContent = 'Cualquier tipo';
+      document.getElementById('lstUbic').value = '';
+      setCurrency('USD');
+      ['precioMin','precioMax','supMin','supMax','mfAmbientes','mfDormitorios','mfBanos','mfCubiertos','mfTerreno','mfAntiguedad'].forEach(function(id) { document.getElementById(id).value = ''; });
+      updPrecioLabel(); updM2Label();
+      document.querySelectorAll('#tagFilter .tag-chip.active, #servFilter .tag-chip.active').forEach(function(c) { c.classList.remove('active'); });
+      filtrarListing();
+    });
+
+    // Chips (características / servicios) a partir de las listas presentes en las propiedades
+    function uniqList(key) {
+      var seen = {}, arr = [];
       allProps.forEach(function(p) {
-        (p.caracteristicas || []).forEach(function(t) {
-          var key = normTxt(t);
-          if (key && !seen[key]) { seen[key] = true; tags.push({ norm: key, label: String(t).trim() }); }
-        });
+        (p[key] || []).forEach(function(t) { var k = normTxt(t); if (k && !seen[k]) { seen[k] = 1; arr.push({ norm: k, label: String(t).trim() }); } });
       });
-      cont.innerHTML = tags.map(function(t) {
-        return '<button type="button" class="tag-chip" data-tag="' + t.norm.replace(/"/g, '&quot;') + '"># ' + t.label + '</button>';
-      }).join('');
-      cont.querySelectorAll('.tag-chip').forEach(function(chip) {
-        chip.addEventListener('click', function() { chip.classList.toggle('active'); filtrarListing(); });
-      });
+      return arr;
+    }
+    function buildChips(contId, groupId, items) {
+      var cont = document.getElementById(contId); if (!cont || !items.length) return;
+      cont.innerHTML = items.map(function(t) { return '<button type="button" class="tag-chip" data-tag="' + t.norm.replace(/"/g, '&quot;') + '"># ' + t.label + '</button>'; }).join('');
+      cont.querySelectorAll('.tag-chip').forEach(function(chip) { chip.addEventListener('click', function() { chip.classList.toggle('active'); }); });
+      if (groupId) document.getElementById(groupId).style.display = 'block';
     }
 
     fetch(API_DIR)
@@ -920,28 +1309,52 @@
         return Promise.all(mds.map(function(f) {
           var slug = f.name.replace(/\.md$/, '');
           return fetch(f.download_url).then(function(r) { return r.text(); }).then(function(text) {
-            var p = parseYAML(text);
-            p._slug = slug;
-            return p;
+            var p = parseYAML(text); p._slug = slug; return p;
           });
         }));
       })
       .then(function(props) {
         document.getElementById('lstLoading').style.display = 'none';
-        // En el listado, las destacadas van al final (abajo), no arriba
         allProps = props.sort(function(a, b) { return (a.destacada ? 1 : 0) - (b.destacada ? 1 : 0); });
-        buildTagChips();
-        // Si se llegó desde un #hashtag (?tag=...), pre-seleccionar ese chip y filtrar
-        var tagParam = new URLSearchParams(window.location.search).get('tag');
-        if (tagParam) {
-          var key = normTxt(tagParam);
-          document.querySelectorAll('#tagFilter .tag-chip').forEach(function(c) {
-            if (c.dataset.tag === key) c.classList.add('active');
+        buildUbicOptions();
+        buildChips('tagFilter',  'caractGroup', uniqList('caracteristicas'));
+        buildChips('servFilter', 'servGroup',   uniqList('servicios'));
+
+        // Filtros que llegan por URL (desde el buscador del home o un #hashtag)
+        var sp = new URLSearchParams(window.location.search);
+        var hayFiltro = false, abrirMas = false;
+        var pTipo = sp.get('tipo'), pUbic = sp.get('ubic'), pTags = (sp.get('tags') || sp.get('tag') || '');
+        if (pTipo) {
+          document.querySelectorAll('#lsf-tipo .sf-option').forEach(function(o) {
+            var sel = o.dataset.value === pTipo.toLowerCase();
+            o.classList.toggle('selected', sel);
+            if (sel) document.querySelector('#lsf-tipo .sf-value').textContent = o.textContent;
           });
-          filtrarListing();
-        } else {
-          renderListing(allProps);
+          hayFiltro = true;
         }
+        if (pUbic) { document.getElementById('lstUbic').value = pUbic; hayFiltro = true; }
+        if (sp.get('cur')) setCurrency(sp.get('cur'));
+        function setVal(id, v, mas) { if (v != null && v !== '') { document.getElementById(id).value = v; hayFiltro = true; if (mas) abrirMas = true; } }
+        setVal('precioMin', sp.get('pmin')); setVal('precioMax', sp.get('pmax'));
+        setVal('supMin', sp.get('mmin')); setVal('supMax', sp.get('mmax'));
+        setVal('mfAmbientes', sp.get('amb'), true); setVal('mfDormitorios', sp.get('dorm'), true);
+        setVal('mfBanos', sp.get('banos'), true); setVal('mfCubiertos', sp.get('cub'), true);
+        setVal('mfTerreno', sp.get('ter'), true); setVal('mfAntiguedad', sp.get('ant'), true);
+        updPrecioLabel(); updM2Label();
+        function activarChips(contId, csv) {
+          if (!csv) return;
+          var keys = csv.split(',').map(function(t) { return normTxt(t); });
+          document.querySelectorAll('#' + contId + ' .tag-chip').forEach(function(c) { if (keys.indexOf(c.dataset.tag) !== -1) c.classList.add('active'); });
+          var grp = document.getElementById(contId).closest('.mf-chips-group');
+          if (grp) grp.classList.add('open');
+          hayFiltro = true; abrirMas = true;
+        }
+        activarChips('tagFilter', pTags);
+        activarChips('servFilter', sp.get('serv'));
+        if (abrirMas) { document.getElementById('moreFilters').classList.add('open'); document.getElementById('moreToggle').classList.add('open'); }
+
+        if (hayFiltro) filtrarListing();
+        else renderListing(allProps);
       })
       .catch(function() {
         document.getElementById('lstLoading').textContent = 'No se pudieron cargar las propiedades.';
@@ -974,8 +1387,10 @@
       // Galería
       var mainEl   = document.getElementById('galleryMain');
       var thumbsEl = document.getElementById('galleryThumbs');
-      var fotos    = p.fotos && p.fotos.length ? p.fotos : [];
+      var rawFotos = p.fotos && p.fotos.length ? p.fotos : [];
 
+      // Solo se arma la galería con las fotos que realmente cargan (ver keepValidImages).
+      keepValidImages(rawFotos, function(fotos) {
       if (fotos.length) {
         var currentIdx = 0;
 
@@ -1003,9 +1418,32 @@
           thumbDivs.forEach(function(td, ti) {
             td.classList.toggle('active', ti === currentIdx);
           });
+          // El thumbnail activo acompaña el scroll (queda centrado en la columna)
+          var at = thumbDivs[currentIdx];
+          if (at) {
+            var isRow = thumbsEl.scrollWidth > thumbsEl.clientWidth + 4;
+            if (isRow) {
+              thumbsEl.scrollTo({ left: Math.max(0, at.offsetLeft - (thumbsEl.clientWidth - at.offsetWidth) / 2), behavior: 'smooth' });
+            } else {
+              thumbsEl.scrollTo({ top: Math.max(0, at.offsetTop - (thumbsEl.clientHeight - at.offsetHeight) / 2), behavior: 'smooth' });
+            }
+          }
           btnPrev.disabled = currentIdx === 0;
           btnNext.disabled = currentIdx === fotos.length - 1;
         }
+
+        // Degradés arriba/abajo (o izq/der en mobile): aparecen/desaparecen según
+        // si quedan fotos por scrollear en esa dirección. La transición la hace el CSS (opacity).
+        function updateThumbFade() {
+          var outer = thumbsEl.parentNode; // .gallery-thumbs
+          var hayAntes   = thumbsEl.scrollTop > 4 || thumbsEl.scrollLeft > 4;
+          var hayDespues = (thumbsEl.scrollTop + thumbsEl.clientHeight < thumbsEl.scrollHeight - 4) ||
+                           (thumbsEl.scrollLeft + thumbsEl.clientWidth < thumbsEl.scrollWidth - 4);
+          outer.classList.toggle('show-top', hayAntes);
+          outer.classList.toggle('show-bottom', hayDespues);
+        }
+        thumbsEl.addEventListener('scroll', updateThumbFade);
+        window.addEventListener('resize', updateThumbFade);
 
         btnPrev.addEventListener('click', function() { goTo(currentIdx - 1); });
         btnNext.addEventListener('click', function() { goTo(currentIdx + 1); });
@@ -1013,8 +1451,9 @@
         // Navegar la galería con las flechas del teclado (← →)
         document.addEventListener('keydown', function(e) {
           if (document.getElementById('lightbox').classList.contains('open')) return;
-          if (e.key === 'ArrowLeft')  goTo(currentIdx - 1);
-          else if (e.key === 'ArrowRight') goTo(currentIdx + 1);
+          // Izquierda/Arriba → anterior ; Derecha/Abajo → siguiente
+          if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { goTo(currentIdx - 1); e.preventDefault(); }
+          else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { goTo(currentIdx + 1); e.preventDefault(); }
         });
 
         mainImg.addEventListener('click', function() {
@@ -1032,9 +1471,12 @@
         });
 
         goTo(0); // set initial arrow states
+        // Evaluar el fade una vez que el layout ya tiene medidas reales
+        setTimeout(updateThumbFade, 60);
       } else {
         mainEl.innerHTML = '<div class="gallery-no-img"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span>Sin fotos disponibles</span></div>';
       }
+      }); // fin keepValidImages
 
       // Datos principales
       document.getElementById('propTipo').textContent    = p.tipo || '';
@@ -1088,15 +1530,55 @@
       if (p.antiguedad)       statsArr.push(statHtml(ICO.calendario, p.antiguedad, '', p.antiguedad == 1 ? 'año antigüedad' : 'años antigüedad'));
       document.getElementById('propStats').innerHTML = statsArr.join('');
 
-      // Características → lista con check (clickeables → listado filtrado por #)
+      // ── Detalles de la propiedad (sección de abajo, estilo Remax) ──────────
+      var checkSvg = '<span class="check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>';
+      var hayDetalle = false;
+
+      // Superficies y datos (repite las principales + las extra como m² semicubierta)
+      function supItem(lbl, val) {
+        return '<div class="prop-detalle-item"><span class="lbl">' + lbl + ':</span> <span class="val">' + val + '</span></div>';
+      }
+      var sup = [];
+      if (p.metros_cuadrados)     sup.push(supItem('Superficie total', p.metros_cuadrados + ' m²'));
+      if (p.metros_cubiertos)     sup.push(supItem('Superficie cubierta', p.metros_cubiertos + ' m²'));
+      if (p.metros_semicubiertos) sup.push(supItem('Superficie semicubierta', p.metros_semicubiertos + ' m²'));
+      if (p.metros_terreno)       sup.push(supItem('Superficie del terreno', p.metros_terreno + ' m²'));
+      if (p.ambientes)            sup.push(supItem('Ambientes', p.ambientes));
+      if (p.dormitorios)          sup.push(supItem('Dormitorios', p.dormitorios));
+      if (p.banos)                sup.push(supItem('Baños', p.banos));
+      if (p.antiguedad)           sup.push(supItem('Antigüedad', p.antiguedad + (p.antiguedad == 1 ? ' año' : ' años')));
+      if (sup.length) {
+        document.getElementById('propSupBlock').innerHTML =
+          '<h3 class="prop-subtitle">Superficies y datos</h3><div class="prop-detalle-grid">' + sup.join('') + '</div>';
+        hayDetalle = true;
+      }
+
+      // Listas con check (servicios / ambientes / características)
+      function checkList(arr, clickable) {
+        return '<ul class="prop-caract-list">' + arr.map(function(t) {
+          var inner = checkSvg + '<span>' + t + '</span>';
+          return clickable
+            ? '<li><a class="prop-caract-item" href="/propiedades/?tag=' + encodeURIComponent(normTxt(t)) + '">' + inner + '</a></li>'
+            : '<li><span class="prop-caract-item">' + inner + '</span></li>';
+        }).join('') + '</ul>';
+      }
+      if (Array.isArray(p.servicios) && p.servicios.length) {
+        document.getElementById('propServBlock').innerHTML =
+          '<h3 class="prop-subtitle">Servicios</h3>' + checkList(p.servicios, false);
+        hayDetalle = true;
+      }
+      if (Array.isArray(p.ambientes_detalle) && p.ambientes_detalle.length) {
+        document.getElementById('propAmbBlock').innerHTML =
+          '<h3 class="prop-subtitle">Ambientes</h3>' + checkList(p.ambientes_detalle, false);
+        hayDetalle = true;
+      }
       var tags = p.caracteristicas || [];
       if (tags.length) {
-        var checkSvg = '<span class="check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>';
-        document.getElementById('propCaractList').innerHTML = tags.map(function(t) {
-          return '<li><a class="prop-caract-item" href="/propiedades/?tag=' + encodeURIComponent(normTxt(t)) + '">' + checkSvg + '<span>' + t + '</span></a></li>';
-        }).join('');
-        document.getElementById('propCaractWrap').style.display = 'block';
+        document.getElementById('propCaractBlock').innerHTML =
+          '<h3 class="prop-subtitle">Características</h3>' + checkList(tags, true);
+        hayDetalle = true;
       }
+      if (hayDetalle) document.getElementById('propDetallesWrap').style.display = 'block';
 
       // Reel
       if (p.link_reel) {
@@ -1146,6 +1628,9 @@
       // Mostrar contenido
       document.getElementById('propLoading').style.display = 'none';
       document.getElementById('propContent').style.display = 'block';
+
+      // Propiedades similares (ranking automático en base a todas las propiedades)
+      renderSimilares(p);
     })
     .catch(function() {
       document.getElementById('propLoading').innerHTML = 'Propiedad no encontrada. <a href="/propiedades" style="color:var(--acento)">Ver todas las propiedades →</a>';

@@ -38,6 +38,7 @@ collections:
         options:
           - Lote
           - Casa
+          - Departamento
           - "Alquiler permanente"
           - "Alquiler turístico"
         required: true
@@ -71,6 +72,14 @@ collections:
         value_type: int
         min: 0
 
+      - label: "Superficie semicubierta (m²)"
+        name: metros_semicubiertos
+        widget: number
+        required: false
+        value_type: int
+        min: 0
+        hint: "Balcones, galerías, quinchos abiertos, etc."
+
       - label: "Superficie del terreno (m²)"
         name: metros_terreno
         widget: number
@@ -78,12 +87,22 @@ collections:
         value_type: int
         min: 0
 
-      - label: "Ambientes"
+      - label: "Ambientes (número)"
         name: ambientes
         widget: number
         required: false
         value_type: int
         min: 0
+
+      - label: "Ambientes (detalle)"
+        name: ambientes_detalle
+        widget: list
+        required: false
+        hint: "Nombrá cada ambiente, uno por ítem. Sugerencias: Living, Cocina, Comedor, Dormitorio, Baño, Patio, Jardín, Quincho, Estudio, Lavadero, Cochera, Balcón."
+        field:
+          label: Ambiente
+          name: ambiente
+          widget: string
 
       - label: "Dormitorios"
         name: dormitorios
@@ -125,11 +144,21 @@ collections:
         required: false
         hint: "Pegá las coordenadas de Google Maps. Ej: -40.749944, -71.656222 o 40°44'59.8\"S 71°39'22.4\"W"
 
+      - label: "Servicios"
+        name: servicios
+        widget: list
+        required: false
+        hint: "Un servicio por ítem. Sugerencias: Luz, Gas natural, Agua corriente, Cloacas, Internet, Pavimento, Teléfono, Gas envasado."
+        field:
+          label: Servicio
+          name: servicio
+          widget: string
+
       - label: "Características"
         name: caracteristicas
         widget: list
         required: false
-        hint: "Una característica por ítem (ej: Cochera, Pileta, Vista al lago). Aparecen como #hashtags y se pueden filtrar en el buscador."
+        hint: "Una característica por ítem (ej: Cochera, Pileta, Vista al lago, Apto crédito). Se muestran en la ficha y se pueden filtrar en el buscador."
         field:
           label: Característica
           name: caracteristica

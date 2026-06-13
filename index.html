@@ -378,7 +378,7 @@
     }
     .search-section-inner {
       position: relative; z-index: 1;
-      max-width: var(--max-w); margin: 0 auto;
+      max-width: 1100px; margin: 0 auto;
     }
     .search-label {
       font-size: 10px; font-weight: 700; letter-spacing: 0.32em; text-transform: uppercase;
@@ -488,6 +488,74 @@
     .sf-option:hover { background: var(--verde-mist); color: var(--verde); }
     .sf-option.selected { color: var(--acento); font-weight: 600; }
 
+    /* ── Ubicación: autocompletado ── */
+    .sf-ubic { position: relative; }
+    .ac-list {
+      position: absolute; top: 100%; left: 0; right: 0; z-index: 40;
+      background: #fff; border: 1px solid var(--gris-suave); border-radius: 0 0 8px 8px;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.12); max-height: 240px; overflow-y: auto; display: none;
+    }
+    .ac-list.open { display: block; }
+    .ac-item { padding: 11px 16px; font-size: 14px; color: var(--negro); cursor: pointer; }
+    .ac-item:hover { background: var(--verde-mist); color: var(--verde); }
+
+    /* ── Filtros de rango (precio / m²): dropdown con Desde/Hasta ── */
+    .search-filter[data-range-filter] { cursor: pointer; }
+    .sf-dropdown.rng-dropdown { padding: 18px 20px 16px; min-width: 300px; }
+    #hsf-m2 .sf-dropdown { left: auto; right: 0; }
+    .cur-toggle { display: flex; gap: 6px; margin-bottom: 16px; }
+    .cur-opt {
+      flex: 1; padding: 7px 0; font-size: 12px; font-weight: 700; cursor: pointer;
+      background: #fff; border: 1.5px solid var(--gris-suave); border-radius: 6px;
+      color: var(--gris-texto); transition: background 0.18s, border-color 0.18s, color 0.18s;
+    }
+    .cur-opt.active { background: var(--verde); border-color: var(--verde); color: var(--crema); }
+    .rng-inputs { display: flex; gap: 12px; }
+    .rng-in { flex: 1; display: flex; flex-direction: column; gap: 5px; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gris-texto); }
+    .rng-dropdown .rng-in input {
+      font-family: var(--font-body); font-size: 14px; font-weight: 400; text-transform: none; letter-spacing: 0;
+      padding: 9px 11px; border: 1.5px solid var(--gris-suave); border-radius: 6px; background: #fff; color: var(--negro);
+      width: 100%; pointer-events: auto; -webkit-user-select: text; user-select: text;
+    }
+    .rng-dropdown .rng-in input:focus { outline: none; border-color: var(--acento); }
+
+    /* ── Más filtros ── */
+    .more-toggle {
+      display: inline-flex; align-items: center; gap: 8px; margin-top: 16px;
+      background: none; border: 1.5px solid var(--gris-suave); border-radius: 8px;
+      padding: 9px 16px; font-family: var(--font-body); font-size: 13px; font-weight: 700;
+      color: var(--verde); cursor: pointer; transition: border-color 0.2s, color 0.2s;
+    }
+    .more-toggle:hover, .more-toggle.open { border-color: var(--acento); color: var(--acento); }
+    .more-toggle svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
+    .more-filters {
+      display: none; margin-top: 16px; padding: 22px 24px;
+      background: #fff; border: 1px solid var(--gris-suave); border-radius: 12px;
+    }
+    .more-filters.open { display: block; }
+    .mf-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px 22px; }
+    @media (max-width: 760px) { .mf-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 480px) { .mf-grid { grid-template-columns: 1fr; } }
+    .mf-field { display: flex; flex-direction: column; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; color: var(--gris-texto); text-transform: uppercase; }
+    .mf-field select, .mf-field input {
+      font-family: var(--font-body); font-size: 14px; font-weight: 400; text-transform: none; letter-spacing: 0;
+      padding: 9px 11px; border: 1.5px solid var(--gris-suave); border-radius: 7px; background: #fff; color: var(--negro);
+    }
+    .mf-field select:focus, .mf-field input:focus { outline: none; border-color: var(--acento); }
+    .mf-chips-group { margin-top: 18px; }
+    .mf-chips-toggle {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #fff; border: 1.5px solid var(--gris-suave); border-radius: 8px; cursor: pointer; padding: 9px 16px;
+      font-family: var(--font-body); font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--verde);
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+    .mf-chips-toggle:hover { border-color: var(--acento); color: var(--acento); }
+    .mf-chips-group.open .mf-chips-toggle { border-color: var(--acento); color: var(--acento); }
+    .mf-chips-plus { font-size: 16px; line-height: 1; transition: transform 0.2s; }
+    .mf-chips-group.open .mf-chips-plus { transform: rotate(45deg); }
+    .mf-chips-list { display: none; margin-top: 10px; }
+    .mf-chips-group.open .mf-chips-list { display: flex; }
+
     /* SECCIÓN PROPIEDADES */
     .propiedades-section {
       background: var(--crema-dark);
@@ -553,8 +621,10 @@
     }
     .prop-card-meta span { display: flex; gap: 4px; }
     .prop-card-meta b { color: var(--verde-claro); font-weight: 600; }
-    .prop-card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
-    .prop-card-tag { font-size: 11px; font-weight: 600; color: var(--verde); background: rgba(54,81,43,0.07); border: 1px solid rgba(54,81,43,0.12); border-radius: 999px; padding: 3px 9px; }
+    .prop-card-ubic { font-size: 13px; color: var(--gris-texto); margin-bottom: 10px; }
+    .prop-card-stats { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+    .prop-card-stat { font-size: 12px; font-weight: 600; color: var(--verde); background: rgba(54,81,43,0.07); border: 1px solid rgba(54,81,43,0.14); border-radius: 999px; padding: 4px 11px; }
+    .btn-ver-todas-dest:hover { background: var(--acento-dark) !important; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(238,122,19,0.4) !important; }
     .prop-card-precio {
       font-family: var(--font-display); font-size: 22px;
       font-weight: 900; color: var(--verde);
@@ -662,15 +732,15 @@
 
     /* VALORES */
     .valores-section {
-      background: #1a2a10; padding: 160px 0;
+      background: #1a2a10; padding: 120px 0;
       width: 100vw; position: relative; left: 50%; right: 50%;
       margin-left: -50vw; margin-right: -50vw;
       overflow: hidden;
     }
     .valores-inner { max-width: var(--max-w); margin: 0 auto; padding: 0 56px; position: relative; z-index: 2; }
-    .valores-section .section-title { color: var(--crema); margin-bottom: 88px; }
+    .valores-section .section-title { color: var(--crema); margin-bottom: 40px; }
     .valores-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 0; }
-    .valor-item { padding: 64px 52px; position: relative; }
+    .valor-item { padding: 36px 52px; position: relative; }
     /* Líneas divisorias verticales: crecen de arriba hacia abajo al entrar en pantalla */
     .valor-item:not(:last-child)::after {
       content: ''; position: absolute; top: 0; right: 0;
@@ -1241,7 +1311,7 @@
     <div class="search-bar">
       <div class="search-bar-inner">
 
-        <!-- TIPO — dropdown custom -->
+        <!-- TIPO -->
         <div class="search-filter" data-custom-select id="sf-tipo">
           <label>Tipo</label>
           <span class="sf-value">Cualquier tipo</span>
@@ -1250,6 +1320,7 @@
             <div class="sf-option selected" data-value="">Cualquier tipo</div>
             <div class="sf-option" data-value="lote">Lotes</div>
             <div class="sf-option" data-value="casa">Casas</div>
+            <div class="sf-option" data-value="departamento">Departamentos</div>
             <div class="sf-option" data-value="alquiler permanente">Alquiler permanente</div>
             <div class="sf-option" data-value="alquiler turístico">Alquiler turístico</div>
           </div>
@@ -1257,39 +1328,92 @@
 
         <span class="search-sep"></span>
 
-        <!-- UBICACIÓN — input texto -->
-        <div class="search-filter" style="flex:1.4; cursor:text;">
+        <!-- UBICACIÓN (con autocompletado) -->
+        <div class="search-filter sf-ubic" style="flex:1.4; cursor:text;">
           <label>Ubicación</label>
-          <input id="hUbic" type="text" placeholder="Villa La Angostura..." />
+          <input id="hUbic" type="text" placeholder="Villa La Angostura…" autocomplete="off"/>
+          <div class="ac-list" id="hUbicAC"></div>
         </div>
 
         <span class="search-sep"></span>
 
-        <!-- PRECIO U$S — valor de referencia (vacío = indistinto) -->
-        <div class="search-filter" style="flex:1.4; cursor:text;">
-          <label>Precio U$S</label>
-          <input id="hPrecio" type="number" min="0" inputmode="numeric" placeholder="Sin especificar" />
+        <!-- PRECIO (moneda + Desde/Hasta) -->
+        <div class="search-filter" data-range-filter id="hsf-precio" style="flex:1.3;">
+          <label>Precio</label>
+          <span class="sf-value" id="hsf-precio-val"></span>
+          <svg class="search-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          <div class="sf-dropdown rng-dropdown">
+            <div class="cur-toggle" id="hCurToggle">
+              <button type="button" class="cur-opt active" data-cur="USD">U$S</button>
+              <button type="button" class="cur-opt" data-cur="ARS">$ ARS</button>
+            </div>
+            <div class="rng-inputs">
+              <label class="rng-in"><span>Desde</span><input type="number" id="hPrecioMin" min="0" inputmode="numeric" placeholder="Sin mínimo"></label>
+              <label class="rng-in"><span>Hasta</span><input type="number" id="hPrecioMax" min="0" inputmode="numeric" placeholder="Sin máximo"></label>
+            </div>
+          </div>
         </div>
 
         <span class="search-sep"></span>
 
-        <!-- M² — valor de referencia (vacío = indistinto) -->
-        <div class="search-filter" style="flex:0.9; cursor:text;">
-          <label>m²</label>
-          <input id="hM2" type="number" min="0" inputmode="numeric" placeholder="Sin especificar" />
+        <!-- SUPERFICIE m² (Desde/Hasta) -->
+        <div class="search-filter" data-range-filter id="hsf-m2" style="flex:1;">
+          <label>Superficie m²</label>
+          <span class="sf-value" id="hsf-m2-val"></span>
+          <svg class="search-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          <div class="sf-dropdown rng-dropdown">
+            <div class="rng-inputs">
+              <label class="rng-in"><span>Desde</span><input type="number" id="hSupMin" min="0" inputmode="numeric" placeholder="Sin mínimo"></label>
+              <label class="rng-in"><span>Hasta</span><input type="number" id="hSupMax" min="0" inputmode="numeric" placeholder="Sin máximo"></label>
+            </div>
+          </div>
         </div>
 
         <span class="search-sep"></span>
 
-        <!-- BOTÓN BUSCAR — derecha -->
-        <button class="search-btn">
+        <button class="search-btn" id="hBuscar">
           <svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           Buscar
         </button>
 
       </div><!-- fin search-bar-inner -->
     </div>
-    <div class="tag-filter" id="tagFilterHome"></div>
+
+    <!-- Más filtros -->
+    <button type="button" class="more-toggle" id="hMoreToggle" aria-expanded="false">
+      <svg viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+      <span>Más filtros</span>
+    </button>
+    <div class="more-filters" id="hMoreFilters">
+      <div class="mf-grid">
+        <label class="mf-field"><span>Ambientes (mín.)</span>
+          <select id="hAmbientes"><option value="">Cualquiera</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
+        </label>
+        <label class="mf-field"><span>Dormitorios (mín.)</span>
+          <select id="hDormitorios"><option value="">Cualquiera</option><option>1</option><option>2</option><option>3</option><option>4</option></select>
+        </label>
+        <label class="mf-field"><span>Baños (mín.)</span>
+          <select id="hBanos"><option value="">Cualquiera</option><option>1</option><option>2</option><option>3</option></select>
+        </label>
+        <label class="mf-field"><span>m² cubiertos (mín.)</span>
+          <input id="hCubiertos" type="number" min="0" inputmode="numeric" placeholder="—"/>
+        </label>
+        <label class="mf-field"><span>m² terreno (mín.)</span>
+          <input id="hTerreno" type="number" min="0" inputmode="numeric" placeholder="—"/>
+        </label>
+        <label class="mf-field"><span>Antigüedad (máx. años)</span>
+          <input id="hAntiguedad" type="number" min="0" inputmode="numeric" placeholder="—"/>
+        </label>
+      </div>
+      <div class="mf-chips-group" id="hServGroup" style="display:none">
+        <button type="button" class="mf-chips-toggle"><span>Servicios</span><span class="mf-chips-plus">+</span></button>
+        <div class="tag-filter mf-chips-list" id="servFilterHome"></div>
+      </div>
+      <div class="mf-chips-group" id="hCaractGroup" style="display:none">
+        <button type="button" class="mf-chips-toggle"><span>Características</span><span class="mf-chips-plus">+</span></button>
+        <div class="tag-filter mf-chips-list" id="tagFilterHome"></div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -1301,7 +1425,7 @@
         <p class="section-eyebrow" id="propiedades-eyebrow">Disponibles ahora</p>
         <h2 class="section-title" style="margin-bottom:0" id="propiedades-titulo">Propiedades destacadas</h2>
       </div>
-      <a href="/propiedades" style="background:none; border:1.5px solid var(--verde); color:var(--verde); font-family:var(--font-body); font-size:12px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; padding:10px 22px; border-radius:3px; cursor:pointer; transition:background 0.2s, color 0.2s; text-decoration:none; display:inline-block;">Ver todas →</a>
+      <a href="/propiedades" class="btn-ver-todas-dest" style="background:var(--acento); border:1.5px solid var(--acento); color:#fff; font-family:var(--font-body); font-size:12px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; padding:12px 26px; border-radius:5px; cursor:pointer; transition:background 0.2s, transform 0.2s, box-shadow 0.2s; text-decoration:none; display:inline-block; box-shadow:0 4px 14px rgba(238,122,19,0.3);">Ver todas →</a>
     </div>
     <div class="propiedades-loading" id="propiedades-loading">Cargando propiedades…</div>
     <div class="propiedades-grid" id="propiedades-grid"></div>
@@ -1502,7 +1626,9 @@
 <script>
   // Nav scroll
   const nav = document.getElementById('mainNav');
-  const navDarkSections = [document.getElementById('valores')].filter(Boolean);
+  // La nav se mantiene blanca/sólida sobre la sección de esencia (no transparente),
+  // así se diferencia del fondo verde. (Antes #valores activaba el modo transparente.)
+  const navDarkSections = [];
   function updateNav() {
     nav.classList.toggle('scrolled', window.scrollY > 40);
     // Nav transparente (estilo hero) cuando una sección oscura pasa por detrás de la barra
@@ -2022,25 +2148,31 @@
       return prefix + formatted + (esAlq ? ' / mes' : '');
     }
 
+    // Características principales para las cards: cada una en su píldora (sin #)
+    function cardStats(p) {
+      return [
+        p.metros_cuadrados ? p.metros_cuadrados + ' m²' : null,
+        p.ambientes        ? p.ambientes + ' amb.' : null,
+        p.dormitorios      ? p.dormitorios + ' dorm.' : null,
+        p.banos            ? p.banos + (p.banos == 1 ? ' baño' : ' baños') : null
+      ].filter(Boolean).map(function(s) { return '<span class="prop-card-stat">' + s + '</span>'; }).join('');
+    }
+
     function renderCard(p) {
       var foto = p.fotos && p.fotos.length ? p.fotos[0] : null;
       var imgHtml = foto
         ? '<img src="' + foto + '" alt="' + (p.titulo || '') + '" loading="lazy"/>'
         : '<div class="prop-card-no-img"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>';
       var ubic = [p.zona, p.localidad].filter(Boolean).join(', ') || p.ubicacion || '';
+      var statsStr = cardStats(p);
       return '<a class="prop-card" href="/propiedades/?p=' + (p._slug || p.codigo || '') + '">' +
         '<div class="prop-card-img">' + imgHtml +
           '<span class="prop-card-tipo">' + (p.tipo || '') + '</span>' +
         '</div>' +
         '<div class="prop-card-body">' +
           '<h3 class="prop-card-titulo">' + (p.titulo || '') + '</h3>' +
-          '<div class="prop-card-meta">' +
-            (p.metros_cuadrados ? '<span><b>m²</b> ' + p.metros_cuadrados + '</span>' : '') +
-            (ubic ? '<span><b>Zona</b> ' + ubic + '</span>' : '') +
-          '</div>' +
-          (Array.isArray(p.caracteristicas) && p.caracteristicas.length
-            ? '<div class="prop-card-tags">' + p.caracteristicas.slice(0, 4).map(function(t) { return '<span class="prop-card-tag"># ' + t + '</span>'; }).join('') + '</div>'
-            : '') +
+          (ubic ? '<div class="prop-card-ubic">' + ubic + '</div>' : '') +
+          (statsStr ? '<div class="prop-card-stats">' + statsStr + '</div>' : '') +
           '<p class="prop-card-precio">' + fmtPrecio(p) + '</p>' +
           '<div class="prop-card-footer">' +
             '<span class="prop-card-codigo">' + (p.codigo || '') + '</span>' +
@@ -2129,30 +2261,104 @@
       if (scroll !== false) document.getElementById('propiedades').scrollIntoView({ behavior: 'smooth' });
     };
 
-    // Arma los chips de características del home con todas las etiquetas presentes
-    function buildTagChipsHome() {
-      var cont = document.getElementById('tagFilterHome');
-      if (!cont) return;
-      var seen = {}, tags = [];
+    // Chips (características / servicios) del home — colapsables dentro de "Más filtros"
+    function buildHomeChips(contId, groupId, key) {
+      var cont = document.getElementById(contId); if (!cont) return;
+      var seen = {}, items = [];
       allProps.forEach(function(p) {
-        (p.caracteristicas || []).forEach(function(t) {
-          var key = normTxt(t);
-          if (key && !seen[key]) { seen[key] = true; tags.push({ norm: key, label: String(t).trim() }); }
-        });
+        (p[key] || []).forEach(function(t) { var k = normTxt(t); if (k && !seen[k]) { seen[k] = 1; items.push({ norm: k, label: String(t).trim() }); } });
       });
-      cont.innerHTML = tags.map(function(t) {
-        return '<button type="button" class="tag-chip" data-tag="' + t.norm.replace(/"/g, '&quot;') + '"># ' + t.label + '</button>';
-      }).join('');
-      cont.querySelectorAll('.tag-chip').forEach(function(chip) {
-        chip.addEventListener('click', function() { chip.classList.toggle('active'); window.filtrarPropiedades(false); });
-      });
+      if (!items.length) return;
+      cont.innerHTML = items.map(function(t) { return '<button type="button" class="tag-chip" data-tag="' + t.norm.replace(/"/g, '&quot;') + '"># ' + t.label + '</button>'; }).join('');
+      cont.querySelectorAll('.tag-chip').forEach(function(chip) { chip.addEventListener('click', function() { chip.classList.toggle('active'); }); });
+      if (groupId) document.getElementById(groupId).style.display = 'block';
+    }
+    function buildTagChipsHome() {
+      buildHomeChips('tagFilterHome', 'hCaractGroup', 'caracteristicas');
+      buildHomeChips('servFilterHome', 'hServGroup', 'servicios');
     }
 
-    // Conectar botón Buscar
-    var btn = document.querySelector('.search-btn');
-    if (btn) btn.addEventListener('click', window.filtrarPropiedades);
-    document.querySelectorAll('.search-filter input').forEach(function(inp) {
-      inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') window.filtrarPropiedades(); });
+    // Moneda + etiquetas de Precio / m²
+    var hCur = 'USD';
+    function hNum(id) { var v = (document.getElementById(id).value || '').trim(); return v === '' ? null : Number(v); }
+    function hFmt(n) { return Math.round(n).toLocaleString('es-AR'); }
+    function hUpdPrecio() {
+      var lo = hNum('hPrecioMin'), hi = hNum('hPrecioMax'), s = hCur === 'USD' ? 'U$S ' : '$ ', el = document.getElementById('hsf-precio-val');
+      if (lo == null && hi == null) el.textContent = '';
+      else if (lo != null && hi != null) el.textContent = s + hFmt(lo) + ' – ' + hFmt(hi);
+      else if (lo != null) el.textContent = 'Desde ' + s + hFmt(lo);
+      else el.textContent = 'Hasta ' + s + hFmt(hi);
+    }
+    function hUpdM2() {
+      var lo = hNum('hSupMin'), hi = hNum('hSupMax'), el = document.getElementById('hsf-m2-val');
+      if (lo == null && hi == null) el.textContent = '';
+      else if (lo != null && hi != null) el.textContent = hFmt(lo) + ' – ' + hFmt(hi) + ' m²';
+      else if (lo != null) el.textContent = 'Desde ' + hFmt(lo) + ' m²';
+      else el.textContent = 'Hasta ' + hFmt(hi) + ' m²';
+    }
+    ['hPrecioMin','hPrecioMax'].forEach(function(id) { document.getElementById(id).addEventListener('input', hUpdPrecio); });
+    ['hSupMin','hSupMax'].forEach(function(id) { document.getElementById(id).addEventListener('input', hUpdM2); });
+    document.querySelectorAll('#hCurToggle .cur-opt').forEach(function(b) {
+      b.addEventListener('click', function(e) { e.stopPropagation(); hCur = b.dataset.cur; document.querySelectorAll('#hCurToggle .cur-opt').forEach(function(x) { x.classList.toggle('active', x.dataset.cur === hCur); }); hUpdPrecio(); });
+    });
+
+    // Dropdowns de rango (abrir/cerrar; no se cierran al tocar adentro)
+    document.querySelectorAll('[data-range-filter]').forEach(function(rf) {
+      rf.addEventListener('click', function(e) {
+        if (e.target.closest('.sf-dropdown')) { e.stopPropagation(); return; }
+        e.stopPropagation();
+        var was = rf.classList.contains('open');
+        document.querySelectorAll('[data-custom-select], [data-range-filter]').forEach(function(o) { if (o !== rf) o.classList.remove('open'); });
+        rf.classList.toggle('open', !was);
+      });
+    });
+    document.addEventListener('click', function() { document.querySelectorAll('[data-range-filter].open').forEach(function(o) { o.classList.remove('open'); }); });
+    document.querySelectorAll('.rng-dropdown').forEach(function(d) { ['click','mousedown'].forEach(function(ev) { d.addEventListener(ev, function(e) { e.stopPropagation(); }); }); });
+
+    // Más filtros + grupos colapsables
+    document.getElementById('hMoreToggle').addEventListener('click', function() { var mf = document.getElementById('hMoreFilters'); var o = mf.classList.toggle('open'); this.classList.toggle('open', o); this.setAttribute('aria-expanded', o); });
+    document.querySelectorAll('#hMoreFilters .mf-chips-toggle').forEach(function(btn) { btn.addEventListener('click', function() { btn.closest('.mf-chips-group').classList.toggle('open'); }); });
+
+    // Autocomplete de ubicación (solo sugiere)
+    var hUbicOpts = [];
+    function buildHubicOpts() { var seen = {}; hUbicOpts = []; allProps.forEach(function(p) { [p.localidad, p.zona].forEach(function(u) { if (u) { var k = normTxt(u); if (!seen[k]) { seen[k] = 1; hUbicOpts.push(String(u).trim()); } } }); }); }
+    (function() {
+      var inp = document.getElementById('hUbic'), ac = document.getElementById('hUbicAC');
+      inp.addEventListener('input', function() {
+        var q = normTxt(inp.value); if (!q) { ac.classList.remove('open'); return; }
+        var m = hUbicOpts.filter(function(o) { return normTxt(o).indexOf(q) !== -1; }).slice(0, 6);
+        if (!m.length) { ac.classList.remove('open'); ac.innerHTML = ''; return; }
+        ac.innerHTML = m.map(function(x) { return '<div class="ac-item">' + x + '</div>'; }).join(''); ac.classList.add('open');
+      });
+      ac.addEventListener('click', function(e) { var it = e.target.closest('.ac-item'); if (!it) return; inp.value = it.textContent; ac.classList.remove('open'); });
+      document.addEventListener('click', function(e) { if (!e.target.closest('.sf-ubic')) ac.classList.remove('open'); });
+    })();
+
+    // El buscador del home REÚNE todo y REDIRIGE a /propiedades (la búsqueda ocurre allá)
+    window.irABusqueda = function() {
+      var params = new URLSearchParams();
+      var tipoOpt = document.querySelector('#sf-tipo .sf-option.selected');
+      var tipoVal = tipoOpt ? tipoOpt.dataset.value : '';
+      var ubic = (document.getElementById('hUbic').value || '').trim();
+      if (tipoVal) params.set('tipo', tipoVal);
+      if (ubic) params.set('ubic', ubic);
+      var pmin = hNum('hPrecioMin'), pmax = hNum('hPrecioMax');
+      if (pmin != null || pmax != null) { params.set('cur', hCur); if (pmin != null) params.set('pmin', pmin); if (pmax != null) params.set('pmax', pmax); }
+      if (hNum('hSupMin') != null) params.set('mmin', hNum('hSupMin'));
+      if (hNum('hSupMax') != null) params.set('mmax', hNum('hSupMax'));
+      [['hAmbientes','amb'],['hDormitorios','dorm'],['hBanos','banos'],['hCubiertos','cub'],['hTerreno','ter'],['hAntiguedad','ant']].forEach(function(par) { var v = hNum(par[0]); if (v != null) params.set(par[1], v); });
+      var tags = Array.prototype.map.call(document.querySelectorAll('#tagFilterHome .tag-chip.active'),  function(c) { return c.dataset.tag; });
+      var serv = Array.prototype.map.call(document.querySelectorAll('#servFilterHome .tag-chip.active'), function(c) { return c.dataset.tag; });
+      if (tags.length) params.set('tags', tags.join(','));
+      if (serv.length) params.set('serv', serv.join(','));
+      var qs = params.toString();
+      window.location.href = '/propiedades' + (qs ? '?' + qs : '');
+    };
+
+    var hb = document.getElementById('hBuscar');
+    if (hb) hb.addEventListener('click', window.irABusqueda);
+    document.querySelectorAll('.search-section input').forEach(function(inp) {
+      inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') window.irABusqueda(); });
     });
 
     // Cargar propiedades al iniciar
@@ -2173,6 +2379,7 @@
         document.getElementById('propiedades-loading').style.display = 'none';
         allProps = props.sort(function(a, b) { return (b.destacada ? 1 : 0) - (a.destacada ? 1 : 0); });
         buildTagChipsHome();
+        buildHubicOpts();
         mostrarDestacadas();
       })
       .catch(function() {
