@@ -82,6 +82,8 @@
        los thumbnails quedan pegados al margen derecho del contenido. 16:9. */
     .gallery-main {
       position: relative; flex: 1; min-width: 0; aspect-ratio: 16/9;
+      /* No supera el alto del viewport → la foto entra entera arriba sin cortarse */
+      max-height: calc(100vh - var(--nav-h) - 240px);
       border-radius: 10px; overflow: hidden; background: var(--verde);
       display: flex; align-items: center; justify-content: center;
     }
@@ -143,7 +145,7 @@
     /* Mobile: foto arriba, thumbnails en fila debajo */
     @media (max-width: 720px) {
       .gallery { flex-direction: column; height: auto; min-height: 0; }
-      .gallery-main { order: 1; flex: 0 0 auto; height: auto; width: 100%; max-width: 100%; }
+      .gallery-main { order: 1; flex: 0 0 auto; height: auto; width: 100%; max-width: 100%; max-height: none; }
       .gallery-thumbs { order: 2; flex: 0 0 auto; height: 80px; }
       .gallery-thumbs-inner {
         flex-direction: row; overflow-x: auto; overflow-y: hidden;
@@ -610,9 +612,25 @@
     .lightbox img { max-width: 92vw; max-height: 88vh; object-fit: contain; border-radius: 4px; }
     .lightbox-close {
       position: absolute; top: 20px; right: 24px;
-      background: none; border: none; color: #fff; font-size: 32px; cursor: pointer; opacity: 0.7;
+      background: none; border: none; color: #fff; font-size: 32px; cursor: pointer; opacity: 0.7; z-index: 2;
     }
     .lightbox-close:hover { opacity: 1; }
+    /* Flechas dentro del lightbox (pasar fotos sin cerrar) */
+    .lightbox-nav {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      background: var(--acento); color: #fff; border: none;
+      width: 52px; height: 52px; border-radius: 50%; cursor: pointer; z-index: 2;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, transform 0.2s; box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+    }
+    .lightbox-nav:hover { background: var(--acento-dark); transform: translateY(-50%) scale(1.08); }
+    .lightbox-nav svg { width: 24px; height: 24px; stroke: #fff; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+    .lightbox-nav.lb-prev { left: 24px; }
+    .lightbox-nav.lb-next { right: 24px; }
+    @media (max-width: 600px) {
+      .lightbox-nav { width: 42px; height: 42px; }
+      .lightbox-nav.lb-prev { left: 10px; } .lightbox-nav.lb-next { right: 10px; }
+    }
   </style>
 </head>
 <body>
@@ -862,7 +880,9 @@
 <!-- Lightbox -->
 <div class="lightbox" id="lightbox">
   <button class="lightbox-close" onclick="document.getElementById('lightbox').classList.remove('open')">×</button>
+  <button class="lightbox-nav lb-prev" id="lbPrev" aria-label="Anterior"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
   <img id="lightboxImg" src="" alt=""/>
+  <button class="lightbox-nav lb-next" id="lbNext" aria-label="Siguiente"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
 </div>
 
 <footer>
@@ -1427,6 +1447,9 @@
               mainImg.style.opacity = '1';
             }, 180);
           }
+          // Si el lightbox (foto ampliada) está abierto, también lo actualiza
+          var lbImg = document.getElementById('lightboxImg');
+          if (document.getElementById('lightbox').classList.contains('open')) lbImg.src = newSrc;
           thumbDivs.forEach(function(td, ti) {
             td.classList.toggle('active', ti === currentIdx);
           });
@@ -1460,18 +1483,22 @@
         btnPrev.addEventListener('click', function() { goTo(currentIdx - 1); });
         btnNext.addEventListener('click', function() { goTo(currentIdx + 1); });
 
-        // Navegar la galería con las flechas del teclado (← →)
+        // Navegar con las flechas del teclado (funciona en la galería Y en el lightbox abierto)
         document.addEventListener('keydown', function(e) {
-          if (document.getElementById('lightbox').classList.contains('open')) return;
           // Izquierda/Arriba → anterior ; Derecha/Abajo → siguiente
           if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { goTo(currentIdx - 1); e.preventDefault(); }
           else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { goTo(currentIdx + 1); e.preventDefault(); }
         });
 
+        // Click en la foto → abrir ampliada (en la foto actual)
         mainImg.addEventListener('click', function() {
-          document.getElementById('lightboxImg').src = mainImg.src;
+          document.getElementById('lightboxImg').src = fotos[currentIdx];
           document.getElementById('lightbox').classList.add('open');
         });
+        // Flechas dentro del lightbox (pasar fotos sin cerrar)
+        var lbPrev = document.getElementById('lbPrev'), lbNext = document.getElementById('lbNext');
+        if (lbPrev) lbPrev.addEventListener('click', function(e) { e.stopPropagation(); goTo(currentIdx - 1); });
+        if (lbNext) lbNext.addEventListener('click', function(e) { e.stopPropagation(); goTo(currentIdx + 1); });
 
         fotos.forEach(function(f, i) {
           var t = document.createElement('div');
