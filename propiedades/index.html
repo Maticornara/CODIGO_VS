@@ -76,16 +76,15 @@
 
     /* ═══ GALERÍA: imagen 16:9 (entra completa en pantalla) + thumbnails verticales con scroll ═══ */
     .gallery {
-      display: flex; gap: 60px; margin-bottom: 30px; align-items: stretch; justify-content: center;
+      display: flex; gap: 14px; margin-bottom: 30px; align-items: stretch; justify-content: flex-start;
     }
-    /* Foto SIEMPRE 16:9 estricto (sin verde): el alto se acota al viewport y el ancho
-       se deriva del alto → entra entera arriba y nunca se ve la caja verde de fondo.
-       overflow visible para que las flechas puedan salir por fuera de la imagen. */
+    /* Foto 16:9 estricto (sin verde): alto acotado al viewport, ancho derivado del alto.
+       Alineada a la izquierda; los thumbnails van a su derecha. */
     .gallery-main {
       position: relative; flex: 0 0 auto;
-      height: min(calc(100vh - var(--nav-h) - 250px), 440px);
+      height: min(calc(100vh - var(--nav-h) - 250px), 500px);
       aspect-ratio: 16/9; width: auto; max-width: 100%;
-      border-radius: 10px; overflow: visible; background: var(--verde);
+      border-radius: 10px; overflow: hidden; background: var(--verde);
       display: flex; align-items: center; justify-content: center;
     }
     .gallery-main img {
@@ -112,13 +111,13 @@
     }
     .gallery-arrow:hover { background: var(--acento-dark); transform: translateY(-50%) scale(1.1); box-shadow: 0 4px 16px rgba(0,0,0,0.32); }
     .gallery-arrow svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
-    /* Flechas POR FUERA de la imagen (en el espacio lateral) */
-    .gallery-arrow.prev { left: -58px; }
-    .gallery-arrow.next { right: -58px; }
+    /* Flechas DENTRO de la imagen */
+    .gallery-arrow.prev { left: 14px; }
+    .gallery-arrow.next { right: 14px; }
     .gallery-arrow:disabled { opacity: 0.2; cursor: default; }
     /* Columna de thumbnails (a la IZQUIERDA de la foto): el contenedor externo se
        estira al alto de la foto, y el scroller interno (absoluto) hace el scroll local. */
-    .gallery-thumbs { flex: 0 0 270px; position: relative; }
+    .gallery-thumbs { flex: 0 0 210px; position: relative; }
     .gallery-thumbs-inner {
       position: absolute; inset: 0; overflow-y: auto;
       display: flex; flex-direction: column; gap: 10px;
@@ -129,14 +128,14 @@
        para scrollear en esa dirección. La foto del borde se funde con el fondo. */
     .gallery-thumbs::before,
     .gallery-thumbs::after {
-      content: ''; position: absolute; left: 0; right: 0; height: 38px;
+      content: ''; position: absolute; left: 0; right: 0; height: 50px;
       pointer-events: none; z-index: 3; opacity: 0; transition: opacity 0.35s ease;
     }
-    .gallery-thumbs::before { top: 0; background: linear-gradient(to bottom, var(--crema) 15%, transparent); }
-    .gallery-thumbs::after  { bottom: 0; background: linear-gradient(to top, var(--crema) 15%, transparent); }
+    .gallery-thumbs::before { top: 0; background: linear-gradient(to bottom, var(--crema), transparent); }
+    .gallery-thumbs::after  { bottom: 0; background: linear-gradient(to top, var(--crema), transparent); }
     .gallery-thumbs.show-top::before    { opacity: 1; }
     .gallery-thumbs.show-bottom::after  { opacity: 1; }
-    /* Landscape (16:10, como las fotos); con la columna 270px + foto a 440px entran ~2,5 */
+    /* Landscape (16:10, como las fotos); con la columna 210px + foto a 500px entran ~3,5 */
     .gallery-thumb {
       width: 100%; aspect-ratio: 16/10; border-radius: 7px; overflow: hidden;
       cursor: pointer; opacity: 0.5; transition: opacity 0.2s, border-color 0.2s;
