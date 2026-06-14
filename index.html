@@ -10,6 +10,8 @@
        para que el hero arranque ya en el idioma correcto. */
     window.SOLAR_LANG = (function(){ try { return localStorage.getItem('solar-lang') || 'es'; } catch(e){ return 'es'; } })();
     document.documentElement.lang = window.SOLAR_LANG;
+    // Helper para textos generados por JS: T('español', 'english')
+    window.T = function(es, en){ return window.SOLAR_LANG === 'en' ? en : es; };
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -1322,22 +1324,22 @@
 <!-- BARRA DE BÚSQUEDA -->
 <section class="search-section">
   <div class="search-section-inner">
-    <p class="search-label">Encontrá tu propiedad ideal</p>
+    <p class="search-label" data-en="Find your ideal property">Encontrá tu propiedad ideal</p>
     <div class="search-bar">
       <div class="search-bar-inner">
 
         <!-- TIPO -->
         <div class="search-filter" data-custom-select id="sf-tipo">
-          <label>Tipo</label>
-          <span class="sf-value">Cualquier tipo</span>
+          <label data-en="Type">Tipo</label>
+          <span class="sf-value" data-en="Any type">Cualquier tipo</span>
           <svg class="search-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
           <div class="sf-dropdown">
-            <div class="sf-option selected" data-value="">Cualquier tipo</div>
-            <div class="sf-option" data-value="lote">Lotes</div>
-            <div class="sf-option" data-value="casa">Casas</div>
-            <div class="sf-option" data-value="departamento">Departamentos</div>
-            <div class="sf-option" data-value="alquiler permanente">Alquiler permanente</div>
-            <div class="sf-option" data-value="alquiler turístico">Alquiler turístico</div>
+            <div class="sf-option selected" data-value="" data-en="Any type">Cualquier tipo</div>
+            <div class="sf-option" data-value="lote" data-en="Lots">Lotes</div>
+            <div class="sf-option" data-value="casa" data-en="Houses">Casas</div>
+            <div class="sf-option" data-value="departamento" data-en="Apartments">Departamentos</div>
+            <div class="sf-option" data-value="alquiler permanente" data-en="Long-term rental">Alquiler permanente</div>
+            <div class="sf-option" data-value="alquiler turístico" data-en="Vacation rental">Alquiler turístico</div>
           </div>
         </div>
 
@@ -1345,7 +1347,7 @@
 
         <!-- UBICACIÓN (con autocompletado) -->
         <div class="search-filter sf-ubic" style="flex:1.4; cursor:text;">
-          <label>Ubicación</label>
+          <label data-en="Location">Ubicación</label>
           <input id="hUbic" type="text" placeholder="Villa La Angostura…" autocomplete="off"/>
           <div class="ac-list" id="hUbicAC"></div>
         </div>
@@ -1354,7 +1356,7 @@
 
         <!-- PRECIO (moneda + Desde/Hasta) -->
         <div class="search-filter" data-range-filter id="hsf-precio" style="flex:1.3;">
-          <label>Precio</label>
+          <label data-en="Price">Precio</label>
           <span class="sf-value" id="hsf-precio-val"></span>
           <svg class="search-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
           <div class="sf-dropdown rng-dropdown">
@@ -1363,8 +1365,8 @@
               <button type="button" class="cur-opt" data-cur="ARS">$ ARS</button>
             </div>
             <div class="rng-inputs">
-              <label class="rng-in"><span>Desde</span><input type="number" id="hPrecioMin" min="0" inputmode="numeric" placeholder="Sin mínimo"></label>
-              <label class="rng-in"><span>Hasta</span><input type="number" id="hPrecioMax" min="0" inputmode="numeric" placeholder="Sin máximo"></label>
+              <label class="rng-in"><span data-en="From">Desde</span><input type="number" id="hPrecioMin" min="0" inputmode="numeric" placeholder="Sin mínimo" data-en-ph="No minimum"></label>
+              <label class="rng-in"><span data-en="To">Hasta</span><input type="number" id="hPrecioMax" min="0" inputmode="numeric" placeholder="Sin máximo" data-en-ph="No maximum"></label>
             </div>
           </div>
         </div>
@@ -1373,13 +1375,13 @@
 
         <!-- SUPERFICIE m² (Desde/Hasta) -->
         <div class="search-filter" data-range-filter id="hsf-m2" style="flex:1;">
-          <label>Superficie m²</label>
+          <label data-en="Area m²">Superficie m²</label>
           <span class="sf-value" id="hsf-m2-val"></span>
           <svg class="search-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
           <div class="sf-dropdown rng-dropdown">
             <div class="rng-inputs">
-              <label class="rng-in"><span>Desde</span><input type="number" id="hSupMin" min="0" inputmode="numeric" placeholder="Sin mínimo"></label>
-              <label class="rng-in"><span>Hasta</span><input type="number" id="hSupMax" min="0" inputmode="numeric" placeholder="Sin máximo"></label>
+              <label class="rng-in"><span data-en="From">Desde</span><input type="number" id="hSupMin" min="0" inputmode="numeric" placeholder="Sin mínimo" data-en-ph="No minimum"></label>
+              <label class="rng-in"><span data-en="To">Hasta</span><input type="number" id="hSupMax" min="0" inputmode="numeric" placeholder="Sin máximo" data-en-ph="No maximum"></label>
             </div>
           </div>
         </div>
@@ -1388,7 +1390,7 @@
 
         <button class="search-btn" id="hBuscar">
           <svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          Buscar
+          <span data-en="Search">Buscar</span>
         </button>
 
       </div><!-- fin search-bar-inner -->
@@ -1397,35 +1399,35 @@
     <!-- Más filtros -->
     <button type="button" class="more-toggle" id="hMoreToggle" aria-expanded="false">
       <svg viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
-      <span>Más filtros</span>
+      <span data-en="More filters">Más filtros</span>
     </button>
     <div class="more-filters" id="hMoreFilters">
       <div class="mf-grid">
-        <label class="mf-field"><span>Ambientes (mín.)</span>
-          <select id="hAmbientes"><option value="">Cualquiera</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
+        <label class="mf-field"><span data-en="Rooms (min.)">Ambientes (mín.)</span>
+          <select id="hAmbientes"><option value="" data-en="Any">Cualquiera</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
         </label>
-        <label class="mf-field"><span>Dormitorios (mín.)</span>
-          <select id="hDormitorios"><option value="">Cualquiera</option><option>1</option><option>2</option><option>3</option><option>4</option></select>
+        <label class="mf-field"><span data-en="Bedrooms (min.)">Dormitorios (mín.)</span>
+          <select id="hDormitorios"><option value="" data-en="Any">Cualquiera</option><option>1</option><option>2</option><option>3</option><option>4</option></select>
         </label>
-        <label class="mf-field"><span>Baños (mín.)</span>
-          <select id="hBanos"><option value="">Cualquiera</option><option>1</option><option>2</option><option>3</option></select>
+        <label class="mf-field"><span data-en="Bathrooms (min.)">Baños (mín.)</span>
+          <select id="hBanos"><option value="" data-en="Any">Cualquiera</option><option>1</option><option>2</option><option>3</option></select>
         </label>
-        <label class="mf-field"><span>m² cubiertos (mín.)</span>
+        <label class="mf-field"><span data-en="Covered m² (min.)">m² cubiertos (mín.)</span>
           <input id="hCubiertos" type="number" min="0" inputmode="numeric" placeholder="—"/>
         </label>
-        <label class="mf-field"><span>m² terreno (mín.)</span>
+        <label class="mf-field"><span data-en="Land m² (min.)">m² terreno (mín.)</span>
           <input id="hTerreno" type="number" min="0" inputmode="numeric" placeholder="—"/>
         </label>
-        <label class="mf-field"><span>Antigüedad (máx. años)</span>
+        <label class="mf-field"><span data-en="Age (max. years)">Antigüedad (máx. años)</span>
           <input id="hAntiguedad" type="number" min="0" inputmode="numeric" placeholder="—"/>
         </label>
       </div>
       <div class="mf-chips-group" id="hServGroup" style="display:none">
-        <button type="button" class="mf-chips-toggle"><span>Servicios</span><span class="mf-chips-plus">+</span></button>
+        <button type="button" class="mf-chips-toggle"><span data-en="Services">Servicios</span><span class="mf-chips-plus">+</span></button>
         <div class="tag-filter mf-chips-list" id="servFilterHome"></div>
       </div>
       <div class="mf-chips-group" id="hCaractGroup" style="display:none">
-        <button type="button" class="mf-chips-toggle"><span>Características</span><span class="mf-chips-plus">+</span></button>
+        <button type="button" class="mf-chips-toggle"><span data-en="Features">Características</span><span class="mf-chips-plus">+</span></button>
         <div class="tag-filter mf-chips-list" id="tagFilterHome"></div>
       </div>
     </div>
@@ -1440,11 +1442,11 @@
         <p class="section-eyebrow" id="propiedades-eyebrow">Disponibles ahora</p>
         <h2 class="section-title" style="margin-bottom:0" id="propiedades-titulo">Propiedades destacadas</h2>
       </div>
-      <a href="/propiedades" class="btn-ver-todas-dest" style="background:var(--acento); border:1.5px solid var(--acento); color:#fff; font-family:var(--font-body); font-size:12px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; padding:12px 26px; border-radius:5px; cursor:pointer; transition:background 0.2s, transform 0.2s, box-shadow 0.2s; text-decoration:none; display:inline-block; box-shadow:0 4px 14px rgba(238,122,19,0.3);">Ver todas →</a>
+      <a href="/propiedades" class="btn-ver-todas-dest" data-en="View all →" style="background:var(--acento); border:1.5px solid var(--acento); color:#fff; font-family:var(--font-body); font-size:12px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; padding:12px 26px; border-radius:5px; cursor:pointer; transition:background 0.2s, transform 0.2s, box-shadow 0.2s; text-decoration:none; display:inline-block; box-shadow:0 4px 14px rgba(238,122,19,0.3);">Ver todas →</a>
     </div>
-    <div class="propiedades-loading" id="propiedades-loading">Cargando propiedades…</div>
+    <div class="propiedades-loading" id="propiedades-loading" data-en="Loading properties…">Cargando propiedades…</div>
     <div class="propiedades-grid" id="propiedades-grid"></div>
-    <div class="propiedades-empty" id="propiedades-empty" style="display:none">
+    <div class="propiedades-empty" id="propiedades-empty" style="display:none" data-en="No properties found with those filters.">
       No se encontraron propiedades con esos filtros.
     </div>
   </div>
@@ -1452,33 +1454,33 @@
 
 <!-- SERVICIOS -->
 <div class="servicios-wrap" id="servicios">
-  <p class="section-eyebrow">Lo que hacemos</p>
-  <h2 class="section-title">Servicios pensados<br/>para cada etapa</h2>
+  <p class="section-eyebrow" data-en="What we do">Lo que hacemos</p>
+  <h2 class="section-title" data-en="Services for<br/>every stage">Servicios pensados<br/>para cada etapa</h2>
 </div>
 <div class="servicios-grid">
   <div class="servicio-card">
     <span class="servicio-num">01</span>
     <div class="servicio-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-    <h3 class="servicio-title">Venta de Casas</h3>
-    <p class="servicio-desc">Gestionamos la venta con análisis técnico de mercado, marketing estratégico y acompañamiento legal completo.</p>
+    <h3 class="servicio-title" data-en="House Sales">Venta de Casas</h3>
+    <p class="servicio-desc" data-en="We manage the sale with technical market analysis, strategic marketing and full legal support.">Gestionamos la venta con análisis técnico de mercado, marketing estratégico y acompañamiento legal completo.</p>
   </div>
   <div class="servicio-card">
     <span class="servicio-num">02</span>
     <div class="servicio-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
-    <h3 class="servicio-title">Venta de Lotes</h3>
-    <p class="servicio-desc">Terrenos en barrios cerrados, a la vera de lagos y zonas de alta valorización en toda la región de Neuquén.</p>
+    <h3 class="servicio-title" data-en="Land Sales">Venta de Lotes</h3>
+    <p class="servicio-desc" data-en="Lots in gated communities, lakeside and high-appreciation areas across the Neuquén region.">Terrenos en barrios cerrados, a la vera de lagos y zonas de alta valorización en toda la región de Neuquén.</p>
   </div>
   <div class="servicio-card">
     <span class="servicio-num">03</span>
     <div class="servicio-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
-    <h3 class="servicio-title">Alquileres</h3>
-    <p class="servicio-desc">Permanentes y turísticos. Administración integral, contratos seguros y gestión de inquilinos para propietarios tranquilos.</p>
+    <h3 class="servicio-title" data-en="Rentals">Alquileres</h3>
+    <p class="servicio-desc" data-en="Long-term and vacation. Full management, secure contracts and tenant handling for worry-free owners.">Permanentes y turísticos. Administración integral, contratos seguros y gestión de inquilinos para propietarios tranquilos.</p>
   </div>
   <div class="servicio-card">
     <span class="servicio-num">04</span>
     <div class="servicio-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
-    <h3 class="servicio-title">Tasaciones</h3>
-    <p class="servicio-desc">Valuación técnica y profesional basada en análisis real de mercado. Respaldada por matrícula contable e inmobiliaria.</p>
+    <h3 class="servicio-title" data-en="Appraisals">Tasaciones</h3>
+    <p class="servicio-desc" data-en="Technical, professional valuation based on real market analysis. Backed by accounting and real-estate licenses.">Valuación técnica y profesional basada en análisis real de mercado. Respaldada por matrícula contable e inmobiliaria.</p>
   </div>
 </div>
 
@@ -1488,23 +1490,23 @@
   <div class="hero-pattern"></div>
   <div class="hero-noise"></div>
   <div class="valores-inner">
-    <p class="section-eyebrow">Nuestra esencia</p>
-    <h2 class="section-title">Lo que nos define</h2>
+    <p class="section-eyebrow" data-en="Our essence">Nuestra esencia</p>
+    <h2 class="section-title" data-en="What defines us">Lo que nos define</h2>
     <div class="valores-grid">
       <div class="valor-item">
         <p class="valor-num">01 ——</p>
-        <h3 class="valor-title">Integridad</h3>
-        <p class="valor-desc">Actuamos con honestidad en cada operación. Tu confianza es el activo más valioso que administramos.</p>
+        <h3 class="valor-title" data-en="Integrity">Integridad</h3>
+        <p class="valor-desc" data-en="We act with honesty in every deal. Your trust is the most valuable asset we manage.">Actuamos con honestidad en cada operación. Tu confianza es el activo más valioso que administramos.</p>
       </div>
       <div class="valor-item">
         <p class="valor-num">02 ——</p>
-        <h3 class="valor-title">Precisión Técnica</h3>
-        <p class="valor-desc">La doble formación contable e inmobiliaria nos permite ver lo que otros no ven: el valor real de cada propiedad.</p>
+        <h3 class="valor-title" data-en="Technical Precision">Precisión Técnica</h3>
+        <p class="valor-desc" data-en="Our dual accounting and real-estate background lets us see what others don't: the real value of each property.">La doble formación contable e inmobiliaria nos permite ver lo que otros no ven: el valor real de cada propiedad.</p>
       </div>
       <div class="valor-item">
         <p class="valor-num">03 ——</p>
-        <h3 class="valor-title">Transparencia</h3>
-        <p class="valor-desc">Sin sorpresas. Te explicamos cada paso, cada costo y cada implicancia legal antes de firmar cualquier documento.</p>
+        <h3 class="valor-title" data-en="Transparency">Transparencia</h3>
+        <p class="valor-desc" data-en="No surprises. We explain every step, every cost and every legal implication before signing any document.">Sin sorpresas. Te explicamos cada paso, cada costo y cada implicancia legal antes de firmar cualquier documento.</p>
       </div>
     </div>
   </div>
@@ -1517,15 +1519,15 @@
       <img class="sobre-img" src="fotos/foto_antonella.jpeg" alt="Antonella Gutiérrez — Solar Propiedades" loading="lazy"/>
     </div>
     <div class="sobre-text">
-      <p class="section-eyebrow">Sobre mí</p>
-      <h2 class="section-title"><span class="sobre-tw" data-text="Hola, soy&#10;Antonella Gutiérrez"></span></h2>
+      <p class="section-eyebrow" data-en="About me">Sobre mí</p>
+      <h2 class="section-title"><span class="sobre-tw" data-text="Hola, soy&#10;Antonella Gutiérrez" data-text-en="Hi, I'm&#10;Antonella Gutiérrez"></span></h2>
       <div class="sobre-bio">
-        <p class="bio-line">Combinar mis dos pasiones —<strong>la contabilidad y el corretaje inmobiliario</strong>— es lo que me permite diferenciarme en el mercado. Entiendo <strong>el valor real de las propiedades</strong> no solo por su ubicación, sino por su rendimiento y su marco legal.</p>
-        <p class="bio-line">Mi objetivo es que te sientas asesorado por una profesional que domina tanto el <strong>mercado inmobiliario como la normativa vigente</strong>, garantizando una experiencia <strong>eficiente y sin sorpresas</strong>.</p>
+        <p class="bio-line" data-en="Combining my two passions —<strong>accounting and real estate brokerage</strong>— is what sets me apart in the market. I understand <strong>the real value of properties</strong> not only by their location, but by their return and legal framework.">Combinar mis dos pasiones —<strong>la contabilidad y el corretaje inmobiliario</strong>— es lo que me permite diferenciarme en el mercado. Entiendo <strong>el valor real de las propiedades</strong> no solo por su ubicación, sino por su rendimiento y su marco legal.</p>
+        <p class="bio-line" data-en="My goal is for you to feel advised by a professional who masters both the <strong>real estate market and current regulations</strong>, ensuring an <strong>efficient, surprise-free</strong> experience.">Mi objetivo es que te sientas asesorado por una profesional que domina tanto el <strong>mercado inmobiliario como la normativa vigente</strong>, garantizando una experiencia <strong>eficiente y sin sorpresas</strong>.</p>
       </div>
       <div class="sobre-badges">
-        <div class="badge"><span class="badge-dot"></span>Consejo de Ciencias Económicas</div>
-        <div class="badge"><span class="badge-dot"></span>Colegio de Martilleros — Neuquén</div>
+        <div class="badge" data-en="<span class='badge-dot'></span>Council of Economic Sciences"><span class="badge-dot"></span>Consejo de Ciencias Económicas</div>
+        <div class="badge" data-en="<span class='badge-dot'></span>Board of Real Estate Brokers — Neuquén"><span class="badge-dot"></span>Colegio de Martilleros — Neuquén</div>
       </div>
     </div>
   </div>
@@ -1534,14 +1536,14 @@
 <!-- FAQ -->
 <section class="faq-section" id="faq">
   <div class="faq-inner">
-    <p class="section-eyebrow">Preguntas frecuentes</p>
-    <h2 class="section-title">Todo lo que necesitás saber</h2>
+    <p class="section-eyebrow" data-en="FAQ">Preguntas frecuentes</p>
+    <h2 class="section-title" data-en="Everything you need to know">Todo lo que necesitás saber</h2>
     <div class="faq-list">
       <div class="faq-item">
         <div class="faq-q">
-          <span class="faq-q-text">¿Qué documentos necesito para vender mi casa o lote?</span>
+          <span class="faq-q-text" data-en="What documents do I need to sell my house or lot?">¿Qué documentos necesito para vender mi casa o lote?</span>
         </div>
-        <div class="faq-a"><div class="faq-a-inner">Para iniciar el proceso de venta y garantizar una operación segura, necesitás:<ul>
+        <div class="faq-a"><div class="faq-a-inner" data-en="To start the sale process and ensure a secure transaction, you need:<ul><li>Property Title (Deed) registered at the Real Estate Registry</li><li>ID of the owner(s) and their spouses if applicable</li><li>Updated survey plan approved by the Cadastre</li><li>Parcel status to verify that the paperwork matches the actual land</li><li>Up-to-date municipal rate (TISH), provincial property tax and utility receipts</li><li>Certificate of no outstanding expenses (for apartments or gated communities)</li></ul>">Para iniciar el proceso de venta y garantizar una operación segura, necesitás:<ul>
           <li>Título de Propiedad (Escritura) inscripta en el Registro de la Propiedad Inmueble</li>
           <li>DNI del/los titulares y de sus cónyuges si corresponde</li>
           <li>Plano de Mensura actualizado y aprobado por Catastro</li>
@@ -1552,9 +1554,9 @@
       </div>
       <div class="faq-item">
         <div class="faq-q">
-          <span class="faq-q-text">¿Qué documentos necesito para comprar una casa o lote?</span>
+          <span class="faq-q-text" data-en="What documents do I need to buy a house or lot?">¿Qué documentos necesito para comprar una casa o lote?</span>
         </div>
-        <div class="faq-a"><div class="faq-a-inner">Comprar una propiedad es un paso importante. Para avanzar de forma firme necesitás:<ul>
+        <div class="faq-a"><div class="faq-a-inner" data-en="Buying a property is an important step. To move forward firmly you need:<ul><li>Valid ID of those who will be listed as owners</li><li>CUIT/CUIL certificate issued by ANSES or AFIP</li><li>Proof of funds: sworn statements, pay slips or previous sale receipts</li><li>Purchase reservation: a formal document to lock in the price and conditions while the legal documentation is reviewed</li></ul>">Comprar una propiedad es un paso importante. Para avanzar de forma firme necesitás:<ul>
           <li>DNI vigente de quienes figurarán como titulares</li>
           <li>Constancia de CUIT/CUIL emitida por ANSES o AFIP</li>
           <li>Justificación de fondos: declaraciones juradas, recibos de sueldo o boletos de venta anteriores</li>
@@ -1563,9 +1565,9 @@
       </div>
       <div class="faq-item">
         <div class="faq-q">
-          <span class="faq-q-text">¿Para qué contratar los servicios de Solar Propiedades?</span>
+          <span class="faq-q-text" data-en="Why hire Solar Propiedades?">¿Para qué contratar los servicios de Solar Propiedades?</span>
         </div>
-        <div class="faq-a"><div class="faq-a-inner">Contratar un profesional matriculado no es un gasto, es una inversión en seguridad. Al trabajar con nosotros obtenés:<ul>
+        <div class="faq-a"><div class="faq-a-inner" data-en="Hiring a licensed professional is not an expense, it's an investment in security. Working with us you get:<ul><li>Technical appraisal based on real market analysis, not estimates</li><li>Strategic marketing with visibility on the best portals and social media</li><li>Buyer screening: we manage visits and verify the solvency of potential buyers</li></ul>">Contratar un profesional matriculado no es un gasto, es una inversión en seguridad. Al trabajar con nosotros obtenés:<ul>
           <li>Tasación técnica basada en análisis de mercado real, no en estimaciones</li>
           <li>Marketing estratégico con visibilidad en los mejores portales y redes sociales</li>
           <li>Filtro de interesados: gestionamos visitas y verificamos la solvencia de compradores potenciales</li>
@@ -1573,9 +1575,9 @@
       </div>
       <div class="faq-item">
         <div class="faq-q">
-          <span class="faq-q-text">¿Qué impuestos debo pagar al comprar?</span>
+          <span class="faq-q-text" data-en="What taxes do I have to pay when buying?">¿Qué impuestos debo pagar al comprar?</span>
         </div>
-        <div class="faq-a"><div class="faq-a-inner">Al comprar una propiedad existen costos asociados a tener en cuenta:<ul>
+        <div class="faq-a"><div class="faq-a-inner" data-en="When buying a property there are associated costs to keep in mind:<ul><li>Stamp Tax: a provincial tax usually split equally between buyer and seller</li><li>Registration fees: registry costs at the Real Estate Registry</li><li>Notary fees: costs of the public deed</li><li>Municipal rate: upon possession, the new owner assumes municipal rates and utilities</li></ul>">Al comprar una propiedad existen costos asociados a tener en cuenta:<ul>
           <li>Impuesto de Sellos: impuesto provincial que generalmente se abona por partes iguales entre comprador y vendedor</li>
           <li>Tasas de Inscripción: gastos de registro en el Registro de la Propiedad Inmueble</li>
           <li>Honorarios de Escribanía: costos de la escritura pública</li>
@@ -1583,7 +1585,7 @@
         </ul></div></div>
       </div>
     </div>
-    <p class="faq-cta">¿Tenés otra consulta? <a href="#contacto">¡Consultanos →</a></p>
+    <p class="faq-cta" data-en="Have another question? <a href=&quot;#contacto&quot;>Ask us →</a>">¿Tenés otra consulta? <a href="#contacto">¡Consultanos →</a></p>
   </div>
 </section>
 
@@ -1591,12 +1593,12 @@
 <section class="contacto-section" id="contacto">
   <div class="contacto-inner">
     <div class="contacto-text">
-      <p class="section-eyebrow">Contacto</p>
-      <h2 class="section-title">Hablemos de tu<br/>próximo paso</h2>
-      <p class="contacto-desc">Ya sea que quieras vender, comprar, alquilar o saber cuánto vale tu propiedad, estamos acá para ayudarte.</p>
+      <p class="section-eyebrow" data-en="Contact">Contacto</p>
+      <h2 class="section-title" data-en="Let's talk about<br/>your next step">Hablemos de tu<br/>próximo paso</h2>
+      <p class="contacto-desc" data-en="Whether you want to sell, buy, rent or know what your property is worth, we're here to help.">Ya sea que quieras vender, comprar, alquilar o saber cuánto vale tu propiedad, estamos acá para ayudarte.</p>
       <a href="https://wa.me/5492994029148?text=Hola%20Antonella%2C%20me%20comunico%20desde%20la%20P%C3%A1gina%20web%20de%20Solar%20Propiedades.%20Quisiera%20recibir%20asesoramiento." class="contacto-wa" target="_blank">
         <svg viewBox="0 0 24 24" fill="white" width="20" height="20"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-        Escribir por WhatsApp
+        <span data-en="Message on WhatsApp">Escribir por WhatsApp</span>
       </a>
       <div class="contacto-extra">
         <a href="mailto:matyy.cornara@gmail.com" class="contacto-link">
@@ -1611,12 +1613,12 @@
     </div>
     <form class="contacto-form" id="contactoForm">
       <div class="form-row">
-        <div class="form-field"><label>Nombre</label><input id="cfNombre" type="text" placeholder="Tu nombre" /></div>
-        <div class="form-field"><label>Teléfono</label><input id="cfTel" type="tel" placeholder="+54 9 ..." /></div>
+        <div class="form-field"><label data-en="Name">Nombre</label><input id="cfNombre" type="text" placeholder="Tu nombre" data-en-ph="Your name" /></div>
+        <div class="form-field"><label data-en="Phone">Teléfono</label><input id="cfTel" type="tel" placeholder="+54 9 ..." /></div>
       </div>
-      <div class="form-field"><label>Email</label><input id="cfEmail" type="email" placeholder="tu@email.com" /></div>
-      <div class="form-field"><label>Mensaje</label><textarea id="cfMensaje" rows="4" placeholder="¿En qué podemos ayudarte?"></textarea></div>
-      <button class="form-submit" type="submit">Enviar consulta →</button>
+      <div class="form-field"><label data-en="Email">Email</label><input id="cfEmail" type="email" placeholder="tu@email.com" /></div>
+      <div class="form-field"><label data-en="Message">Mensaje</label><textarea id="cfMensaje" rows="4" placeholder="¿En qué podemos ayudarte?" data-en-ph="How can we help you?"></textarea></div>
+      <button class="form-submit" type="submit" data-en="Send inquiry →">Enviar consulta →</button>
     </form>
   </div>
 </section>
@@ -1625,11 +1627,11 @@
 <footer>
   <span class="footer-copy">© 2025 Solar Propiedades · Antonella Gutiérrez · Neuquén, Argentina</span>
   <ul class="footer-links">
-    <li><a href="#inicio">Inicio</a></li>
-    <li><a href="#propiedades">Propiedades</a></li>
-    <li><a href="#servicios">Servicios</a></li>
-    <li><a href="#sobre">Sobre mí</a></li>
-    <li><a href="#contacto">Contacto</a></li>
+    <li><a href="#inicio" data-en="Home">Inicio</a></li>
+    <li><a href="#propiedades" data-en="Properties">Propiedades</a></li>
+    <li><a href="#servicios" data-en="Services">Servicios</a></li>
+    <li><a href="#sobre" data-en="About me">Sobre mí</a></li>
+    <li><a href="#contacto" data-en="Contact">Contacto</a></li>
   </ul>
 </footer>
 
@@ -2189,9 +2191,9 @@
     function cardStats(p) {
       return [
         p.metros_cuadrados ? p.metros_cuadrados + ' m²' : null,
-        p.ambientes        ? p.ambientes + ' amb.' : null,
-        p.dormitorios      ? p.dormitorios + ' dorm.' : null,
-        p.banos            ? p.banos + (p.banos == 1 ? ' baño' : ' baños') : null
+        p.ambientes        ? p.ambientes + T(' amb.', ' rooms') : null,
+        p.dormitorios      ? p.dormitorios + T(' dorm.', ' bd') : null,
+        p.banos            ? p.banos + (p.banos == 1 ? T(' baño', ' bath') : T(' baños', ' baths')) : null
       ].filter(Boolean).map(function(s) { return '<span class="prop-card-stat">' + s + '</span>'; }).join('');
     }
 
@@ -2213,7 +2215,7 @@
           '<p class="prop-card-precio">' + fmtPrecio(p) + '</p>' +
           '<div class="prop-card-footer">' +
             '<span class="prop-card-codigo">' + (p.codigo || '') + '</span>' +
-            '<span class="prop-card-ver">VER PROPIEDAD →</span>' +
+            '<span class="prop-card-ver">' + T('VER PROPIEDAD →', 'VIEW PROPERTY →') + '</span>' +
           '</div>' +
         '</div>' +
       '</a>';
@@ -2239,13 +2241,13 @@
     // Mostrar solo destacadas (vista por defecto)
     function mostrarDestacadas() {
       var dest = allProps.filter(function(p) { return p.destacada; }).slice(0, 3);
-      setHeader('Disponibles ahora', 'Propiedades destacadas', 'Ver todas →');
+      setHeader(T('Disponibles ahora','Available now'), T('Propiedades destacadas','Featured properties'), T('Ver todas →','View all →'));
       renderGrid(dest.length ? dest : allProps.slice(0, 3));
     }
 
     // Ver todas
     window.verTodasPropiedades = function() {
-      setHeader('Todas las propiedades', 'Propiedades', 'Solo destacadas ↑');
+      setHeader(T('Todas las propiedades','All properties'), T('Propiedades','Properties'), T('Solo destacadas ↑','Featured only ↑'));
       document.getElementById('btn-ver-todas').onclick = function() {
         mostrarDestacadas();
         document.getElementById('btn-ver-todas').onclick = function() { window.verTodasPropiedades(); };
@@ -2289,7 +2291,7 @@
         return true;
       });
 
-      setHeader('Resultados de búsqueda', filtered.length + ' propiedad' + (filtered.length !== 1 ? 'es' : '') + ' encontrada' + (filtered.length !== 1 ? 's' : ''), 'Ver destacadas ↑');
+      setHeader(T('Resultados de búsqueda','Search results'), T(filtered.length + ' propiedad' + (filtered.length !== 1 ? 'es' : '') + ' encontrada' + (filtered.length !== 1 ? 's' : ''), filtered.length + ' propert' + (filtered.length !== 1 ? 'ies' : 'y') + ' found'), T('Ver destacadas ↑','See featured ↑'));
       document.getElementById('btn-ver-todas').onclick = function() {
         mostrarDestacadas();
         document.getElementById('btn-ver-todas').onclick = function() { window.verTodasPropiedades(); };
@@ -2436,15 +2438,20 @@
       if (!el.hasAttribute('data-es')) el.setAttribute('data-es', el.innerHTML);
       el.innerHTML = (lang === 'en') ? el.getAttribute('data-en') : el.getAttribute('data-es');
     });
+    document.querySelectorAll('[data-en-ph]').forEach(function(el) {
+      if (!el.hasAttribute('data-es-ph')) el.setAttribute('data-es-ph', el.getAttribute('placeholder') || '');
+      el.setAttribute('placeholder', (lang === 'en') ? el.getAttribute('data-en-ph') : el.getAttribute('data-es-ph'));
+    });
     if (window.__setHeroLang)  window.__setHeroLang(lang);
     if (window.__setSobreLang) window.__setSobreLang(lang);
     var tg = document.getElementById('langToggle');
     if (tg) tg.textContent = (lang === 'en') ? 'ES' : 'EN';
   }
   window.solarToggleLang = function() {
-    window.SOLAR_LANG = (window.SOLAR_LANG === 'en') ? 'es' : 'en';
-    try { localStorage.setItem('solar-lang', window.SOLAR_LANG); } catch(e){}
-    solarApplyLang();
+    var next = (window.SOLAR_LANG === 'en') ? 'es' : 'en';
+    try { localStorage.setItem('solar-lang', next); } catch(e){}
+    // Recarga la página → todo (incluido el hero animado) arranca limpio en el idioma nuevo
+    location.reload();
   };
   document.addEventListener('DOMContentLoaded', solarApplyLang);
   solarApplyLang();
@@ -2555,7 +2562,7 @@
       // Construir TODO el contenido en su posición final, transparente, desde el inicio
       var titleEl = sobre.querySelector('.sobre-tw');
       var bioWrap = sobre.querySelector('.sobre-bio');
-      var titleText = titleEl.getAttribute('data-text') || '';
+      var titleText = ((window.SOLAR_LANG === 'en' && titleEl.getAttribute('data-text-en')) || titleEl.getAttribute('data-text')) || '';
       var bioSegs = bioToSegments(bioWrap); // leer antes de reemplazar el HTML del bio
       bioWrap.innerHTML = '<p class="sobre-bio-tw"></p>';
 
