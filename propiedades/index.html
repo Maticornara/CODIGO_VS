@@ -57,7 +57,7 @@
 
     /* ═══ PÁGINA PROPIEDAD (ficha) — columna única, inmobiliaria moderna ═══ */
     .prop-page {
-      max-width: 1200px; margin: 0 auto;
+      max-width: 1280px; margin: 0 auto;
       padding: calc(var(--nav-h) + 22px) 24px 90px;
     }
     /* Zona "above the fold": empuja la card de precio fuera de la 1ª pantalla */
@@ -76,14 +76,14 @@
 
     /* ═══ GALERÍA: imagen 16:9 (entra completa en pantalla) + thumbnails verticales con scroll ═══ */
     .gallery {
-      display: flex; gap: 14px; margin-bottom: 30px; align-items: stretch;
+      display: flex; gap: 14px; margin-bottom: 30px; align-items: stretch; justify-content: center;
     }
-    /* La foto principal llena el ancho disponible (llega al margen izquierdo);
-       los thumbnails quedan pegados al margen derecho del contenido. 16:9. */
+    /* Foto SIEMPRE 16:9 estricto (sin verde): el alto se acota al viewport y el ancho
+       se deriva del alto → entra entera arriba y nunca se ve la caja verde de fondo. */
     .gallery-main {
-      position: relative; flex: 1; min-width: 0; aspect-ratio: 16/9;
-      /* No supera el alto del viewport → la foto entra entera arriba sin cortarse */
-      max-height: calc(100vh - var(--nav-h) - 240px);
+      position: relative; flex: 0 0 auto;
+      height: min(calc(100vh - var(--nav-h) - 230px), 516px);
+      aspect-ratio: 16/9; width: auto; max-width: 100%;
       border-radius: 10px; overflow: hidden; background: var(--verde);
       display: flex; align-items: center; justify-content: center;
     }
@@ -116,7 +116,7 @@
     .gallery-arrow:disabled { opacity: 0.2; cursor: default; }
     /* Columna de thumbnails (a la IZQUIERDA de la foto): el contenedor externo se
        estira al alto de la foto, y el scroller interno (absoluto) hace el scroll local. */
-    .gallery-thumbs { flex: 0 0 240px; position: relative; }
+    .gallery-thumbs { flex: 0 0 300px; position: relative; }
     .gallery-thumbs-inner {
       position: absolute; inset: 0; overflow-y: auto;
       display: flex; flex-direction: column; gap: 10px;
