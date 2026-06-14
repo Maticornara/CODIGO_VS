@@ -142,6 +142,39 @@
         el.style.setProperty('border-radius', '8px', 'important');
       });
 
+      /* ─── Subida de fotos más fácil ───
+         1) Permitir elegir VARIAS fotos a la vez en el selector de archivos. */
+      Array.from(document.querySelectorAll('input[type="file"]')).forEach(function(inp) {
+        inp.setAttribute('multiple', 'multiple'); inp.multiple = true;
+      });
+      /* 2) Renombrar/resaltar botones de la galería de medios para que se entienda. */
+      Array.from(document.querySelectorAll('button, a, [role="button"]')).forEach(function(b) {
+        var t = (b.textContent || '').trim();
+        // "Subir nuevo" → grande y naranja, con texto claro
+        if (/^subir nuevo$/i.test(t) || /upload$/i.test(t)) {
+          if (!b.dataset.solarUp) { b.dataset.solarUp = '1'; b.textContent = '⬆ Subir fotos (podés elegir varias)'; }
+          b.style.setProperty('background', A, 'important');
+          b.style.setProperty('background-color', A, 'important');
+          b.style.setProperty('color', '#fff', 'important');
+          b.style.setProperty('font-weight', '700', 'important');
+          b.style.setProperty('border-radius', '8px', 'important');
+          b.style.setProperty('font-size', '14px', 'important');
+          b.style.setProperty('padding', '10px 18px', 'important');
+        }
+        // "Elige una imagen diferente" → texto más claro (es el botón para abrir la galería)
+        if (/elige una imagen diferente|choose.*different|insert from/i.test(t) && !b.dataset.solarCh) {
+          b.dataset.solarCh = '1';
+          b.textContent = '🖼 Abrir galería de fotos';
+          b.style.setProperty('font-weight', '700', 'important');
+        }
+        // "Confirmar selección" → resaltar
+        if (/confirmar selecci/i.test(t)) {
+          b.style.setProperty('background', V, 'important');
+          b.style.setProperty('color', '#fff', 'important');
+          b.style.setProperty('font-weight', '700', 'important');
+        }
+      });
+
       /* Botón naranja */
       var nb = document.querySelector('[data-testid="new-button"]');
       if (nb) {
