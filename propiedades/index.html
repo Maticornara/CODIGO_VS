@@ -83,7 +83,7 @@
        overflow visible para que las flechas puedan salir por fuera de la imagen. */
     .gallery-main {
       position: relative; flex: 0 0 auto;
-      height: min(calc(100vh - var(--nav-h) - 250px), 478px);
+      height: min(calc(100vh - var(--nav-h) - 250px), 440px);
       aspect-ratio: 16/9; width: auto; max-width: 100%;
       border-radius: 10px; overflow: visible; background: var(--verde);
       display: flex; align-items: center; justify-content: center;
@@ -118,7 +118,7 @@
     .gallery-arrow:disabled { opacity: 0.2; cursor: default; }
     /* Columna de thumbnails (a la IZQUIERDA de la foto): el contenedor externo se
        estira al alto de la foto, y el scroller interno (absoluto) hace el scroll local. */
-    .gallery-thumbs { flex: 0 0 200px; position: relative; }
+    .gallery-thumbs { flex: 0 0 270px; position: relative; }
     .gallery-thumbs-inner {
       position: absolute; inset: 0; overflow-y: auto;
       display: flex; flex-direction: column; gap: 10px;
@@ -136,9 +136,9 @@
     .gallery-thumbs::after  { bottom: 0; background: linear-gradient(to top, var(--crema) 15%, transparent); }
     .gallery-thumbs.show-top::before    { opacity: 1; }
     .gallery-thumbs.show-bottom::after  { opacity: 1; }
-    /* Aspect ~10/9 → entran ~2,5 thumbnails verticalmente */
+    /* Landscape (16:10, como las fotos); con la columna 270px + foto a 440px entran ~2,5 */
     .gallery-thumb {
-      width: 100%; aspect-ratio: 10/9; border-radius: 7px; overflow: hidden;
+      width: 100%; aspect-ratio: 16/10; border-radius: 7px; overflow: hidden;
       cursor: pointer; opacity: 0.5; transition: opacity 0.2s, border-color 0.2s;
       flex-shrink: 0; border: 2px solid transparent;
     }
