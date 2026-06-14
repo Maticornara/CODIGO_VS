@@ -98,11 +98,7 @@ collections:
         name: ambientes_detalle
         widget: list
         required: false
-        hint: "Nombrá cada ambiente, uno por ítem. Sugerencias: Living, Cocina, Comedor, Dormitorio, Baño, Patio, Jardín, Quincho, Estudio, Lavadero, Cochera, Balcón."
-        field:
-          label: Ambiente
-          name: ambiente
-          widget: string
+        hint: "Escribí los ambientes separados por coma. Ej: Living, Cocina, Comedor, Dormitorio, Baño, Patio, Jardín, Quincho."
 
       - label: "Dormitorios"
         name: dormitorios
@@ -148,21 +144,13 @@ collections:
         name: servicios
         widget: list
         required: false
-        hint: "Un servicio por ítem. Sugerencias: Luz, Gas natural, Agua corriente, Cloacas, Internet, Pavimento, Teléfono, Gas envasado."
-        field:
-          label: Servicio
-          name: servicio
-          widget: string
+        hint: "Escribí los servicios separados por coma. Ej: Luz, Gas natural, Agua corriente, Cloacas, Internet, Pavimento."
 
       - label: "Características"
         name: caracteristicas
         widget: list
         required: false
-        hint: "Una característica por ítem (ej: Cochera, Pileta, Vista al lago, Apto crédito). Se muestran en la ficha y se pueden filtrar en el buscador."
-        field:
-          label: Característica
-          name: caracteristica
-          widget: string
+        hint: "Escribí las características separadas por coma. Ej: Cochera, Pileta, Vista al lago, Apto crédito. Se muestran en la ficha y se filtran en el buscador."
 
       - label: "Descripción"
         name: descripcion
@@ -172,13 +160,10 @@ collections:
 
       - label: "Fotos"
         name: fotos
-        widget: list
-        max: 20
+        widget: image
+        multiple: true
         required: false
-        field:
-          label: Foto
-          name: foto
-          widget: image
+        hint: "Podés seleccionar/arrastrar varias fotos a la vez. La primera es la principal."
 
       - label: "Link Reel / Video"
         name: link_reel

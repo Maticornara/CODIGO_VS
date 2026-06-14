@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Solar Propiedades — Admin</title>
+  <link rel="icon" type="image/png" href="/fotos/LOGO.PNG"/>
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 </head>
@@ -105,10 +106,10 @@
       found.style.setProperty('background', V, 'important');
       found.style.setProperty('background-color', V, 'important');
       found.style.setProperty('box-shadow', '0 1px 8px rgba(0,0,0,.25)', 'important');
-      /* Ocultar tabs */
+      /* Ocultar solo la pestaña Medios (Contenido se mantiene) */
       Array.from(found.querySelectorAll('a,li,span,button')).forEach(function(el) {
         var t = (el.textContent||'').trim();
-        if (['Contenido','Medios','Media','Content'].indexOf(t) !== -1) {
+        if (['Medios','Media'].indexOf(t) !== -1) {
           (el.closest('li') || el.closest('a') || el).style.setProperty('display','none','important');
         }
       });
@@ -122,6 +123,15 @@
         if (t.indexOf('Añadir')!==-1||t.indexOf('rápido')!==-1||t.indexOf('Quick')!==-1) {
           el.style.setProperty('display','none','important');
           if (el.parentElement) el.parentElement.style.setProperty('display','none','important');
+        }
+      });
+
+      /* "Nuevo Propiedad" → "Nueva Propiedad" (robusto: cualquier botón/enlace) */
+      Array.from(document.querySelectorAll('button, a, [role="button"]')).forEach(function(el) {
+        if ((el.textContent||'').indexOf('Nuevo Propiedad') === -1) return;
+        var w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null), tn;
+        while (tn = w.nextNode()) {
+          if (tn.nodeValue && tn.nodeValue.indexOf('Nuevo') !== -1) tn.nodeValue = tn.nodeValue.replace(/Nuevo/g, 'Nueva');
         }
       });
 
