@@ -142,36 +142,20 @@
         el.style.setProperty('border-radius', '8px', 'important');
       });
 
-      /* ─── Subida de fotos más fácil ───
-         1) Permitir elegir VARIAS fotos a la vez en el selector de archivos. */
+      /* Subida de fotos: permitir elegir VARIAS a la vez en el selector de archivos */
       Array.from(document.querySelectorAll('input[type="file"]')).forEach(function(inp) {
         inp.setAttribute('multiple', 'multiple'); inp.multiple = true;
       });
-      /* 2) Renombrar/resaltar botones de la galería de medios para que se entienda. */
+      /* Solo el botón "Subir nuevo" en NARANJA (el resto queda como está) */
       Array.from(document.querySelectorAll('button, a, [role="button"]')).forEach(function(b) {
         var t = (b.textContent || '').trim();
-        // "Subir nuevo" → grande y naranja, con texto claro
-        if (/^subir nuevo$/i.test(t) || /upload$/i.test(t)) {
-          if (!b.dataset.solarUp) { b.dataset.solarUp = '1'; b.textContent = '⬆ Subir fotos (podés elegir varias)'; }
+        if (/^subir nuevo$/i.test(t) || /^upload$/i.test(t)) {
           b.style.setProperty('background', A, 'important');
           b.style.setProperty('background-color', A, 'important');
+          b.style.setProperty('border-color', A, 'important');
           b.style.setProperty('color', '#fff', 'important');
           b.style.setProperty('font-weight', '700', 'important');
           b.style.setProperty('border-radius', '8px', 'important');
-          b.style.setProperty('font-size', '14px', 'important');
-          b.style.setProperty('padding', '10px 18px', 'important');
-        }
-        // "Elige una imagen diferente" → texto más claro (es el botón para abrir la galería)
-        if (/elige una imagen diferente|choose.*different|insert from/i.test(t) && !b.dataset.solarCh) {
-          b.dataset.solarCh = '1';
-          b.textContent = '🖼 Abrir galería de fotos';
-          b.style.setProperty('font-weight', '700', 'important');
-        }
-        // "Confirmar selección" → resaltar
-        if (/confirmar selecci/i.test(t)) {
-          b.style.setProperty('background', V, 'important');
-          b.style.setProperty('color', '#fff', 'important');
-          b.style.setProperty('font-weight', '700', 'important');
         }
       });
 
@@ -287,11 +271,20 @@
       return out;
     }
 
-    function renderTags(list) {
-      if (!list || !list.size) return null;
-      var chips = [];
-      list.forEach(function (t) { if (t) chips.push(h('span', { className: 'sp-tag' }, '# ' + t)); });
-      return chips.length ? h('div', { className: 'sp-tags' }, chips) : null;
+    // Convierte un valor (texto "a, b" o lista YAML vieja) a array
+    function toArr(v) {
+      if (v == null) return [];
+      if (typeof v === 'string') return v.split(/[\n,]+/).map(function (s) { return s.trim(); }).filter(Boolean);
+      if (v.toArray) return v.toArray().map(function (x) { return String(x).trim(); }).filter(Boolean);
+      if (Array.isArray(v)) return v.map(function (x) { return String(x).trim(); }).filter(Boolean);
+      return [];
+    }
+    function chipGroup(titulo, v) {
+      var items = toArr(v); if (!items.length) return null;
+      return h('div', { className: 'sp-group' }, [
+        h('div', { className: 'sp-group-t' }, titulo),
+        h('div', { className: 'sp-tags' }, items.map(function (t) { return h('span', { className: 'sp-tag' }, t); }))
+      ]);
     }
 
     var Preview = createClass({
@@ -303,6 +296,14 @@
         var fotos = data.get('fotos');
         var fotoPath = fotos && fotos.size ? fotos.get(0) : null;
         var tipo = get('tipo');
+        var ubic = [get('zona'), get('localidad')].filter(Boolean).join(' · ');
+
+        var stats = [];
+        function st(v, suf) { if (v !== '' && v != null) stats.push(String(v) + suf); }
+        st(get('metros_cuadrados'), ' m² tot.'); st(get('metros_cubiertos'), ' m² cub.');
+        st(get('metros_terreno'), ' m² terreno'); st(get('ambientes'), ' amb.');
+        st(get('dormitorios'), ' dorm.'); st(get('banos'), Number(get('banos')) === 1 ? ' baño' : ' baños');
+        st(get('antiguedad'), ' años');
 
         return h('div', { className: 'sp' }, [
           h('div', { className: 'sp-photo' }, [
@@ -311,19 +312,13 @@
             data.get('destacada') ? h('span', { className: 'sp-dest' }, '★ Destacada') : null
           ]),
           h('h1', { className: 'sp-titulo' }, get('titulo') || 'Título de la propiedad'),
-          (get('metros_cuadrados') !== '' && get('metros_cuadrados') != null)
-            ? h('div', { className: 'sp-sup' }, [
-                h('span', { className: 'sp-sup-n' }, String(get('metros_cuadrados'))),
-                h('span', { className: 'sp-sup-u' }, ' m²')
-              ])
-            : null,
-          h('div', { className: 'sp-ubic' }, [
-            get('zona') ? h('div', {}, [h('span', { className: 'sp-lbl' }, 'Zona'), h('span', { className: 'sp-val' }, get('zona'))]) : null,
-            get('localidad') ? h('div', {}, [h('span', { className: 'sp-lbl' }, 'Localidad'), h('span', { className: 'sp-val' }, get('localidad'))]) : null
-          ]),
+          ubic ? h('div', { className: 'sp-ubicline' }, '📍 ' + ubic) : null,
           h('div', { className: 'sp-precio' }, fmtPrecio(get('precio'), get('moneda'), tipo)),
-          renderTags(data.get('caracteristicas')),
-          h('div', { className: 'sp-desc' }, renderDesc(get('descripcion')))
+          stats.length ? h('div', { className: 'sp-stats' }, stats.map(function (s) { return h('span', { className: 'sp-stat' }, s); })) : null,
+          chipGroup('Servicios', data.get('servicios')),
+          chipGroup('Ambientes', data.get('ambientes_detalle')),
+          chipGroup('Características', data.get('caracteristicas')),
+          get('descripcion') ? h('div', { className: 'sp-desc' }, renderDesc(get('descripcion'))) : null
         ]);
       }
     });
@@ -343,9 +338,15 @@
       ".sp-ubic{display:flex;gap:40px;margin-bottom:22px;flex-wrap:wrap;}" +
       ".sp-lbl{display:block;font-size:11px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#6b6860;margin-bottom:3px;}" +
       ".sp-val{font-size:16px;font-weight:500;}" +
-      ".sp-precio{font-family:'Archivo Black',sans-serif;font-size:30px;color:#36512B;margin-bottom:18px;}" +
-      ".sp-tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;}" +
-      ".sp-tag{font-size:13px;font-weight:600;color:#36512B;background:#eef0e6;border:1px solid #dfe3d4;border-radius:999px;padding:5px 12px;}" +
+      ".sp-ubicline{font-size:15px;color:#6b6860;margin-bottom:14px;}" +
+      ".sp-precio{font-family:'Archivo Black',sans-serif;font-size:30px;color:#36512B;margin-bottom:16px;}" +
+      ".sp-stats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px;}" +
+      ".sp-stat{font-size:13px;font-weight:600;color:#36512B;background:#eef0e6;border:1px solid #dfe3d4;border-radius:999px;padding:5px 12px;}" +
+      ".sp-group{margin-bottom:18px;}" +
+      ".sp-group-t{font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#36512B;margin-bottom:8px;}" +
+      ".sp-tags{display:flex;flex-wrap:wrap;gap:8px;}" +
+      ".sp-tag{font-size:13px;font-weight:600;color:#1E1E1E;background:#fff;border:1px solid #dfe3d4;border-radius:999px;padding:5px 12px;}" +
+      ".sp-desc{margin-top:6px;}" +
       ".sp-desc{font-size:16px;line-height:1.8;color:#444;}" +
       ".sp-desc p{margin:0 0 12px;}" +
       ".sp-desc ul{padding-left:0;list-style:none;margin:0 0 12px;}" +

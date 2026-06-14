@@ -777,7 +777,7 @@
     <div class="breadcrumb">
       <a href="/">Inicio</a>
       <span>›</span>
-      <a href="/#propiedades">Propiedades</a>
+      <a href="/propiedades">Propiedades</a>
       <span>›</span>
       <span id="bcCodigo"></span>
     </div>
@@ -920,7 +920,10 @@
       }
 
       if (/^\s+-\s+/.test(line)) {
-        if (listKey) result[listKey].push(line.replace(/^\s+-\s+/, '').trim());
+        if (listKey) {
+          var _it = line.replace(/^\s+-\s+/, '').trim().replace(/^["']|["']$/g, '').trim();
+          if (_it) result[listKey].push(_it); // ignora ítems vacíos ("")
+        }
         return;
       }
       listKey = null;
@@ -978,6 +981,14 @@
     return String(s == null ? '' : s).toLowerCase()
       .replace(/[áàä]/g, 'a').replace(/[éèë]/g, 'e').replace(/[íìï]/g, 'i')
       .replace(/[óòö]/g, 'o').replace(/[úùü]/g, 'u').replace(/ñ/g, 'n').trim();
+  }
+
+  // Convierte características/servicios/ambientes a array, vengan como texto ("a, b")
+  // o como lista YAML (datos viejos). Separa por coma o salto de línea y descarta vacíos.
+  function toList(v) {
+    if (Array.isArray(v)) return v.map(function(x) { return String(x).trim(); }).filter(Boolean);
+    if (v == null) return [];
+    return String(v).split(/[\n,]+/).map(function(x) { return x.trim(); }).filter(Boolean);
   }
 
   // Convierte coordenadas DMS ("40°44'59.8\"S 71°39'22.4\"W") a decimal ("-40.749944,-71.656222")
@@ -1056,8 +1067,8 @@
           if (pa && pt && a.moneda === current.moneda) {
             s += Math.max(0, 100 - Math.abs(pa - pt) / pt * 100); // hasta +100 si el precio es igual
           }
-          var ta = (a.caracteristicas || []).map(normTxt);
-          var tt = (current.caracteristicas || []).map(normTxt);
+          var ta = toList(a.caracteristicas).map(normTxt);
+          var tt = toList(current.caracteristicas).map(normTxt);
           s += tt.filter(function(x) { return ta.indexOf(x) !== -1; }).length * 10;
           return s;
         }
@@ -1257,8 +1268,8 @@
         if (minCub  != null && !(Number(p.metros_cubiertos) >= minCub)) return false;
         if (minTer  != null && !(Number(p.metros_terreno) >= minTer)) return false;
         if (maxAnt  != null && !(p.antiguedad !== undefined && p.antiguedad !== '' && Number(p.antiguedad) <= maxAnt)) return false;
-        if (selTags.length) { var pt = (p.caracteristicas || []).map(function(t) { return normTxt(t); }); if (!selTags.some(function(t) { return pt.indexOf(t) !== -1; })) return false; }
-        if (selServ.length) { var ps = (p.servicios || []).map(function(t) { return normTxt(t); }); if (!selServ.some(function(t) { return ps.indexOf(t) !== -1; })) return false; }
+        if (selTags.length) { var pt = toList(p.caracteristicas).map(function(t) { return normTxt(t); }); if (!selTags.some(function(t) { return pt.indexOf(t) !== -1; })) return false; }
+        if (selServ.length) { var ps = toList(p.servicios).map(function(t) { return normTxt(t); }); if (!selServ.some(function(t) { return ps.indexOf(t) !== -1; })) return false; }
         return true;
       });
       renderListing(filtered);
@@ -1292,7 +1303,7 @@
     function uniqList(key) {
       var seen = {}, arr = [];
       allProps.forEach(function(p) {
-        (p[key] || []).forEach(function(t) { var k = normTxt(t); if (k && !seen[k]) { seen[k] = 1; arr.push({ norm: k, label: String(t).trim() }); } });
+        toList(p[key]).forEach(function(t) { var k = normTxt(t); if (k && !seen[k]) { seen[k] = 1; arr.push({ norm: k, label: String(t).trim() }); } });
       });
       return arr;
     }
@@ -1563,20 +1574,22 @@
             : '<li><span class="prop-caract-item">' + inner + '</span></li>';
         }).join('') + '</ul>';
       }
-      if (Array.isArray(p.servicios) && p.servicios.length) {
+      var servs = toList(p.servicios);
+      if (servs.length) {
         document.getElementById('propServBlock').innerHTML =
-          '<h3 class="prop-subtitle">Servicios</h3>' + checkList(p.servicios, false);
+          '<h3 class="prop-subtitle">Servicios</h3>' + checkList(servs, false);
         hayDetalle = true;
       }
-      if (Array.isArray(p.ambientes_detalle) && p.ambientes_detalle.length) {
+      var ambs = toList(p.ambientes_detalle);
+      if (ambs.length) {
         document.getElementById('propAmbBlock').innerHTML =
-          '<h3 class="prop-subtitle">Ambientes</h3>' + checkList(p.ambientes_detalle, false);
+          '<h3 class="prop-subtitle">Ambientes</h3>' + checkList(ambs, false);
         hayDetalle = true;
       }
-      var tags = p.caracteristicas || [];
+      var tags = toList(p.caracteristicas);
       if (tags.length) {
         document.getElementById('propCaractBlock').innerHTML =
-          '<h3 class="prop-subtitle">Características</h3>' + checkList(tags, true);
+          '<h3 class="prop-subtitle">Características</h3>' + checkList(tags, false);
         hayDetalle = true;
       }
       if (hayDetalle) document.getElementById('propDetallesWrap').style.display = 'block';

@@ -686,7 +686,7 @@
     }
     .servicio-icon svg { width: 22px; height: 22px; stroke: var(--verde); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
     .servicio-title { font-family: var(--font-display); font-size: 21px; font-weight: 900; color: var(--negro); margin-bottom: 14px; line-height: 1.2; }
-    .servicio-desc { font-size: 13px; font-weight: 300; line-height: 1.8; color: var(--gris-texto); }
+    .servicio-desc { font-size: 16px; font-weight: 300; line-height: 1.8; color: var(--gris-texto); }
 
     /* PROPIEDADES DESTACADAS */
     .props-section { background: #f5f2e3; padding: 120px 56px; }
@@ -2115,7 +2115,10 @@
       var listKey = null;
       lines.forEach(function(line) {
         if (/^\s+-\s+/.test(line)) {
-          if (listKey) result[listKey].push(line.replace(/^\s+-\s+/, '').trim());
+          if (listKey) {
+            var _it = line.replace(/^\s+-\s+/, '').trim().replace(/^["']|["']$/g, '').trim();
+            if (_it) result[listKey].push(_it);
+          }
           return;
         }
         listKey = null;
@@ -2137,6 +2140,13 @@
       return String(s == null ? '' : s).toLowerCase()
         .replace(/[áàä]/g, 'a').replace(/[éèë]/g, 'e').replace(/[íìï]/g, 'i')
         .replace(/[óòö]/g, 'o').replace(/[úùü]/g, 'u').replace(/ñ/g, 'n').trim();
+    }
+
+    // Características/servicios a array, vengan como texto ("a, b") o lista YAML (datos viejos)
+    function toList(v) {
+      if (Array.isArray(v)) return v.map(function(x) { return String(x).trim(); }).filter(Boolean);
+      if (v == null) return [];
+      return String(v).split(/[\n,]+/).map(function(x) { return x.trim(); }).filter(Boolean);
     }
 
     function fmtPrecio(prop) {
@@ -2266,7 +2276,7 @@
       var cont = document.getElementById(contId); if (!cont) return;
       var seen = {}, items = [];
       allProps.forEach(function(p) {
-        (p[key] || []).forEach(function(t) { var k = normTxt(t); if (k && !seen[k]) { seen[k] = 1; items.push({ norm: k, label: String(t).trim() }); } });
+        toList(p[key]).forEach(function(t) { var k = normTxt(t); if (k && !seen[k]) { seen[k] = 1; items.push({ norm: k, label: String(t).trim() }); } });
       });
       if (!items.length) return;
       cont.innerHTML = items.map(function(t) { return '<button type="button" class="tag-chip" data-tag="' + t.norm.replace(/"/g, '&quot;') + '"># ' + t.label + '</button>'; }).join('');

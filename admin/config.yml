@@ -96,9 +96,9 @@ collections:
 
       - label: "Ambientes (detalle)"
         name: ambientes_detalle
-        widget: list
+        widget: text
         required: false
-        hint: "Escribí los ambientes separados por coma. Ej: Living, Cocina, Comedor, Dormitorio, Baño, Patio, Jardín, Quincho."
+        hint: "Escribí los ambientes separados por coma (podés usar espacios). Ej: Living, Cocina, Comedor, Dormitorio principal, Baño, Patio."
 
       - label: "Dormitorios"
         name: dormitorios
@@ -142,15 +142,15 @@ collections:
 
       - label: "Servicios"
         name: servicios
-        widget: list
+        widget: text
         required: false
-        hint: "Escribí los servicios separados por coma. Ej: Luz, Gas natural, Agua corriente, Cloacas, Internet, Pavimento."
+        hint: "Escribí los servicios separados por coma (podés usar espacios). Ej: Luz, Gas natural, Agua corriente, Cloacas, Internet."
 
       - label: "Características"
         name: caracteristicas
-        widget: list
+        widget: text
         required: false
-        hint: "Escribí las características separadas por coma. Ej: Cochera, Pileta, Vista al lago, Apto crédito. Se muestran en la ficha y se filtran en el buscador."
+        hint: "Escribí las características separadas por coma (podés usar espacios). Ej: Cochera, Pileta, Vista al lago, Apto crédito. Se muestran en la ficha y se filtran en el buscador."
 
       - label: "Descripción"
         name: descripcion
