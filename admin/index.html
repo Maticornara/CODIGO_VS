@@ -117,13 +117,19 @@
     }
 
     function applyRepeating() {
-      /* Ocultar "Añadir rápido" (robusto: incluye elementos chicos/divs) */
-      Array.from(document.querySelectorAll('button,a,[role="button"],span,div')).forEach(function(el) {
+      /* Ocultar SOLO "Añadir rápido" y la pestaña "Medios"
+         (específico, para NO tocar otros botones con la palabra "Añadir") */
+      Array.from(document.querySelectorAll('button,a,[role="button"],span,div,li')).forEach(function(el) {
         if (el.children.length > 2) return; // solo elementos hoja/chicos
         var t = (el.textContent||'').trim();
-        if (t && t.length < 25 && (t.indexOf('Añadir')!==-1 || t.indexOf('rápido')!==-1 || /Quick/i.test(t))) {
+        if (!t || t.length > 22) return;
+        if (/a[ñn]adir\s+r[áa]pido/i.test(t) || /quick\s*add/i.test(t)) {
           var btn = el.closest('button') || el.closest('a') || el.closest('[role="button"]') || el;
           btn.style.setProperty('display','none','important');
+        }
+        if (/^(medios|media)$/i.test(t)) {
+          var tab = el.closest('a') || el.closest('li') || el;
+          tab.style.setProperty('display','none','important');
         }
       });
 

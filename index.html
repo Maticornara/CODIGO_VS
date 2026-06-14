@@ -2256,7 +2256,7 @@
           if (!(mq >= m2Ref * (1 - F) && mq <= m2Ref * (1 + F))) return false;
         }
         if (selTags.length) {
-          var propTags = (p.caracteristicas || []).map(function(t) { return normTxt(t); });
+          var propTags = toList(p.caracteristicas).map(function(t) { return normTxt(t); });
           if (!selTags.some(function(t) { return propTags.indexOf(t) !== -1; })) return false;
         }
         return true;

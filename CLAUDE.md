@@ -192,3 +192,38 @@ Orden: **1)** Hero (breadcrumb + badge + título + ubicación 📍) **2)** Galer
 
 ## Deploy de esta sesión
 - Push a `main` → Vercel (sitio) ✅. Para el **admin** (campos nuevos) hace falta **deploy de Netlify** (estaba pausado; el usuario lo habilitó para publicar).
+
+---
+
+# Sesión — Admin simplificado, favicon, listas como texto, y presupuesto de deploys
+
+## ⚠️ PRESUPUESTO DE DEPLOYS DE NETLIFY (importante)
+- Cuenta **nueva** de Netlify con **POCOS deploys disponibles** (quedan ~2). **Batchear** todos los cambios de `admin/` y avisar al usuario para que haga UN solo "Trigger deploy".
+- **Las ediciones de propiedades de Antonella NO gastan deploys de Netlify** (commitean a GitHub → publica Vercel). Netlify solo se gasta cuando cambia código de `admin/` (config o index) y se hace deploy manual. Netlify queda **pausado** a propósito.
+
+## Favicon
+- `LOGO.PNG` como favicon en `index.html`, `propiedades/index.html` y `admin/index.html` (ruta absoluta `/fotos/LOGO.PNG`).
+
+## Listas (características / servicios / ambientes) → TEXTO LIBRE
+- Problema: el widget `list` de Decap cortaba en "tags" (confuso) y dejaba ítems vacíos (`- ""` → en el sitio salía `# ""`).
+- Solución: en `admin/config.yml` esos 3 campos son **`widget: text`** (cuadro de texto; se escribe con coma y espacios, ej. "Gas natural, Luz").
+- En el sitio se parsea con **`toList(v)`** (en `propiedades/index.html` e `index.html`): acepta string ("a, b") o lista YAML vieja, separa por coma/salto de línea y **descarta vacíos**. Está aplicado en TODOS los consumidores (ficha Detalles, filtros, chips, similares, home).
+- **`parseYAML`** (ambos archivos): ignora ítems de lista vacíos y saca comillas → no más `# ""`.
+- Datos migrados a texto en `content/propiedades/lo-615.md` (CA-001) y `lo-615-1.md` (ALP-001).
+- ⚠️ Tras deployar el nuevo `config.yml`, abrir cada propiedad una vez para que esos campos queden en formato texto (si quedó alguno en lista vieja, se ve raro hasta re-guardar).
+
+## Fotos en el admin
+- `fotos` → **`widget: image, multiple: true`** (se eligen/arrastran varias). Sigue guardando lista de paths; el sitio lee `p.fotos` igual.
+- `admin/index.html` fuerza `multiple` en los `input[type=file]` (para elegir varias en el explorador).
+- ⚠️ Las fotos recién subidas tardan **1-2 min en verse en el sitio** porque el archivo lo sirve **Vercel** (rebuild). El `.md` se lee en vivo pero la imagen necesita el build. `keepValidImages()` oculta las que aún no están listas.
+
+## Admin (`admin/index.html`) — branding/UX por JS (Decap no se reestiliza fácil)
+- Oculta pestaña **"Medios"** y botón **"Añadir rápido"** (matcheo ESPECÍFICO `añadir rápido`/`quick add` para NO ocultar otros botones con "Añadir").
+- Botón **"Nueva Propiedad"** (corrige "Nuevo"→"Nueva") y **"Subir nuevo"** en **naranja**. "Confirmar selección" y el resto, sin tocar.
+- **Preview en vivo** reescrito: ubicación (zona · localidad), stats (m² total/cubiertos/terreno, ambientes, dorm, baños, antigüedad), y grupos Servicios/Ambientes/Características. Helper `toArr()` parsea string o lista Immutable.
+
+## Ficha
+- Las **características** dentro de la propiedad ya **NO son clickeables al filtro** (se descartó esa idea por ahora); quedan como texto con ✓.
+
+## Barra de búsqueda
+- Mismo ancho en home y listado: ambas `max-width: var(--max-w)` (1280px).
