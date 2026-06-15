@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Tiñe la barra del navegador (y en algunos Android la franja inferior) con el verde de marca -->
+  <meta name="theme-color" content="#1e2e17" />
   <title>Solar Propiedades</title>
   <link rel="icon" type="image/png" href="fotos/LOGO.PNG" />
   <script>
@@ -1028,7 +1030,9 @@
       /* Ilustración EN EL MEDIO: después del typewriter, antes del "Asesoramiento..." */
       .hero-illus-wrap { order: 4; display: flex; min-height: 230px; width: 100%; margin: 4px 0 10px; }
       .hero-sub { order: 5; }
-      .illus-svg { max-width: 210px; max-height: 200px; }
+      /* Trazo más fino en mobile: el stroke es non-scaling (px fijos), al achicar
+         la ilustración 4.5 se ve grueso (sobre todo el edificio). Bajado a 3. */
+      .illus-svg { max-width: 210px; max-height: 200px; stroke-width: 3; }
       #illus-0 { max-width: 225px; max-height: 215px; transform: translate(-16px, -10px); }
       #illus-1 { max-width: 235px; max-height: 255px; }
       #illus-3 { transform: translateX(-20px); }
@@ -1063,6 +1067,16 @@
       .props-grid { grid-template-columns: 1fr; }
       .form-row { grid-template-columns: 1fr; }
       footer { padding: 28px 20px; flex-direction: column; align-items: flex-start; }
+      /* WhatsApp menos invasivo en mobile: más chico, sin pulso, y aparece recién
+         al scrollear (no encima del hero). Se revela con .wa-show desde el JS. */
+      .wa-float {
+        width: 50px; height: 50px; bottom: 18px; right: 16px;
+        animation: none; box-shadow: 0 3px 12px rgba(0,0,0,0.22);
+        opacity: 0; pointer-events: none; transform: translateY(10px);
+        transition: opacity 0.35s, transform 0.35s;
+      }
+      .wa-float.wa-show { opacity: 1; pointer-events: auto; transform: none; }
+      .wa-float svg { width: 24px; height: 24px; }
     }
     @media (max-width: 1024px) {
       .valores-section { padding: 120px 0; }
@@ -1809,6 +1823,8 @@
 <script>
   // Nav scroll
   const nav = document.getElementById('mainNav');
+  // WhatsApp flotante: en mobile aparece recién tras scrollear ~70% de la 1ª pantalla
+  const waFloat = document.querySelector('.wa-float');
   // La nav se mantiene blanca/sólida sobre la sección de esencia (no transparente),
   // así se diferencia del fondo verde. (Antes #valores activaba el modo transparente.)
   const navDarkSections = [];
@@ -1821,6 +1837,7 @@
       return r.top <= navH && r.bottom >= navH;
     });
     nav.classList.toggle('over-dark', overDark);
+    if (waFloat) waFloat.classList.toggle('wa-show', window.scrollY > window.innerHeight * 0.7);
   }
   window.addEventListener('scroll', updateNav, { passive: true });
   updateNav();
