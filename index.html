@@ -12,6 +12,38 @@
     document.documentElement.lang = window.SOLAR_LANG;
     // Helper para textos generados por JS: T('español', 'english')
     window.T = function(es, en){ return window.SOLAR_LANG === 'en' ? en : es; };
+
+    /* ── Traducción AUTOMÁTICA de los DATOS de las propiedades (solo en EN) ──────
+       MyMemory (gratis, sin API key). Solo traduce en 'en' y SOLO lo que se está
+       viendo; cachea en localStorage (2ª vez instantánea). Mismo motor que /propiedades. */
+    window.solarTr = (function(){
+      var LANG = window.SOLAR_LANG;
+      var CK = 'solar-tr-cache', cache = {};
+      try { cache = JSON.parse(localStorage.getItem(CK) || '{}'); } catch(e){}
+      var saveT = null;
+      function save(){ clearTimeout(saveT); saveT = setTimeout(function(){ try { localStorage.setItem(CK, JSON.stringify(cache)); } catch(e){} }, 400); }
+      var TIPOS = { 'lote':'Lot', 'casa':'House', 'departamento':'Apartment', 'alquiler permanente':'Long-term rental', 'alquiler turístico':'Vacation rental' };
+      window.solarTrTipo = function(t){ if (LANG !== 'en') return t || ''; return TIPOS[(t||'').toLowerCase().trim()] || t || ''; };
+      function tr(text){
+        text = (text == null ? '' : String(text));
+        if (LANG !== 'en' || !text.trim()) return Promise.resolve(text);
+        if (cache[text] != null) return Promise.resolve(cache[text]);
+        var url = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(text) + '&langpair=es|en';
+        return fetch(url).then(function(r){ return r.json(); }).then(function(d){
+          var out = (d && d.responseData && d.responseData.translatedText) || text;
+          cache[text] = out; save(); return out;
+        }).catch(function(){ return text; });
+      }
+      function el(node){ if (LANG !== 'en' || !node) return; var t = node.textContent; tr(t).then(function(out){ if (out && out !== t) node.textContent = out; }); }
+      function html(container){
+        if (LANG !== 'en' || !container) return;
+        var w = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null), nodes = [];
+        while (w.nextNode()) { if (w.currentNode.nodeValue.trim()) nodes.push(w.currentNode); }
+        nodes.forEach(function(n){ var t = n.nodeValue; tr(t).then(function(out){ if (out) n.nodeValue = out; }); });
+      }
+      function cards(scope){ if (LANG !== 'en' || !scope) return; scope.querySelectorAll('.prop-card-titulo, .prop-card-ubic').forEach(el); }
+      return { tr: tr, el: el, html: html, cards: cards };
+    })();
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -2206,7 +2238,7 @@
       var statsStr = cardStats(p);
       return '<a class="prop-card" href="/propiedades/?p=' + (p._slug || p.codigo || '') + '">' +
         '<div class="prop-card-img">' + imgHtml +
-          '<span class="prop-card-tipo">' + (p.tipo || '') + '</span>' +
+          '<span class="prop-card-tipo">' + window.solarTrTipo(p.tipo) + '</span>' +
         '</div>' +
         '<div class="prop-card-body">' +
           '<h3 class="prop-card-titulo">' + (p.titulo || '') + '</h3>' +
@@ -2227,6 +2259,7 @@
       if (!props.length) { grid.innerHTML = ''; empty.style.display = 'block'; return; }
       empty.style.display = 'none';
       grid.innerHTML = props.map(renderCard).join('');
+      window.solarTr.cards(grid);
     }
 
     function setHeader(eyebrow, titulo, btnLabel) {

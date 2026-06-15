@@ -9,6 +9,55 @@
     window.SOLAR_LANG = (function(){ try { return localStorage.getItem('solar-lang') || 'es'; } catch(e){ return 'es'; } })();
     document.documentElement.lang = window.SOLAR_LANG;
     window.T = function(es, en){ return window.SOLAR_LANG === 'en' ? en : es; };
+
+    /* ── Traducción AUTOMÁTICA de los DATOS de las propiedades (solo en EN) ──────
+       Usa MyMemory (gratis, sin API key). Solo traduce cuando el idioma es 'en'
+       y SOLO lo que el visitante está mirando. Cachea cada traducción en el
+       navegador (localStorage) → la 2ª vez es instantánea y no gasta cuota. */
+    window.solarTr = (function(){
+      var LANG = window.SOLAR_LANG;
+      var CK = 'solar-tr-cache', cache = {};
+      try { cache = JSON.parse(localStorage.getItem(CK) || '{}'); } catch(e){}
+      var saveT = null;
+      function save(){ clearTimeout(saveT); saveT = setTimeout(function(){ try { localStorage.setItem(CK, JSON.stringify(cache)); } catch(e){} }, 400); }
+      // Tipos de propiedad: mapa fijo (mejor que traducción automática, que falla con "Lote")
+      var TIPOS = { 'lote':'Lot', 'casa':'House', 'departamento':'Apartment', 'alquiler permanente':'Long-term rental', 'alquiler turístico':'Vacation rental' };
+      window.solarTrTipo = function(t){
+        if (LANG !== 'en') return t || '';
+        return TIPOS[(t||'').toLowerCase().trim()] || t || '';
+      };
+      function tr(text){
+        text = (text == null ? '' : String(text));
+        if (LANG !== 'en' || !text.trim()) return Promise.resolve(text);
+        if (cache[text] != null) return Promise.resolve(cache[text]);
+        var url = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(text) + '&langpair=es|en';
+        return fetch(url).then(function(r){ return r.json(); }).then(function(d){
+          var out = (d && d.responseData && d.responseData.translatedText) || text;
+          cache[text] = out; save();
+          return out;
+        }).catch(function(){ return text; });
+      }
+      // Traduce el textContent de un elemento (campos cortos: título, ubicación…)
+      function el(node){
+        if (LANG !== 'en' || !node) return;
+        var t = node.textContent;
+        tr(t).then(function(out){ if (out && out !== t) node.textContent = out; });
+      }
+      // Traduce los nodos de texto dentro de un contenedor preservando el HTML
+      // (para la descripción con negritas/listas y las listas con ✓)
+      function html(container){
+        if (LANG !== 'en' || !container) return;
+        var w = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null), nodes = [];
+        while (w.nextNode()) { if (w.currentNode.nodeValue.trim()) nodes.push(w.currentNode); }
+        nodes.forEach(function(n){ var t = n.nodeValue; tr(t).then(function(out){ if (out) n.nodeValue = out; }); });
+      }
+      // Traduce las cards dentro de un contenedor (título + ubicación)
+      function cards(scope){
+        if (LANG !== 'en' || !scope) return;
+        scope.querySelectorAll('.prop-card-titulo, .prop-card-ubic').forEach(el);
+      }
+      return { tr: tr, el: el, html: html, cards: cards };
+    })();
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -1066,8 +1115,8 @@
     ].filter(Boolean).map(function(s) { return '<span class="prop-card-stat">' + s + '</span>'; }).join('');
     return '<a class="prop-card" style="animation-delay:' + delay + 's" href="/propiedades/?p=' + (p._slug || p.codigo || '') + '">' +
       '<div class="prop-card-img">' + imgHtml +
-        '<span class="prop-card-tipo">' + (p.tipo || '') + '</span>' +
-        (p.destacada ? '<span class="prop-card-destacada">★ Destacada</span>' : '') +
+        '<span class="prop-card-tipo">' + window.solarTrTipo(p.tipo) + '</span>' +
+        (p.destacada ? '<span class="prop-card-destacada">' + T('★ Destacada', '★ Featured') + '</span>' : '') +
       '</div>' +
       '<div class="prop-card-body">' +
         '<h3 class="prop-card-titulo">' + (p.titulo || '') + '</h3>' +
@@ -1122,6 +1171,7 @@
         var top = candidatos.slice(0, 3);
         if (!top.length) return;
         document.getElementById('propSimilares').innerHTML = top.map(renderCard).join('');
+        window.solarTr.cards(document.getElementById('propSimilares'));
         document.getElementById('propSimilaresWrap').style.display = 'block';
       })
       .catch(function() { /* si falla, simplemente no se muestra la sección */ });
@@ -1181,6 +1231,7 @@
       empty.style.display = 'none';
       stat.textContent = T(props.length + ' propiedad' + (props.length !== 1 ? 'es' : '') + ' encontrada' + (props.length !== 1 ? 's' : ''), props.length + ' propert' + (props.length !== 1 ? 'ies' : 'y') + ' found');
       grid.innerHTML = props.map(renderCard).join('');
+      window.solarTr.cards(grid);
     }
 
     function fmtMiles(n) { return Math.round(n).toLocaleString('es-AR'); }
@@ -1537,8 +1588,9 @@
       }); // fin keepValidImages
 
       // Datos principales
-      document.getElementById('propTipo').textContent    = p.tipo || '';
+      document.getElementById('propTipo').textContent    = window.solarTrTipo(p.tipo);
       document.getElementById('propTitulo').textContent  = p.titulo || '';
+      window.solarTr.el(document.getElementById('propTitulo'));
       document.getElementById('sidebarCodigo').textContent = p.codigo || '';
 
       // Precio sidebar
@@ -1560,6 +1612,7 @@
       if (localidad) ubicParts.push(localidad);
       if (ubicParts.length) {
         document.getElementById('propUbicTxt').innerHTML = ubicParts.join(' · ');
+        window.solarTr.html(document.getElementById('propUbicTxt'));
         document.getElementById('propUbicLine').style.display = 'flex';
       }
 
@@ -1624,18 +1677,21 @@
       if (servs.length) {
         document.getElementById('propServBlock').innerHTML =
           '<h3 class="prop-subtitle">' + T('Servicios', 'Services') + '</h3>' + checkList(servs, false);
+        window.solarTr.html(document.querySelector('#propServBlock .prop-caract-list'));
         hayDetalle = true;
       }
       var ambs = toList(p.ambientes_detalle);
       if (ambs.length) {
         document.getElementById('propAmbBlock').innerHTML =
           '<h3 class="prop-subtitle">' + T('Ambientes', 'Rooms') + '</h3>' + checkList(ambs, false);
+        window.solarTr.html(document.querySelector('#propAmbBlock .prop-caract-list'));
         hayDetalle = true;
       }
       var tags = toList(p.caracteristicas);
       if (tags.length) {
         document.getElementById('propCaractBlock').innerHTML =
           '<h3 class="prop-subtitle">' + T('Características', 'Features') + '</h3>' + checkList(tags, false);
+        window.solarTr.html(document.querySelector('#propCaractBlock .prop-caract-list'));
         hayDetalle = true;
       }
       if (hayDetalle) document.getElementById('propDetallesWrap').style.display = 'block';
@@ -1661,6 +1717,7 @@
           .replace(/\n{2,}/g, '</p><p>')
           .replace(/\n/g, '<br>');
         document.getElementById('propDesc').innerHTML = '<p>' + md + '</p>';
+        window.solarTr.html(document.getElementById('propDesc'));
         document.getElementById('propDescWrap').style.display = 'block';
       }
 

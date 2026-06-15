@@ -245,7 +245,19 @@ Orden: **1)** Hero (breadcrumb + badge + título + ubicación 📍) **2)** Galer
 
 ## Qué se traduce y qué NO
 - **Se traduce toda la UI:** nav, hero, buscador + "Más filtros", secciones (Servicios, esencia, Sobre mí, FAQ, Contacto, footer), y en `propiedades/`: hero del listado, barra de búsqueda, labels de la ficha (Descripción, Detalles, Ubicación, Similares), botones de contacto, breadcrumb, stats, etc.
-- **Los DATOS de cada propiedad NO se traducen** (título, descripción, zona, etc. los escribe Antonella en español). Solo se traduce la cáscara/UI.
+- **Los DATOS de cada propiedad SÍ se traducen automáticamente** (ver abajo). Antonella los carga **solo en español**; no carga nada dos veces.
+
+## Traducción AUTOMÁTICA de los datos de las propiedades (MyMemory)
+- **Por qué automática:** se descartó pedirle a Antonella cargar todo dos veces (ES/EN). En su lugar, los datos se traducen al vuelo SOLO cuando el visitante pone la página en inglés.
+- **Motor:** **MyMemory** (`api.mymemory.translated.net`), **gratis y sin API key**, con **CORS abierto** → se llama directo desde el navegador (no hace falta función serverless). Límite ~5.000 palabras/día por IP (suficiente con el caché). Si algún día la calidad no alcanza, se migra a Google Cloud Translation cambiando solo la función `tr()`.
+- **Módulo `window.solarTr`** (definido en el `<head>` de `index.html` y `propiedades/index.html`, idéntico):
+  - `tr(text)` → Promise con la traducción (o el original si falla / si idioma ≠ en).
+  - `el(node)` → traduce el `textContent` de un elemento (campos cortos: título, ubicación).
+  - `html(container)` → traduce los **nodos de texto** dentro de un contenedor **preservando el HTML** (para la descripción con `<strong>`/`<ul>` y las listas con ✓).
+  - `cards(scope)` → traduce `.prop-card-titulo` y `.prop-card-ubic` de las cards dentro de `scope`.
+  - `window.solarTrTipo(t)` → **mapa fijo** de tipos (Lote→Lot, Casa→House, Departamento→Apartment, etc.). No se manda a MyMemory porque "Lote" lo traduce mal.
+- **Solo on-demand + caché:** solo traduce cuando `SOLAR_LANG==='en'` y SOLO lo que el visitante está mirando (la propiedad/cards en pantalla, no todo el catálogo). Cada traducción se **cachea en `localStorage['solar-tr-cache']`** → la 2ª vez es instantánea y no gasta cuota. Se ve el español un instante y se reemplaza (sin saltos).
+- **Dónde se engancha:** cards del listado y similares (`solarTr.cards`), y en la ficha: `propTitulo` (`el`), `propTipo` (mapa), `propUbicTxt` / `propDesc` / listas de Servicios/Ambientes/Características (`html`). En el home: cards de destacadas (`solarTr.cards`) + tipo (mapa). Badge "★ Destacada"→"★ Featured" con `T()`.
 
 ## Deploy
 - Todo es del sitio público → **push a `main` → Vercel**. NO toca el admin, así que **no gasta deploys de Netlify**.
