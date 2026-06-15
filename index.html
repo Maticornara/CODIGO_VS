@@ -189,6 +189,10 @@
     nav:not(.scrolled) .nav-lang { color: var(--crema); }
     nav:not(.scrolled) .nav-lang:hover { color: #fff; }
 
+    /* ── Menú mobile (hamburguesa + overlay): ocultos en desktop ── */
+    .nav-hamb { display: none; }
+    .mobile-menu { display: none; }
+
     /* HERO */
     .hero {
       position: relative; height: 100vh; min-height: 600px;
@@ -943,6 +947,64 @@
       nav { padding: 0 20px; }
       .nav-links { display: none; }
       .nav-isologo-img { display: none; }
+
+      /* ── Hamburguesa visible ── */
+      .nav-hamb {
+        display: flex; flex-direction: column; justify-content: center; gap: 5px;
+        width: 42px; height: 42px; margin-left: auto; padding: 9px;
+        background: none; border: none; cursor: pointer; z-index: 1200;
+      }
+      .nav-hamb span {
+        display: block; width: 24px; height: 2px; border-radius: 2px;
+        background: var(--crema); transition: background 0.2s;
+      }
+      nav.scrolled .nav-hamb span { background: var(--verde); }
+
+      /* ── Overlay de menú a pantalla completa ── */
+      .mobile-menu {
+        display: flex; position: fixed; inset: 0; z-index: 1100;
+        flex-direction: column; align-items: center; justify-content: center;
+        background: #1E2E17; padding: 80px 24px 48px;
+        opacity: 0; pointer-events: none; transition: opacity 0.32s ease;
+      }
+      .mobile-menu.open { opacity: 1; pointer-events: auto; }
+      .mobile-menu-close {
+        position: absolute; top: 20px; right: 24px;
+        background: none; border: none; color: var(--crema);
+        font-size: 40px; line-height: 1; cursor: pointer;
+      }
+      .mobile-menu-logo { height: 56px; width: auto; margin-bottom: 30px; }
+      .mobile-menu-links {
+        display: flex; flex-direction: column; align-items: center; gap: 2px;
+        width: 100%; max-width: 360px;
+      }
+      .mobile-menu-links > a, .mm-acc-head {
+        font-family: var(--font-display); font-size: 25px; font-weight: 400;
+        color: var(--crema); text-decoration: none; background: none; border: none;
+        cursor: pointer; padding: 11px 0; text-align: center;
+      }
+      .mm-cta { color: var(--acento) !important; }
+      .mm-destacado { color: var(--acento); }
+      /* Acordeón (Propiedades / Contacto) */
+      .mm-acc { width: 100%; display: flex; flex-direction: column; align-items: center; }
+      .mm-acc-head::after { content: ' ▾'; font-size: 0.6em; opacity: 0.6; }
+      .mm-acc.open .mm-acc-head::after { content: ' ▴'; }
+      .mm-acc-body {
+        display: none; flex-direction: column; align-items: center; gap: 3px;
+        padding: 2px 0 8px;
+      }
+      .mm-acc.open .mm-acc-body { display: flex; }
+      .mm-acc-body a {
+        font-family: var(--font-body); font-size: 15px; font-weight: 600;
+        letter-spacing: 0.08em; text-transform: uppercase;
+        color: rgba(255,252,235,0.78); text-decoration: none; padding: 7px 0;
+      }
+      .mm-lang {
+        margin-top: 24px; background: none; border: 1.5px solid var(--crema);
+        color: var(--crema); font-family: var(--font-body); font-size: 13px;
+        font-weight: 700; letter-spacing: 0.08em; padding: 9px 22px;
+        border-radius: 7px; cursor: pointer;
+      }
       .hero-layout { flex-direction: column; padding: calc(var(--nav-h) + 48px) 20px 80px; gap: 0; }
       .hero-content { max-width: 100%; }
       .hero-illus-wrap { display: none; }
@@ -1017,7 +1079,42 @@
     <li><a href="#contacto" class="nav-cta" data-en="Contact us">Consultar</a></li>
     <li><button id="langToggle" class="nav-lang" type="button" onclick="solarToggleLang()">EN</button></li>
   </ul>
+
+  <!-- Botón hamburguesa (solo mobile) -->
+  <button id="navHamb" class="nav-hamb" type="button" aria-label="Abrir menú" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<!-- Menú mobile a pantalla completa -->
+<div id="mobileMenu" class="mobile-menu">
+  <button id="mobileMenuClose" class="mobile-menu-close" type="button" aria-label="Cerrar menú">&times;</button>
+  <img src="fotos/LOGO.PNG" alt="Solar Propiedades" class="mobile-menu-logo"/>
+  <div class="mobile-menu-links">
+    <a href="#inicio" data-en="Home">Inicio</a>
+    <div class="mm-acc">
+      <button type="button" class="mm-acc-head mm-destacado" data-en="Properties">Propiedades</button>
+      <div class="mm-acc-body">
+        <a href="#propiedades" data-en="Featured">Destacadas</a>
+        <a href="/propiedades" data-en="View all">Ver todas</a>
+      </div>
+    </div>
+    <a href="#servicios" data-en="Services">Servicios</a>
+    <a href="#valores" data-en="Our essence">Nuestra esencia</a>
+    <a href="#sobre" data-en="About me">Sobre mí</a>
+    <a href="#faq" data-en="FAQ">FAQ</a>
+    <div class="mm-acc">
+      <button type="button" class="mm-acc-head" data-en="Contact">Contacto</button>
+      <div class="mm-acc-body">
+        <a href="https://wa.me/5492994029148?text=Hola%20Antonella%2C%20me%20comunico%20desde%20la%20P%C3%A1gina%20web%20de%20Solar%20Propiedades." target="_blank" rel="noopener">WhatsApp</a>
+        <a href="mailto:matyy.cornara@gmail.com">Email</a>
+        <a href="https://www.instagram.com/solar_propiedades/" target="_blank" rel="noopener">Instagram</a>
+      </div>
+    </div>
+    <a href="#contacto" class="mm-cta" data-en="Contact us">Consultar</a>
+    <button id="mobileLang" class="mm-lang" type="button" onclick="solarToggleLang()">EN</button>
+  </div>
+</div>
 
 <!-- HERO -->
 <section class="hero" id="inicio">
@@ -2477,8 +2574,11 @@
     });
     if (window.__setHeroLang)  window.__setHeroLang(lang);
     if (window.__setSobreLang) window.__setSobreLang(lang);
+    var lbl = (lang === 'en') ? 'ES' : 'EN';
     var tg = document.getElementById('langToggle');
-    if (tg) tg.textContent = (lang === 'en') ? 'ES' : 'EN';
+    if (tg) tg.textContent = lbl;
+    var tgm = document.getElementById('mobileLang');
+    if (tgm) tgm.textContent = lbl;
   }
   window.solarToggleLang = function() {
     var next = (window.SOLAR_LANG === 'en') ? 'es' : 'en';
@@ -2674,6 +2774,35 @@
                 'Consulta: ' + val('cfMensaje');
       window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(msg), '_blank');
     });
+  })();
+
+  // ── Menú mobile (hamburguesa): abrir/cerrar + acordeones ──
+  (function() {
+    var hamb  = document.getElementById('navHamb');
+    var menu  = document.getElementById('mobileMenu');
+    var close = document.getElementById('mobileMenuClose');
+    if (!hamb || !menu) return;
+    function abrir() {
+      menu.classList.add('open');
+      hamb.setAttribute('aria-expanded', 'true');
+      hamb.style.visibility = 'hidden';   // evita que pise la X del menú
+      document.body.style.overflow = 'hidden';
+    }
+    function cerrar() {
+      menu.classList.remove('open');
+      hamb.setAttribute('aria-expanded', 'false');
+      hamb.style.visibility = '';
+      document.body.style.overflow = '';
+    }
+    hamb.addEventListener('click', abrir);
+    if (close) close.addEventListener('click', cerrar);
+    // Cerrar al tocar cualquier link de navegación
+    menu.querySelectorAll('a').forEach(function(a) { a.addEventListener('click', cerrar); });
+    // Acordeones (Propiedades / Contacto)
+    menu.querySelectorAll('.mm-acc-head').forEach(function(h) {
+      h.addEventListener('click', function() { h.parentElement.classList.toggle('open'); });
+    });
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') cerrar(); });
   })();
 </script>
 </body>
