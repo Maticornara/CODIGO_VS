@@ -1016,11 +1016,11 @@
          el wordmark se iba para la derecha y quedaba descentrado/cortado) ── */
       /* Grupo completo (pin + wordmark) corrido unos px a la izquierda, alineados
          entre sí (el glow del pin hace ver todo medio corrido a la derecha). */
-      #splash { flex-direction: column; gap: 14px; transform: translateX(-8px); }
+      #splash { flex-direction: column; gap: 14px; transform: translateX(-3px); }
       #splash-logo { height: 110px; }
       #splash-wordmark { height: 46px; max-width: 80vw; }
 
-      .hero-layout { flex-direction: column; align-items: stretch; padding: calc(var(--nav-h) + 48px) 20px 80px; gap: 0; }
+      .hero-layout { flex-direction: column; align-items: stretch; padding: calc(var(--nav-h) + 24px) 20px 80px; gap: 0; }
       /* display:contents → los hijos del hero-content pasan a ser items del flex,
          así puedo intercalar la ilustración entre el typewriter y el subtítulo. */
       .hero-content { display: contents; }
@@ -1028,12 +1028,12 @@
       .hero-welcome { order: 2; }
       .hero-title { order: 3; height: auto; min-height: 2.6em; }
       /* Ilustración EN EL MEDIO: después del typewriter, antes del "Asesoramiento..." */
-      .hero-illus-wrap { order: 4; display: flex; min-height: 230px; width: 100%; margin: 4px 0 10px; }
-      .hero-sub { order: 5; }
+      .hero-illus-wrap { order: 4; display: flex; min-height: 230px; width: 100%; margin: 24px 0 22px; }
+      .hero-sub { order: 5; margin-top: 8px; }
       /* Trazo más fino en mobile: el stroke es non-scaling (px fijos), al achicar
          la ilustración 4.5 se ve grueso (sobre todo el edificio). Bajado a 3. */
       .illus-svg { max-width: 210px; max-height: 200px; stroke-width: 3; }
-      #illus-0 { max-width: 225px; max-height: 215px; transform: translate(-16px, -10px); }
+      #illus-0 { max-width: 225px; max-height: 215px; transform: translate(-4px, -6px); }
       #illus-1 { max-width: 235px; max-height: 255px; }
       #illus-3 { transform: translateX(-20px); }
       /* Barra de búsqueda en mobile: columna */
@@ -1837,7 +1837,7 @@
       return r.top <= navH && r.bottom >= navH;
     });
     nav.classList.toggle('over-dark', overDark);
-    if (waFloat) waFloat.classList.toggle('wa-show', window.scrollY > window.innerHeight * 0.7);
+    if (waFloat) waFloat.classList.toggle('wa-show', window.scrollY > window.innerHeight * 0.5);
   }
   window.addEventListener('scroll', updateNav, { passive: true });
   updateNav();
@@ -2031,14 +2031,16 @@
         [{ transform: 'translateX(500px)', opacity: 0 }, { transform: 'translateX(0px)', opacity: 1 }],
         { duration: 700, easing: 'cubic-bezier(.2,.7,.3,1)', fill: 'backwards' }
       );
-      // al agarrar: leve "tirón" + rotación del conjunto y vuelve (reacción del agarre)
+      // al agarrar: leve "tirón" + rotación del conjunto y vuelve (reacción del agarre).
+      // composite:'add' → el recoil es un DELTA relativo que se suma a la base CSS
+      // (translateX -50px desktop / -20px mobile), así no pega un salto en mobile.
       svg.animate(
         [
-          { transform: 'translateX(-50px) rotate(0deg)' },
-          { transform: 'translateX(-64px) rotate(-3.5deg)', offset: 0.45 },
-          { transform: 'translateX(-50px) rotate(0deg)' }
+          { transform: 'translateX(0px) rotate(0deg)' },
+          { transform: 'translateX(-14px) rotate(-3.5deg)', offset: 0.45 },
+          { transform: 'translateX(0px) rotate(0deg)' }
         ],
-        { duration: 520, delay: 620, easing: 'ease-out' }
+        { duration: 520, delay: 620, easing: 'ease-out', composite: 'add' }
       );
     }
     /* handOut(): la mano se DESDIBUJA al salir (retrae trazos + desvanece relleno) */
