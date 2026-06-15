@@ -960,6 +960,16 @@
       }
       nav.scrolled .nav-hamb span { background: var(--verde); }
 
+      /* En mobile la barra es SIEMPRE sólida y fija (sin transparencia sobre el
+         hero) → se ve estable, no "aparece y desaparece" al scrollear. */
+      nav, nav.over-dark {
+        background: rgba(255,252,235,0.97);
+        backdrop-filter: blur(14px);
+        box-shadow: 0 1px 0 rgba(54,81,43,0.10);
+      }
+      .nav-hamb span { background: var(--verde); }   /* verde sobre crema, siempre visible */
+      .nav-logo-img { filter: none; }
+
       /* ── Overlay de menú a pantalla completa ── */
       .mobile-menu {
         display: flex; position: fixed; inset: 0; z-index: 1100;
