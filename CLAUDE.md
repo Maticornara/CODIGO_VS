@@ -261,3 +261,52 @@ Orden: **1)** Hero (breadcrumb + badge + título + ubicación 📍) **2)** Galer
 
 ## Deploy
 - Todo es del sitio público → **push a `main` → Vercel**. NO toca el admin, así que **no gasta deploys de Netlify**.
+
+---
+
+# Sesión — VERSIÓN MOBILE (en progreso) ⚠️ RETOMAR ACÁ
+
+> El sitio estaba pensado **solo para desktop**. Se está haciendo el pasaje a **mobile** (`@media (max-width: 768px)`). Esta sección documenta el plan completo, lo ya hecho y lo que falta, para continuar en otra conversación.
+
+## Concepto central (decisión del usuario)
+- En mobile **NO existe el `:hover`**, así que cada efecto hover de desktop se traduce a un **trigger por Intersection Observer**: se aplica una clase `.is-visible` cuando el elemento entra al viewport (`threshold: 0.5` salvo que se indique otro) y **se remueve al salir** (para que se repita si el usuario vuelve a scrollear).
+- Implementación: los estilos que en desktop están en `:hover`, en mobile van **dentro del `@media (max-width:768px)`** con el selector duplicado `.elemento.is-visible { ... }` (el `&.is-visible` de SCSS NO existe en CSS puro).
+- Los **observers se activan solo en mobile** (con `window.matchMedia('(max-width:768px)')`) para no ensuciar desktop.
+- **REGLA DURA:** no tocar ni romper desktop. TODO el CSS mobile va dentro de `@media (max-width:768px)`.
+
+## Decisiones tomadas con el usuario
+1. **Ilustraciones del hero en mobile: SÍ** (mostrar las 4 rotando como en desktop). Es la tarea **más frágil** (los SVG tienen transforms finos para la columna de desktop) → va a necesitar **iteración con capturas**. Se dejó para la última tanda (D). Hoy están ocultas: `.hero-illus-wrap { display:none }`.
+2. **Submenús del menú hamburguesa: ACORDEÓN** (Propiedades→Destacadas/Ver todas; Contacto→WhatsApp/Email/Instagram se tocan para desplegar).
+3. **Trabajar POR TANDAS**, validando con capturas del usuario (trabaja muy visual). Orden A→D.
+
+## Plan por tandas
+- **Tanda A — Hamburguesa + hero base.** ✅ HECHO Y PUSHEADO.
+- **Tanda B — Hover→scroll (bajo riesgo):** Servicios + Valores + FAQ + Sobre mí. ⏳ PENDIENTE (es lo próximo).
+- **Tanda C — Destacadas:** carrusel horizontal deslizable (swipe, scroll-snap), 1 card visible; la card centrada/visible (`threshold: 0.6`) recibe `.is-visible` (elevación + sombra); botón "Ver todas" al final. ⏳ PENDIENTE.
+- **Tanda D — Ilustraciones del hero en mobile** (la fina, con iteración). ⏳ PENDIENTE.
+
+## ✅ Tanda A — HECHO (commits `45cbc26` + `9d50297`)
+Solo en `index.html`, todo dentro de `@media (max-width:768px)`:
+- **Menú hamburguesa:** botón `#navHamb` (`.nav-hamb`, 3 `<span>`) visible solo en mobile (en desktop `.nav-hamb { display:none }` fuera del media query). Las `.nav-links` siguen ocultas en mobile.
+- **Overlay `#mobileMenu`** (`.mobile-menu`): a pantalla completa, fondo `#1E2E17`, fade in con `.open` (opacity + pointer-events), logo pin centrado arriba (`LOGO.PNG`), botón **X** `#mobileMenuClose` arriba-der, links grandes en Archivo Black centrados.
+  - **Acordeones** (`.mm-acc` / `.mm-acc-head` / `.mm-acc-body`): Propiedades y Contacto; flechita `▾`/`▴` vía `::after`; se abre con `.mm-acc.open`.
+  - **Botón idioma `#mobileLang`** (`.mm-lang`) DENTRO del menú (clave: el `#langToggle` del nav está en `.nav-links`, oculto en mobile → sin esto no se podía cambiar idioma en celu). `solarApplyLang()` ahora actualiza el texto de AMBOS (`#langToggle` y `#mobileLang`).
+- **JS** (IIFE al final del `<script>` principal): abrir/cerrar (`abrir`/`cerrar`), cierra al tocar cualquier `<a>`, con la X o con Escape; bloquea el scroll del body (`overflow:hidden`); oculta la hamburguesa al abrir (`visibility:hidden`) para que no pise la X.
+- **Nav siempre sólida y fija en mobile:** se forzó `nav, nav.over-dark { background: crema + blur + box-shadow }`, hamburguesa verde y logo a color SIEMPRE (antes era transparente sobre el hero y se volvía crema al scrollear → el usuario lo veía "subir y bajar"). El hero (título/sub) ya escalaba con `clamp()`, no desbordaba.
+  - ⚠️ Nota: el otro "movimiento" que el usuario notaba es la **barra de URL del propio Chrome del celu** (se auto-esconde al scrollear) → eso es del navegador, NO se controla desde el código.
+
+## Estado actual del responsive (lo que YA existía, a revisar/afinar en cada tanda)
+- **Home (`index.html`):** breakpoints en `@media (max-width:1024px)` y `@media (max-width:768px)` (hay 2 bloques de 1024px, líneas ~930 y ~968, el 2º solo redefine padding de `.valores-section` — redundante, se puede unificar). Hero pasa a columna y oculta ilustraciones; búsqueda en columna; grids a 1 col; footer apilado.
+- **Listado/Ficha (`propiedades/index.html`):** breakpoints dispares (`720`, `600`, `860`, `480`). Galería de la ficha pasa a columna a 720px; cards a 1 col a 600px; búsqueda apilada. El nav de `propiedades/` es distinto (logo + "volver" + botón EN) y NO se oculta en mobile → **no necesita hamburguesa**. Su botón idioma (`#langToggle`) ya se ve.
+- ⚠️ Los breakpoints están dispares entre páginas; si se quiere, unificar criterio (el usuario lo dejó a consideración).
+
+## Hover de desktop a traducir en cada tanda (referencia de selectores)
+En `index.html`:
+- **Servicios** (`.servicio-card`): hover → `background:#fffef5; transform:translateY(-8px); box-shadow:...` + `::after { transform: scaleX(1) }` (línea naranja inferior) + `.servicio-num { color:#EE7A13 }`. (líneas ~723-730)
+- **Cards destacadas** (`.prop-card`): hover → `transform:translateY(-5px); box-shadow:0 16px 48px...` + `.prop-card-img img { scale(1.05) }` + `.prop-card-ver { letter-spacing }`. (líneas ~631-694, ~748)
+- **FAQ** (`.faq-item`): el borde naranja es un `::before` que aparece por opacidad en `.faq-item:not(.open) .faq-q:hover .faq-q-text::before` (líneas ~870-877). En mobile: mostrarlo con `.faq-item.open .faq-q-text::before { opacity:1 }`. El click/abrir ya funciona (IIFE FAQ ~2746).
+- **Sobre mí:** secuencia ya por IntersectionObserver (`ioSobre`, ~2605); en mobile solo ajustar a 1 columna manteniendo la animación.
+- **Valores:** animación ya por IntersectionObserver (`ioValores`, ~2507); en mobile cada `.valor-item` debe disparar individual (threshold 0.5) con delay escalonado 0.4s.
+
+## Cómo prueba el usuario
+- En el celu real → **codigo-vs.vercel.app** (por eso pidió pushear cada tanda). También DevTools (F12 → modo celular). **Trabaja con capturas**: mostrarle, esperar OK visual, seguir.
