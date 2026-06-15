@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Solar Propiedades</title>
   <link rel="icon" type="image/png" href="/fotos/LOGO.PNG"/>
+  <script>
+    window.SOLAR_LANG = (function(){ try { return localStorage.getItem('solar-lang') || 'es'; } catch(e){ return 'es'; } })();
+    document.documentElement.lang = window.SOLAR_LANG;
+    window.T = function(es, en){ return window.SOLAR_LANG === 'en' ? en : es; };
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Archivo+Black&display=swap" rel="stylesheet"/>
@@ -54,6 +59,13 @@
     nav.scrolled .nav-back { color: var(--verde); }
     .nav-back:hover { color: var(--acento); }
     .nav-back svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .nav-lang {
+      margin-left: 18px; background: none; border: 1.5px solid var(--verde);
+      color: var(--verde); font-family: var(--font-body); font-size: 11px; font-weight: 700;
+      letter-spacing: 0.08em; padding: 6px 11px; border-radius: 6px; cursor: pointer;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+    .nav-lang:hover { background: var(--acento); border-color: var(--acento); color: #fff; }
 
     /* ═══ PÁGINA PROPIEDAD (ficha) — columna única, inmobiliaria moderna ═══ */
     .prop-page {
@@ -650,6 +662,7 @@
     <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
     <span id="navBackLabel">Propiedades</span>
   </a>
+  <button id="langToggle" class="nav-lang" type="button" onclick="solarToggleLang()">EN</button>
 </nav>
 
 <!-- ═══ LISTING MODE ═══════════════════════════════════════════════════════ -->
@@ -658,7 +671,7 @@
     <div class="listing-hero">
       <div class="listing-hero-inner">
         <p class="listing-eyebrow">Solar Propiedades</p>
-        <h1 class="listing-title">Todas las propiedades</h1>
+        <h1 class="listing-title" data-en="All properties">Todas las propiedades</h1>
       </div>
     </div>
 
@@ -669,16 +682,16 @@
 
           <!-- TIPO -->
           <div class="search-filter" data-custom-select id="lsf-tipo">
-            <label>Tipo</label>
-            <span class="sf-value">Cualquier tipo</span>
+            <label data-en="Type">Tipo</label>
+            <span class="sf-value" data-en="Any type">Cualquier tipo</span>
             <svg class="search-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
             <div class="sf-dropdown">
-              <div class="sf-option selected" data-value="">Cualquier tipo</div>
-              <div class="sf-option" data-value="lote">Lotes</div>
-              <div class="sf-option" data-value="casa">Casas</div>
-              <div class="sf-option" data-value="departamento">Departamentos</div>
-              <div class="sf-option" data-value="alquiler permanente">Alquiler permanente</div>
-              <div class="sf-option" data-value="alquiler turístico">Alquiler turístico</div>
+              <div class="sf-option selected" data-value="" data-en="Any type">Cualquier tipo</div>
+              <div class="sf-option" data-value="lote" data-en="Lots">Lotes</div>
+              <div class="sf-option" data-value="casa" data-en="Houses">Casas</div>
+              <div class="sf-option" data-value="departamento" data-en="Apartments">Departamentos</div>
+              <div class="sf-option" data-value="alquiler permanente" data-en="Long-term rental">Alquiler permanente</div>
+              <div class="sf-option" data-value="alquiler turístico" data-en="Vacation rental">Alquiler turístico</div>
             </div>
           </div>
 
@@ -686,7 +699,7 @@
 
           <!-- UBICACIÓN (con autocompletado) -->
           <div class="search-filter sf-ubic" style="flex:1.4; cursor:text;">
-            <label>Ubicación</label>
+            <label data-en="Location">Ubicación</label>
             <input id="lstUbic" type="text" placeholder="Villa La Angostura…" autocomplete="off"/>
             <div class="ac-list" id="lstUbicAC"></div>
           </div>
@@ -695,7 +708,7 @@
 
           <!-- PRECIO (moneda + slider de rango) -->
           <div class="search-filter" data-range-filter id="lsf-precio" style="flex:1.3;">
-            <label>Precio</label>
+            <label data-en="Price">Precio</label>
             <span class="sf-value" id="lsf-precio-val"></span>
             <svg class="search-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
             <div class="sf-dropdown rng-dropdown">
@@ -704,8 +717,8 @@
                 <button type="button" class="cur-opt" data-cur="ARS">$ ARS</button>
               </div>
               <div class="rng-inputs">
-                <label class="rng-in"><span>Desde</span><input type="number" id="precioMin" min="0" inputmode="numeric" placeholder="Sin mínimo"></label>
-                <label class="rng-in"><span>Hasta</span><input type="number" id="precioMax" min="0" inputmode="numeric" placeholder="Sin máximo"></label>
+                <label class="rng-in"><span data-en="From">Desde</span><input type="number" id="precioMin" min="0" inputmode="numeric" placeholder="Sin mínimo" data-en-ph="No minimum"></label>
+                <label class="rng-in"><span data-en="To">Hasta</span><input type="number" id="precioMax" min="0" inputmode="numeric" placeholder="Sin máximo" data-en-ph="No maximum"></label>
               </div>
             </div>
           </div>
@@ -714,13 +727,13 @@
 
           <!-- SUPERFICIE m² (slider de rango) -->
           <div class="search-filter" data-range-filter id="lsf-m2" style="flex:1;">
-            <label>Superficie m²</label>
+            <label data-en="Area m²">Superficie m²</label>
             <span class="sf-value" id="lsf-m2-val"></span>
             <svg class="search-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
             <div class="sf-dropdown rng-dropdown">
               <div class="rng-inputs">
-                <label class="rng-in"><span>Desde</span><input type="number" id="supMin" min="0" inputmode="numeric" placeholder="Sin mínimo"></label>
-                <label class="rng-in"><span>Hasta</span><input type="number" id="supMax" min="0" inputmode="numeric" placeholder="Sin máximo"></label>
+                <label class="rng-in"><span data-en="From">Desde</span><input type="number" id="supMin" min="0" inputmode="numeric" placeholder="Sin mínimo" data-en-ph="No minimum"></label>
+                <label class="rng-in"><span data-en="To">Hasta</span><input type="number" id="supMax" min="0" inputmode="numeric" placeholder="Sin máximo" data-en-ph="No maximum"></label>
               </div>
             </div>
           </div>
@@ -729,7 +742,7 @@
 
           <button class="search-btn" id="lstBuscar">
             <svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            Buscar
+            <span data-en="Search">Buscar</span>
           </button>
 
         </div>
@@ -738,41 +751,41 @@
       <!-- Botón Más filtros -->
       <button type="button" class="more-toggle" id="moreToggle" aria-expanded="false">
         <svg viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
-        <span>Más filtros</span>
+        <span data-en="More filters">Más filtros</span>
       </button>
 
       <!-- Panel Más filtros -->
       <div class="more-filters" id="moreFilters">
         <div class="mf-grid">
-          <label class="mf-field"><span>Ambientes (mín.)</span>
-            <select id="mfAmbientes"><option value="">Cualquiera</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
+          <label class="mf-field"><span data-en="Rooms (min.)">Ambientes (mín.)</span>
+            <select id="mfAmbientes"><option value="" data-en="Any">Cualquiera</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
           </label>
-          <label class="mf-field"><span>Dormitorios (mín.)</span>
-            <select id="mfDormitorios"><option value="">Cualquiera</option><option>1</option><option>2</option><option>3</option><option>4</option></select>
+          <label class="mf-field"><span data-en="Bedrooms (min.)">Dormitorios (mín.)</span>
+            <select id="mfDormitorios"><option value="" data-en="Any">Cualquiera</option><option>1</option><option>2</option><option>3</option><option>4</option></select>
           </label>
-          <label class="mf-field"><span>Baños (mín.)</span>
-            <select id="mfBanos"><option value="">Cualquiera</option><option>1</option><option>2</option><option>3</option></select>
+          <label class="mf-field"><span data-en="Bathrooms (min.)">Baños (mín.)</span>
+            <select id="mfBanos"><option value="" data-en="Any">Cualquiera</option><option>1</option><option>2</option><option>3</option></select>
           </label>
-          <label class="mf-field"><span>m² cubiertos (mín.)</span>
+          <label class="mf-field"><span data-en="Covered m² (min.)">m² cubiertos (mín.)</span>
             <input id="mfCubiertos" type="number" min="0" inputmode="numeric" placeholder="—"/>
           </label>
-          <label class="mf-field"><span>m² terreno (mín.)</span>
+          <label class="mf-field"><span data-en="Land m² (min.)">m² terreno (mín.)</span>
             <input id="mfTerreno" type="number" min="0" inputmode="numeric" placeholder="—"/>
           </label>
-          <label class="mf-field"><span>Antigüedad (máx. años)</span>
+          <label class="mf-field"><span data-en="Age (max. years)">Antigüedad (máx. años)</span>
             <input id="mfAntiguedad" type="number" min="0" inputmode="numeric" placeholder="—"/>
           </label>
         </div>
         <div class="mf-chips-group" id="servGroup" style="display:none">
-          <button type="button" class="mf-chips-toggle"><span>Servicios</span><span class="mf-chips-plus">+</span></button>
+          <button type="button" class="mf-chips-toggle"><span data-en="Services">Servicios</span><span class="mf-chips-plus">+</span></button>
           <div class="tag-filter mf-chips-list" id="servFilter"></div>
         </div>
         <div class="mf-chips-group" id="caractGroup" style="display:none">
-          <button type="button" class="mf-chips-toggle"><span>Características</span><span class="mf-chips-plus">+</span></button>
+          <button type="button" class="mf-chips-toggle"><span data-en="Features">Características</span><span class="mf-chips-plus">+</span></button>
           <div class="tag-filter mf-chips-list" id="tagFilter"></div>
         </div>
         <div class="mf-actions">
-          <button type="button" class="mf-clear" id="mfClear">Limpiar filtros</button>
+          <button type="button" class="mf-clear" id="mfClear" data-en="Clear filters">Limpiar filtros</button>
         </div>
       </div>
     </div>
@@ -782,10 +795,10 @@
   <div class="listing-props-wrap">
     <p class="listing-status" id="lstStatus"></p>
     <div class="propiedades-grid" id="lstGrid"></div>
-    <div class="listing-empty" id="lstEmpty" style="display:none">
+    <div class="listing-empty" id="lstEmpty" style="display:none" data-en="No properties found with those filters.">
       No se encontraron propiedades con esos filtros.
     </div>
-    <div class="propiedades-loading" id="lstLoading">Cargando propiedades…</div>
+    <div class="propiedades-loading" id="lstLoading" data-en="Loading properties…">Cargando propiedades…</div>
   </div>
 </div>
 <!-- ══════════════════════════════════════════════════════════════════════════ -->
@@ -799,9 +812,9 @@
 
     <!-- 1 · Breadcrumb -->
     <div class="breadcrumb">
-      <a href="/">Inicio</a>
+      <a href="/" data-en="Home">Inicio</a>
       <span>›</span>
-      <a href="/propiedades">Propiedades</a>
+      <a href="/propiedades" data-en="Properties">Propiedades</a>
       <span>›</span>
       <span id="bcCodigo"></span>
     </div>
@@ -840,20 +853,20 @@
     <div class="prop-contact">
         <a class="prop-wa-btn" id="waBtn" href="#" target="_blank">
           <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-          Consultar por WhatsApp
+          <span data-en="Ask on WhatsApp">Consultar por WhatsApp</span>
         </a>
-        <a class="prop-mail-btn" id="mailBtn" href="mailto:matyy.cornara@gmail.com">Enviar consulta por email</a>
+        <a class="prop-mail-btn" id="mailBtn" href="mailto:matyy.cornara@gmail.com" data-en="Send inquiry by email">Enviar consulta por email</a>
     </div><!-- /contacto -->
 
     <!-- 5 · Descripción -->
     <section class="prop-section" id="propDescWrap" style="display:none">
-      <h2 class="prop-section-title">Descripción</h2>
+      <h2 class="prop-section-title" data-en="Description">Descripción</h2>
       <div class="prop-desc" id="propDesc"></div>
     </section>
 
     <!-- 6 · Detalles de la propiedad (superficies, servicios, ambientes, características) -->
     <section class="prop-section" id="propDetallesWrap" style="display:none">
-      <h2 class="prop-section-title">Detalles de la propiedad</h2>
+      <h2 class="prop-section-title" data-en="Property details">Detalles de la propiedad</h2>
       <div class="prop-detalle-sub" id="propSupBlock"></div>
       <div class="prop-detalle-sub" id="propServBlock"></div>
       <div class="prop-detalle-sub" id="propAmbBlock"></div>
@@ -864,19 +877,19 @@
     <div id="propReelWrap" style="display:none; margin-bottom:52px">
       <a class="prop-reel" id="propReel" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-        Ver reel / video
+        <span data-en="Watch reel / video">Ver reel / video</span>
       </a>
     </div>
 
     <!-- 7 · Mapa -->
     <section class="prop-section" id="propMapSection" style="display:none">
-      <h2 class="prop-section-title">Ubicación</h2>
+      <h2 class="prop-section-title" data-en="Location">Ubicación</h2>
       <iframe class="prop-map-frame" id="propMap" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>
     </section>
 
     <!-- 8 · Propiedades similares (ranking automático: la más parecida primero) -->
     <section class="prop-section" id="propSimilaresWrap" style="display:none">
-      <h2 class="prop-section-title">Propiedades similares</h2>
+      <h2 class="prop-section-title" data-en="Similar properties">Propiedades similares</h2>
       <div class="prop-similares-grid" id="propSimilares"></div>
     </section>
 
@@ -1047,9 +1060,9 @@
     var ubic = [p.zona, p.localidad].filter(Boolean).join(', ') || p.ubicacion || '';
     var statsStr = [
       p.metros_cuadrados ? p.metros_cuadrados + ' m²' : null,
-      p.ambientes        ? p.ambientes + ' amb.' : null,
-      p.dormitorios      ? p.dormitorios + ' dorm.' : null,
-      p.banos            ? p.banos + (p.banos == 1 ? ' baño' : ' baños') : null
+      p.ambientes        ? p.ambientes + T(' amb.', ' rooms') : null,
+      p.dormitorios      ? p.dormitorios + T(' dorm.', ' bd') : null,
+      p.banos            ? p.banos + (p.banos == 1 ? T(' baño', ' bath') : T(' baños', ' baths')) : null
     ].filter(Boolean).map(function(s) { return '<span class="prop-card-stat">' + s + '</span>'; }).join('');
     return '<a class="prop-card" style="animation-delay:' + delay + 's" href="/propiedades/?p=' + (p._slug || p.codigo || '') + '">' +
       '<div class="prop-card-img">' + imgHtml +
@@ -1063,7 +1076,7 @@
         '<p class="prop-card-precio">' + fmtPrecio(p) + '</p>' +
         '<div class="prop-card-footer">' +
           '<span class="prop-card-codigo">' + (p.codigo || '') + '</span>' +
-          '<span class="prop-card-ver">VER PROPIEDAD →</span>' +
+          '<span class="prop-card-ver">' + T('VER PROPIEDAD →', 'VIEW PROPERTY →') + '</span>' +
         '</div>' +
       '</div>' +
     '</a>';
@@ -1127,7 +1140,7 @@
   if (isListing) {
     // ── LISTING MODE ────────────────────────────────────────────────────────
     document.getElementById('navBack').href = '/';
-    document.getElementById('navBackLabel').textContent = 'Inicio';
+    document.getElementById('navBackLabel').textContent = T('Inicio', 'Home');
     document.getElementById('modeListing').style.display = 'block';
 
     // Custom selects
@@ -1166,7 +1179,7 @@
         grid.innerHTML = ''; empty.style.display = 'block'; stat.textContent = ''; return;
       }
       empty.style.display = 'none';
-      stat.textContent = props.length + ' propiedad' + (props.length !== 1 ? 'es' : '') + ' encontrada' + (props.length !== 1 ? 's' : '');
+      stat.textContent = T(props.length + ' propiedad' + (props.length !== 1 ? 'es' : '') + ' encontrada' + (props.length !== 1 ? 's' : ''), props.length + ' propert' + (props.length !== 1 ? 'ies' : 'y') + ' found');
       grid.innerHTML = props.map(renderCard).join('');
     }
 
@@ -1180,16 +1193,16 @@
       var el = document.getElementById('lsf-precio-val');
       if (lo == null && hi == null) el.textContent = '';
       else if (lo != null && hi != null) el.textContent = s + fmtMiles(lo) + ' – ' + fmtMiles(hi);
-      else if (lo != null) el.textContent = 'Desde ' + s + fmtMiles(lo);
-      else el.textContent = 'Hasta ' + s + fmtMiles(hi);
+      else if (lo != null) el.textContent = T('Desde ', 'From ') + s + fmtMiles(lo);
+      else el.textContent = T('Hasta ', 'Up to ') + s + fmtMiles(hi);
     }
     function updM2Label() {
       var lo = num('supMin'), hi = num('supMax');
       var el = document.getElementById('lsf-m2-val');
       if (lo == null && hi == null) el.textContent = '';
       else if (lo != null && hi != null) el.textContent = fmtMiles(lo) + ' – ' + fmtMiles(hi) + ' m²';
-      else if (lo != null) el.textContent = 'Desde ' + fmtMiles(lo) + ' m²';
-      else el.textContent = 'Hasta ' + fmtMiles(hi) + ' m²';
+      else if (lo != null) el.textContent = T('Desde ', 'From ') + fmtMiles(lo) + ' m²';
+      else el.textContent = T('Hasta ', 'Up to ') + fmtMiles(hi) + ' m²';
     }
     ['precioMin','precioMax'].forEach(function(id) { document.getElementById(id).addEventListener('input', updPrecioLabel); });
     ['supMin','supMax'].forEach(function(id) { document.getElementById(id).addEventListener('input', updM2Label); });
@@ -1316,7 +1329,7 @@
     // Limpiar todos los filtros
     document.getElementById('mfClear').addEventListener('click', function() {
       document.querySelectorAll('#lsf-tipo .sf-option').forEach(function(o, i) { o.classList.toggle('selected', i === 0); });
-      document.querySelector('#lsf-tipo .sf-value').textContent = 'Cualquier tipo';
+      document.querySelector('#lsf-tipo .sf-value').textContent = T('Cualquier tipo', 'Any type');
       document.getElementById('lstUbic').value = '';
       setCurrency('USD');
       ['precioMin','precioMax','supMin','supMax','mfAmbientes','mfDormitorios','mfBanos','mfCubiertos','mfTerreno','mfAntiguedad'].forEach(function(id) { document.getElementById(id).value = ''; });
@@ -1395,14 +1408,14 @@
         else renderListing(allProps);
       })
       .catch(function() {
-        document.getElementById('lstLoading').textContent = 'No se pudieron cargar las propiedades.';
+        document.getElementById('lstLoading').textContent = T('No se pudieron cargar las propiedades.', 'Could not load properties.');
       });
 
   } else {
     // ── INDIVIDUAL MODE ─────────────────────────────────────────────────────
     document.querySelector('.prop-page').style.display = 'block';
     document.getElementById('navBack').href = '/propiedades';
-    document.getElementById('navBackLabel').textContent = 'Todas las propiedades';
+    document.getElementById('navBackLabel').textContent = T('Todas las propiedades', 'All properties');
 
     var codigo = slug;
     var url = 'https://api.github.com/repos/' + REPO + '/contents/content/propiedades/' + codigo + '.md?ref=main';
@@ -1519,7 +1532,7 @@
         // Evaluar el fade una vez que el layout ya tiene medidas reales
         setTimeout(updateThumbFade, 60);
       } else {
-        mainEl.innerHTML = '<div class="gallery-no-img"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span>Sin fotos disponibles</span></div>';
+        mainEl.innerHTML = '<div class="gallery-no-img"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span>' + T('Sin fotos disponibles', 'No photos available') + '</span></div>';
       }
       }); // fin keepValidImages
 
@@ -1531,7 +1544,7 @@
       // Precio sidebar
       document.getElementById('sidebarPrecio').textContent = fmtPrecio(p);
       var esAlq = p.tipo && p.tipo.toLowerCase().includes('alquiler');
-      document.getElementById('sidebarPrecioSub').textContent = esAlq ? 'por mes' : (p.moneda === 'ARS' ? 'pesos argentinos' : 'dólares estadounidenses');
+      document.getElementById('sidebarPrecioSub').textContent = esAlq ? T('por mes', 'per month') : (p.moneda === 'ARS' ? T('pesos argentinos', 'argentine pesos') : T('dólares estadounidenses', 'US dollars'));
 
       // Ubicación (Zona · Localidad) debajo del título.
       // Usa los campos separados; si solo hay 'ubicacion' (datos viejos),
@@ -1566,13 +1579,13 @@
                '<span><b>' + val + '</b>' + u + ' ' + label + '</span></div>';
       }
       var statsArr = [];
-      if (p.metros_cuadrados) statsArr.push(statHtml(ICO.area, p.metros_cuadrados, 'm²', 'totales'));
-      if (p.metros_cubiertos) statsArr.push(statHtml(ICO.casa, p.metros_cubiertos, 'm²', 'cubiertos'));
-      if (p.metros_terreno)   statsArr.push(statHtml(ICO.terreno, p.metros_terreno, 'm²', 'terreno'));
-      if (p.ambientes)        statsArr.push(statHtml(ICO.ambientes, p.ambientes, '', p.ambientes == 1 ? 'ambiente' : 'ambientes'));
-      if (p.dormitorios)      statsArr.push(statHtml(ICO.cama, p.dormitorios, '', p.dormitorios == 1 ? 'dormitorio' : 'dormitorios'));
-      if (p.banos)            statsArr.push(statHtml(ICO.bano, p.banos, '', p.banos == 1 ? 'baño' : 'baños'));
-      if (p.antiguedad)       statsArr.push(statHtml(ICO.calendario, p.antiguedad, '', p.antiguedad == 1 ? 'año antigüedad' : 'años antigüedad'));
+      if (p.metros_cuadrados) statsArr.push(statHtml(ICO.area, p.metros_cuadrados, 'm²', T('totales', 'total')));
+      if (p.metros_cubiertos) statsArr.push(statHtml(ICO.casa, p.metros_cubiertos, 'm²', T('cubiertos', 'covered')));
+      if (p.metros_terreno)   statsArr.push(statHtml(ICO.terreno, p.metros_terreno, 'm²', T('terreno', 'land')));
+      if (p.ambientes)        statsArr.push(statHtml(ICO.ambientes, p.ambientes, '', p.ambientes == 1 ? T('ambiente', 'room') : T('ambientes', 'rooms')));
+      if (p.dormitorios)      statsArr.push(statHtml(ICO.cama, p.dormitorios, '', p.dormitorios == 1 ? T('dormitorio', 'bedroom') : T('dormitorios', 'bedrooms')));
+      if (p.banos)            statsArr.push(statHtml(ICO.bano, p.banos, '', p.banos == 1 ? T('baño', 'bathroom') : T('baños', 'bathrooms')));
+      if (p.antiguedad)       statsArr.push(statHtml(ICO.calendario, p.antiguedad, '', p.antiguedad == 1 ? T('año antigüedad', 'year old') : T('años antigüedad', 'years old')));
       document.getElementById('propStats').innerHTML = statsArr.join('');
 
       // ── Detalles de la propiedad (sección de abajo, estilo Remax) ──────────
@@ -1584,17 +1597,17 @@
         return '<div class="prop-detalle-item"><span class="lbl">' + lbl + ':</span> <span class="val">' + val + '</span></div>';
       }
       var sup = [];
-      if (p.metros_cuadrados)     sup.push(supItem('Superficie total', p.metros_cuadrados + ' m²'));
-      if (p.metros_cubiertos)     sup.push(supItem('Superficie cubierta', p.metros_cubiertos + ' m²'));
-      if (p.metros_semicubiertos) sup.push(supItem('Superficie semicubierta', p.metros_semicubiertos + ' m²'));
-      if (p.metros_terreno)       sup.push(supItem('Superficie del terreno', p.metros_terreno + ' m²'));
-      if (p.ambientes)            sup.push(supItem('Ambientes', p.ambientes));
-      if (p.dormitorios)          sup.push(supItem('Dormitorios', p.dormitorios));
-      if (p.banos)                sup.push(supItem('Baños', p.banos));
-      if (p.antiguedad)           sup.push(supItem('Antigüedad', p.antiguedad + (p.antiguedad == 1 ? ' año' : ' años')));
+      if (p.metros_cuadrados)     sup.push(supItem(T('Superficie total', 'Total area'), p.metros_cuadrados + ' m²'));
+      if (p.metros_cubiertos)     sup.push(supItem(T('Superficie cubierta', 'Covered area'), p.metros_cubiertos + ' m²'));
+      if (p.metros_semicubiertos) sup.push(supItem(T('Superficie semicubierta', 'Semi-covered area'), p.metros_semicubiertos + ' m²'));
+      if (p.metros_terreno)       sup.push(supItem(T('Superficie del terreno', 'Land area'), p.metros_terreno + ' m²'));
+      if (p.ambientes)            sup.push(supItem(T('Ambientes', 'Rooms'), p.ambientes));
+      if (p.dormitorios)          sup.push(supItem(T('Dormitorios', 'Bedrooms'), p.dormitorios));
+      if (p.banos)                sup.push(supItem(T('Baños', 'Bathrooms'), p.banos));
+      if (p.antiguedad)           sup.push(supItem(T('Antigüedad', 'Age'), p.antiguedad + (p.antiguedad == 1 ? T(' año', ' year') : T(' años', ' years'))));
       if (sup.length) {
         document.getElementById('propSupBlock').innerHTML =
-          '<h3 class="prop-subtitle">Superficies y datos</h3><div class="prop-detalle-grid">' + sup.join('') + '</div>';
+          '<h3 class="prop-subtitle">' + T('Superficies y datos', 'Areas & details') + '</h3><div class="prop-detalle-grid">' + sup.join('') + '</div>';
         hayDetalle = true;
       }
 
@@ -1610,19 +1623,19 @@
       var servs = toList(p.servicios);
       if (servs.length) {
         document.getElementById('propServBlock').innerHTML =
-          '<h3 class="prop-subtitle">Servicios</h3>' + checkList(servs, false);
+          '<h3 class="prop-subtitle">' + T('Servicios', 'Services') + '</h3>' + checkList(servs, false);
         hayDetalle = true;
       }
       var ambs = toList(p.ambientes_detalle);
       if (ambs.length) {
         document.getElementById('propAmbBlock').innerHTML =
-          '<h3 class="prop-subtitle">Ambientes</h3>' + checkList(ambs, false);
+          '<h3 class="prop-subtitle">' + T('Ambientes', 'Rooms') + '</h3>' + checkList(ambs, false);
         hayDetalle = true;
       }
       var tags = toList(p.caracteristicas);
       if (tags.length) {
         document.getElementById('propCaractBlock').innerHTML =
-          '<h3 class="prop-subtitle">Características</h3>' + checkList(tags, false);
+          '<h3 class="prop-subtitle">' + T('Características', 'Features') + '</h3>' + checkList(tags, false);
         hayDetalle = true;
       }
       if (hayDetalle) document.getElementById('propDetallesWrap').style.display = 'block';
@@ -1680,7 +1693,7 @@
       renderSimilares(p);
     })
     .catch(function() {
-      document.getElementById('propLoading').innerHTML = 'Propiedad no encontrada. <a href="/propiedades" style="color:var(--acento)">Ver todas las propiedades →</a>';
+      document.getElementById('propLoading').innerHTML = T('Propiedad no encontrada. <a href="/propiedades" style="color:var(--acento)">Ver todas las propiedades →</a>', 'Property not found. <a href="/propiedades" style="color:var(--acento)">View all properties →</a>');
     });
 
   } // end else (individual mode)
@@ -1690,6 +1703,31 @@
     if (e.key === 'Escape') document.getElementById('lightbox').classList.remove('open');
   });
 })();
+</script>
+
+<script>
+  // ── i18n: mismo motor que el home (toggle recarga la página) ──────────────
+  function solarApplyLang() {
+    var lang = window.SOLAR_LANG;
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-en]').forEach(function(el) {
+      if (!el.hasAttribute('data-es')) el.setAttribute('data-es', el.innerHTML);
+      el.innerHTML = (lang === 'en') ? el.getAttribute('data-en') : el.getAttribute('data-es');
+    });
+    document.querySelectorAll('[data-en-ph]').forEach(function(el) {
+      if (!el.hasAttribute('data-es-ph')) el.setAttribute('data-es-ph', el.getAttribute('placeholder') || '');
+      el.setAttribute('placeholder', (lang === 'en') ? el.getAttribute('data-en-ph') : el.getAttribute('data-es-ph'));
+    });
+    var tg = document.getElementById('langToggle');
+    if (tg) tg.textContent = (lang === 'en') ? 'ES' : 'EN';
+  }
+  window.solarToggleLang = function() {
+    var next = (window.SOLAR_LANG === 'en') ? 'es' : 'en';
+    try { localStorage.setItem('solar-lang', next); } catch(e){}
+    location.reload();
+  };
+  document.addEventListener('DOMContentLoaded', solarApplyLang);
+  solarApplyLang();
 </script>
 
 </body>

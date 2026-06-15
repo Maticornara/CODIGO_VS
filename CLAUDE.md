@@ -227,3 +227,25 @@ Orden: **1)** Hero (breadcrumb + badge + título + ubicación 📍) **2)** Galer
 
 ## Barra de búsqueda
 - Mismo ancho en home y listado: ambas `max-width: var(--max-w)` (1280px).
+
+---
+
+# Sesión — Traducción ES/EN (toggle propio, SIN Google Translate)
+
+## Por qué NO Google Translate
+- Google Translate rompía las animaciones de tipografía (typewriter del **hero** y de **Sobre mí**) porque reemplaza nodos de texto en vivo. Se descartó. Se hizo un **toggle propio ES/EN**.
+
+## Cómo funciona el i18n (en `index.html` y `propiedades/index.html`)
+- **Estado:** `window.SOLAR_LANG` se define en el `<head>` (antes de cualquier animación) leyendo `localStorage['solar-lang']` (default `'es'`). También setea `document.documentElement.lang`.
+- **Helper para JS:** `window.T(es, en)` devuelve el string según el idioma. Se usa en TODO el texto generado por JS (cards, stats de la ficha, labels de detalle, status de resultados, navBackLabel, etc.).
+- **Texto estático en HTML:** atributo **`data-en`** (se swapea el `innerHTML`) y **`data-en-ph`** (se swapea el `placeholder` de inputs). `solarApplyLang()` guarda el original en `data-es`/`data-es-ph` la primera vez y luego intercambia según idioma.
+- **Toggle:** botón `#langToggle` (clase `.nav-lang`, dice "EN" o "ES") → `solarToggleLang()` guarda el próximo idioma en localStorage y hace **`location.reload()`**. **Recargar es a propósito:** así el hero y Sobre mí se re-inicializan limpios en el idioma elegido y no se ven cortes/saltos de las animaciones.
+- **Texto animado:** el hero usa `window.__setHeroLang(lang)` que reasigna `BASE`/`WORDS` del typewriter; el título de Sobre mí lee el atributo `data-text-en` (además de `data-text`). La bio/badges usan `data-en` (se swapean antes de que corra la animación de reveal).
+- **Fallback seguro:** lo que no tenga `data-en`/`T()` queda en español (no rompe nada; permite traducir de a poco).
+
+## Qué se traduce y qué NO
+- **Se traduce toda la UI:** nav, hero, buscador + "Más filtros", secciones (Servicios, esencia, Sobre mí, FAQ, Contacto, footer), y en `propiedades/`: hero del listado, barra de búsqueda, labels de la ficha (Descripción, Detalles, Ubicación, Similares), botones de contacto, breadcrumb, stats, etc.
+- **Los DATOS de cada propiedad NO se traducen** (título, descripción, zona, etc. los escribe Antonella en español). Solo se traduce la cáscara/UI.
+
+## Deploy
+- Todo es del sitio público → **push a `main` → Vercel**. NO toca el admin, así que **no gasta deploys de Netlify**.
