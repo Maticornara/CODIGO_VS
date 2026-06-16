@@ -972,36 +972,57 @@
       .mobile-menu {
         display: flex; position: fixed; inset: 0; z-index: 1100;
         flex-direction: column; align-items: center; justify-content: center;
-        background: #1E2E17; padding: 80px 24px 48px;
+        background: #1a2a10; padding: 80px 24px 48px; overflow: hidden;
         opacity: 0; pointer-events: none; transition: opacity 0.32s ease;
       }
       .mobile-menu.open { opacity: 1; pointer-events: auto; }
+      /* Capa de fondo con el degradé animado del hero (blobs) */
+      .mobile-menu .mm-bg { position: absolute; inset: 0; z-index: 0; }
+      .mobile-menu .mm-bg::before, .mobile-menu .mm-bg::after { opacity: 0.9; }
       .mobile-menu-close {
-        position: absolute; top: 20px; right: 24px;
+        position: absolute; top: 20px; right: 24px; z-index: 2;
         background: none; border: none; color: var(--crema);
         font-size: 40px; line-height: 1; cursor: pointer;
       }
-      .mobile-menu-logo { height: 56px; width: auto; margin-bottom: 30px; }
+      .mobile-menu-logo { height: 56px; width: auto; margin-bottom: 30px; position: relative; z-index: 1; }
       .mobile-menu-links {
-        display: flex; flex-direction: column; align-items: center; gap: 2px;
+        display: flex; flex-direction: column; align-items: center; gap: 4px;
         width: 100%; max-width: 360px;
+        position: relative; z-index: 1;
       }
       .mobile-menu-links > a, .mm-acc-head {
-        font-family: var(--font-body); font-size: 20px; font-weight: 500; letter-spacing: 0.01em;
+        font-family: var(--font-body); font-size: 21px; font-weight: 500; letter-spacing: 0.01em;
         color: var(--crema); text-decoration: none; background: none; border: none;
-        cursor: pointer; padding: 11px 0; text-align: center;
+        cursor: pointer; padding: 12px 0; text-align: center;
+        transition: color 0.2s;
       }
       .mm-cta { color: var(--acento) !important; }
       .mm-destacado { color: var(--acento); }
-      /* Acordeón (Propiedades / Contacto) */
+      /* Fade-in escalonado de los items al abrir el menú (le da "vida") */
+      .mobile-menu-links > * { opacity: 0; transform: translateY(12px); transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.2,0.7,0.3,1); }
+      .mobile-menu.open .mobile-menu-links > * { opacity: 1; transform: none; }
+      .mobile-menu.open .mobile-menu-links > *:nth-child(1) { transition-delay: 0.08s; }
+      .mobile-menu.open .mobile-menu-links > *:nth-child(2) { transition-delay: 0.13s; }
+      .mobile-menu.open .mobile-menu-links > *:nth-child(3) { transition-delay: 0.18s; }
+      .mobile-menu.open .mobile-menu-links > *:nth-child(4) { transition-delay: 0.23s; }
+      .mobile-menu.open .mobile-menu-links > *:nth-child(5) { transition-delay: 0.28s; }
+      .mobile-menu.open .mobile-menu-links > *:nth-child(6) { transition-delay: 0.33s; }
+      .mobile-menu.open .mobile-menu-links > *:nth-child(7) { transition-delay: 0.38s; }
+      .mobile-menu.open .mobile-menu-links > *:nth-child(8) { transition-delay: 0.43s; }
+      .mobile-menu.open .mobile-menu-links > *:nth-child(9) { transition-delay: 0.48s; }
+      /* Acordeón (Propiedades / Contacto): despliegue SUAVE (max-height) */
       .mm-acc { width: 100%; display: flex; flex-direction: column; align-items: center; }
-      .mm-acc-head::after { content: ' ▾'; font-size: 0.6em; opacity: 0.6; }
-      .mm-acc.open .mm-acc-head::after { content: ' ▴'; }
-      .mm-acc-body {
-        display: none; flex-direction: column; align-items: center; gap: 3px;
-        padding: 2px 0 8px;
+      .mm-acc-head::after {
+        content: '▾'; display: inline-block; margin-left: 8px; font-size: 0.7em;
+        color: var(--acento); opacity: 0.85; transition: transform 0.3s ease;
       }
-      .mm-acc.open .mm-acc-body { display: flex; }
+      .mm-acc.open .mm-acc-head::after { transform: rotate(180deg); }
+      .mm-acc-body {
+        display: flex; flex-direction: column; align-items: center; gap: 3px;
+        max-height: 0; overflow: hidden; opacity: 0; padding: 0;
+        transition: max-height 0.36s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease, padding 0.36s ease;
+      }
+      .mm-acc.open .mm-acc-body { max-height: 200px; opacity: 1; padding: 4px 0 10px; }
       .mm-acc-body a {
         font-family: var(--font-body); font-size: 15px; font-weight: 600;
         letter-spacing: 0.08em; text-transform: uppercase;
@@ -1156,6 +1177,8 @@
 
 <!-- Menú mobile a pantalla completa -->
 <div id="mobileMenu" class="mobile-menu">
+  <!-- Fondo con el mismo degradé animado (blobs) del hero -->
+  <div class="hero-pattern mm-bg"></div>
   <button id="mobileMenuClose" class="mobile-menu-close" type="button" aria-label="Cerrar menú">&times;</button>
   <img src="fotos/LOGO.PNG" alt="Solar Propiedades" class="mobile-menu-logo"/>
   <div class="mobile-menu-links">
