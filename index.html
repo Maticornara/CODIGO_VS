@@ -1018,9 +1018,9 @@
       /* Grupo completo (pin + wordmark) corrido unos px a la izquierda, alineados
          entre sí (el glow del pin hace ver todo medio corrido a la derecha). */
       #splash { flex-direction: column; gap: 16px; transform: none; }
-      /* El pin se corre a la izquierda para COMPENSAR el peso visual de la llave
-         (que sale a la derecha) → queda ópticamente centrado sobre el wordmark. */
-      #splash-logo { height: 148px; left: -14px; }
+      /* Ajuste óptico fino del pin sobre el wordmark (la llave que sale a la
+         derecha hace que se vea corrido si se centra por bounding-box). */
+      #splash-logo { height: 148px; left: 6px; }
       #splash-wordmark { height: 62px; max-width: 88vw; }
 
       .hero-layout { flex-direction: column; align-items: stretch; padding: calc(var(--nav-h) + 8px) 20px 80px; gap: 0; }
