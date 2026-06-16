@@ -1084,8 +1084,20 @@
       .servicio-card.is-visible { background: #fffef5; transform: scale(1.03); box-shadow: 0 18px 44px rgba(30,30,30,0.12); z-index: 1; }
       .servicio-card.is-visible::after { transform: scaleX(1); }
       .servicio-card.is-visible .servicio-num { color: #EE7A13; }
-      .propiedades-grid { grid-template-columns: 1fr; }
-      .propiedades-section { padding: 56px 20px 72px; }
+      /* Destacadas → carrusel horizontal deslizable (swipe + scroll-snap).
+         Una card visible (se asoma la siguiente). La centrada recibe .is-visible. */
+      .propiedades-grid {
+        display: flex; grid-template-columns: none;
+        overflow-x: auto; scroll-snap-type: x mandatory;
+        gap: 14px; padding: 10px 0 18px; margin: 0 -20px; padding-left: 20px; padding-right: 20px;
+        -webkit-overflow-scrolling: touch; scrollbar-width: none;
+      }
+      .propiedades-grid::-webkit-scrollbar { display: none; }
+      .propiedades-grid .prop-card { flex: 0 0 82%; scroll-snap-align: center; }
+      .propiedades-grid .prop-card.is-visible {
+        transform: translateY(-4px); box-shadow: 0 16px 40px rgba(54,81,43,0.18);
+      }
+      .propiedades-section { padding: 56px 20px 72px; overflow: hidden; }
       .props-section, .faq-section, .contacto-section, .sobre-outer { padding: 72px 20px; }
       /* Sobre mí: el TÍTULO va primero, después la foto, después la bio.
          (Regla: los títulos siempre antes de cualquier info.) */
@@ -2453,6 +2465,20 @@
       empty.style.display = 'none';
       grid.innerHTML = props.map(renderCard).join('');
       window.solarTr.cards(grid);
+      setupCardCarousel(grid);
+    }
+
+    /* En mobile, las destacadas son un carrusel: la card centrada (≥50% dentro de
+       la franja central del viewport) recibe .is-visible para destacarse. */
+    function setupCardCarousel(grid) {
+      if (!window.matchMedia('(max-width: 768px)').matches) return;
+      var cards = grid.querySelectorAll('.prop-card');
+      if (!cards.length) return;
+      if (grid._cio) grid._cio.disconnect();
+      grid._cio = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) { e.target.classList.toggle('is-visible', e.isIntersecting); });
+      }, { root: null, rootMargin: '0px -38% 0px -38%', threshold: 0.4 });
+      cards.forEach(function(c) { grid._cio.observe(c); });
     }
 
     function setHeader(eyebrow, titulo, btnLabel) {

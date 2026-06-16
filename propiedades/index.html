@@ -1696,8 +1696,25 @@
           else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { goTo(currentIdx + 1); e.preventDefault(); }
         });
 
-        // Click en la foto → abrir ampliada (en la foto actual)
+        // Swipe en la foto principal (mobile) → pasar foto anterior/siguiente.
+        // Distingue swipe de tap (swMoved) para no abrir el lightbox al deslizar.
+        var swStartX = 0, swStartY = 0, swMoved = false;
+        mainEl.addEventListener('touchstart', function(e) {
+          if (e.touches.length !== 1) return;
+          swStartX = e.touches[0].clientX; swStartY = e.touches[0].clientY; swMoved = false;
+        }, { passive: true });
+        mainEl.addEventListener('touchend', function(e) {
+          var dx = e.changedTouches[0].clientX - swStartX;
+          var dy = e.changedTouches[0].clientY - swStartY;
+          if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) + 8) {
+            swMoved = true;
+            if (dx < 0) goTo(currentIdx + 1); else goTo(currentIdx - 1);
+          }
+        }, { passive: true });
+
+        // Click en la foto → abrir ampliada (en la foto actual). Si fue swipe, no abre.
         mainImg.addEventListener('click', function() {
+          if (swMoved) { swMoved = false; return; }
           document.getElementById('lightboxImg').src = fotos[currentIdx];
           document.getElementById('lightbox').classList.add('open');
         });
@@ -1705,6 +1722,22 @@
         var lbPrev = document.getElementById('lbPrev'), lbNext = document.getElementById('lbNext');
         if (lbPrev) lbPrev.addEventListener('click', function(e) { e.stopPropagation(); goTo(currentIdx - 1); });
         if (lbNext) lbNext.addEventListener('click', function(e) { e.stopPropagation(); goTo(currentIdx + 1); });
+        // Swipe dentro del lightbox (foto ampliada) → pasar fotos
+        var lbImgEl = document.getElementById('lightboxImg');
+        if (lbImgEl) {
+          var lbSX = 0, lbSY = 0;
+          lbImgEl.addEventListener('touchstart', function(e) {
+            if (e.touches.length !== 1) return;
+            lbSX = e.touches[0].clientX; lbSY = e.touches[0].clientY;
+          }, { passive: true });
+          lbImgEl.addEventListener('touchend', function(e) {
+            var dx = e.changedTouches[0].clientX - lbSX;
+            var dy = e.changedTouches[0].clientY - lbSY;
+            if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) + 8) {
+              if (dx < 0) goTo(currentIdx + 1); else goTo(currentIdx - 1);
+            }
+          }, { passive: true });
+        }
 
         fotos.forEach(function(f, i) {
           var t = document.createElement('div');
