@@ -667,7 +667,10 @@
       .listing-props-wrap { padding: 32px 20px 60px; }
       .search-bar-inner { flex-direction: column; align-items: stretch; }
       .search-btn { width: 100%; border-radius: 0 0 7px 7px; justify-content: center; }
-      .search-filter { width: 100%; border-radius: 0 !important; }
+      .search-filter { width: 100%; border-radius: 0 !important; padding: 15px 20px; height: auto; min-width: unset; }
+      /* Líneas divisorias horizontales de ancho completo entre filtros (como en
+         el home). Antes eran slivers verticales de 1px → se veía "vacío". */
+      .search-sep { width: 100%; height: 1px; margin: 0; }
       /* Dropdowns full-width sin desbordar (igual que el buscador del home) */
       .search-filter .sf-dropdown,
       #lsf-m2 .sf-dropdown {
