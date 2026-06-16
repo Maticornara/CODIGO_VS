@@ -1040,13 +1040,21 @@
       #illus-1 { max-width: 262px; max-height: 285px; } /* edificio más grande */
       #illus-2 { max-width: 245px; max-height: 235px; } /* terreno más grande */
       #illus-3 { transform: translateX(-20px); }
-      /* Barra de búsqueda en mobile: columna */
+      /* Barra de búsqueda en mobile: columna, filtros a ANCHO COMPLETO (el align
+         center heredado los centraba y achicaba → se veía raro). */
       .search-section { padding: 36px 20px 48px; }
-      .search-bar-inner { flex-direction: column; }
+      .search-bar-inner { flex-direction: column; align-items: stretch; }
       .search-btn { border-radius: 0 0 7px 7px; padding: 18px 28px; justify-content: center; width: 100%; }
-      .search-sep { width: 80%; height: 1px; margin: 0 auto; }
-      .search-filter { padding: 14px 20px; border-bottom: 1px solid rgba(255,252,235,0.1); min-width: unset; }
-      .sf-dropdown { top: auto; bottom: calc(100% + 8px); } /* dropdowns abren hacia arriba en mobile */
+      .search-sep { width: 100%; height: 1px; margin: 0; }
+      .search-filter { padding: 15px 20px; min-width: unset; width: 100%; }
+      /* Dropdowns: abren hacia ABAJO (antes para arriba, pisaban el hero) y ocupan
+         el ancho del filtro, sin desbordar a los costados (precio/superficie). */
+      .search-filter .sf-dropdown,
+      #hsf-m2 .sf-dropdown {
+        top: calc(100% + 6px); bottom: auto;
+        left: 0; right: 0; min-width: 0; width: auto;
+      }
+      .sf-dropdown.rng-dropdown { min-width: 0; padding: 16px; }
       .servicios-wrap { padding: 72px 20px 0; }
       .servicios-grid { grid-template-columns: 1fr; margin-bottom: 72px; }
       /* En mobile no hay hover → el efecto se activa cuando la card pasa por el
