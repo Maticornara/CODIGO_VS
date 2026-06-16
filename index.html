@@ -1067,6 +1067,10 @@
       .sobre-badges { order: 5; }
       .valores-section { padding: 72px 0; }
       .valores-inner { padding: 0 20px; }
+      /* Escalonado un poco más rápido en mobile (menos espera entre columnas) */
+      .valores-section.in-view .valor-item { transition-duration: 0.5s; }
+      .valores-section.in-view .valor-item:nth-child(2) { transition-delay: 0.22s; }
+      .valores-section.in-view .valor-item:nth-child(3) { transition-delay: 0.44s; }
       .props-grid { grid-template-columns: 1fr; }
       .form-row { grid-template-columns: 1fr; }
       footer { padding: 28px 20px; flex-direction: column; align-items: flex-start; }
@@ -2660,18 +2664,22 @@
   // ── Animaciones al hacer scroll (IntersectionObserver, sin scroll listeners) ──
   (function() {
 
-    /* VALORES: líneas divisorias crecen + columnas con fade/slide escalonado */
+    /* VALORES: líneas divisorias crecen + columnas con fade/slide escalonado.
+       En mobile la sección es alta (apilada) → threshold más bajo y menos pausa
+       para que no tarde tanto en arrancar. En desktop se mantiene 0.7 + 0.5s. */
     var valores = document.querySelector('.valores-section');
     if (valores) {
+      var valMobile = window.matchMedia('(max-width: 768px)').matches;
+      var valThr   = valMobile ? 0.25 : 0.7;
+      var valPause = valMobile ? 150  : 500;
       var ioValores = new IntersectionObserver(function(entries) {
         entries.forEach(function(e) {
           if (e.isIntersecting) {
             ioValores.unobserve(valores);
-            // Pausa de 0.5s tras entrar (≥70% visible) antes de arrancar el escalonado
-            setTimeout(function() { valores.classList.add('in-view'); }, 500);
+            setTimeout(function() { valores.classList.add('in-view'); }, valPause);
           }
         });
-      }, { threshold: 0.7 });
+      }, { threshold: valThr });
       ioValores.observe(valores);
     }
 
@@ -2686,7 +2694,7 @@
           entries.forEach(function(e) {
             e.target.classList.toggle('is-visible', e.isIntersecting);
           });
-        }, { threshold: 0, rootMargin: '-45% 0px -45% 0px' });
+        }, { threshold: 0, rootMargin: '-25% 0px -55% 0px' });
         servicioCards.forEach(function(c) { ioServicios.observe(c); });
       }
     }
@@ -2792,6 +2800,9 @@
       var img      = sobre.querySelector('.sobre-img-wrap');
       var eyebrow  = sobre.querySelector('.section-eyebrow');
       var badgeEls = sobre.querySelectorAll('.sobre-badges .badge');
+      // En mobile el orden visual es: eyebrow → título → foto → bio → badges.
+      // Por eso la foto aparece JUNTO con el título (no antes, con el eyebrow).
+      var sobreMobile = window.matchMedia('(max-width: 768px)').matches;
 
       // 0–1s: espera. Todo invisible. Da tiempo a que el usuario vea la sección vacía.
       var START_DELAY = 1000;
@@ -2802,12 +2813,14 @@
       var BIO_DUR = TOTAL - PAUSE - TITLE_DUR;
 
       setTimeout(function() {
-        // 1.0s: la foto y el eyebrow "SOBRE MÍ" aparecen con fade (0.6s)
-        if (img) img.classList.add('visible');
+        // 1.0s: aparece el eyebrow "SOBRE MÍ" con fade. En desktop la foto aparece
+        // acá también; en mobile se posterga para que entre con el título.
         if (eyebrow) eyebrow.classList.add('visible');
+        if (img && !sobreMobile) img.classList.add('visible');
 
         // 2.1s: arranca el typewriter (título → bio) → 5.1s: badges con fade
         setTimeout(function() {
+          if (img && sobreMobile) img.classList.add('visible'); // mobile: foto con el título
           reveal(titleSpans, TITLE_DUR)
             .then(function() { return pause(PAUSE); })
             .then(function() { return reveal(bioSpans, BIO_DUR); })
