@@ -57,6 +57,12 @@ collections:
           - ARS
         default: "USD"
 
+      - label: "Período del precio (solo alquileres)"
+        name: periodo
+        widget: string
+        required: false
+        hint: "Solo para alquileres: cada cuánto es el precio. Escribilo libre. Ej: mes, noche, día, semana, quincena, temporada. Si lo dejás vacío en un alquiler, se muestra 'por mes'."
+
       - label: "Superficie total (m²)"
         name: metros_cuadrados
         widget: number

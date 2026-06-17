@@ -342,5 +342,12 @@ Orden: **1)** Hero (breadcrumb + badge + título + ubicación 📍) **2)** Galer
 ## Videos
 - Se decidió **NO tocar** (queda el campo único "Link Reel / Video" actual).
 
+## Período del precio (alquileres)
+- Antes el precio mostraba **"/ mes" fijo** para cualquier alquiler. El turístico suele ser por noche/semana/quincena → se agregó un campo libre.
+- **Admin (`config.yml`):** campo nuevo `periodo` (`widget: string`, texto libre, opcional, con ejemplos en el hint: mes, noche, día, semana, quincena, temporada). Va después de "Moneda".
+- **Sitio (`index.html` + `propiedades/index.html`):** helper `periodoTxt(p)` → solo aplica a alquileres; limpia "/" y "por " inicial; si está vacío → "mes" (fallback = comportamiento viejo); traduce los términos comunes al inglés con un mapa (mes→month, noche→night, etc.). `fmtPrecio` muestra `precio / <periodo>` (ej: `U$S 80 / noche`). En la ficha, `sidebarPrecioSub` muestra `por <periodo>`.
+- **Admin preview (`admin/index.html`):** su `fmtPrecio` también recibe `periodo` (solo español, sin mapa EN).
+- ⚠️ El campo `periodo` aparece SIEMPRE en el admin (Decap no tiene campos condicionales simples); el hint aclara que es solo para alquileres y en ventas el sitio lo ignora.
+
 ## ⚠️ Deploy de esta sesión
 - `admin/config.yml` + `admin/index.html` → necesitan **deploy manual de Netlify** (un solo "Trigger deploy"; quedan POCOS). `content/config/general.json` y `propiedades/index.html` → **Vercel** (push a `main`).

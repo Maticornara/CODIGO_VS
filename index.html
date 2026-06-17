@@ -1995,6 +1995,7 @@
 
     function initSVG(svg) {
       strokeEls(svg).forEach(function(el) {
+        el.style.transition = 'none'; // limpia cualquier CSS transition del undraw
         var L = pathLen(el);
         el.style.strokeDasharray  = L + ' ' + (L + 40); // gap grande: evita puntitos al ocultar
         el.style.strokeDashoffset = L + 12;             // overshoot: limpia la punta redonda
@@ -2180,6 +2181,7 @@
 
         els.forEach(function(el, i) {
           el.getAnimations().forEach(function(a) { a.cancel(); });
+          el.style.transition = 'none'; // limpia CSS transition del undraw
           var L = pathLen(el);
           el.style.strokeDasharray  = L + ' ' + (L + 40);
           el.style.strokeDashoffset = '0'; // reposo = dibujado
@@ -2196,17 +2198,34 @@
     function undraw(svg) {
       return new Promise(function(res) {
         var els = strokeEls(svg);
+        var dur = UNDRAW_MS / 1000;
+
+        // Paso 1: cancelar WAAPI y fijar dashoffset=0 (visible) sin transición
         els.forEach(function(el) {
           el.getAnimations().forEach(function(a) { a.cancel(); });
           var L = pathLen(el);
           el.style.strokeDasharray  = L + ' ' + (L + 40);
-          el.style.strokeDashoffset = String(L + 12); // reposo = borrado (overshoot)
-          el.animate(
-            [{ strokeDashoffset: 0 }, { strokeDashoffset: L + 12 }],
-            { duration: UNDRAW_MS, easing: 'ease-in-out' }
-          );
+          el.style.transition = 'none';
+          el.style.strokeDashoffset = '0';
         });
-        setTimeout(res, UNDRAW_MS + 180);
+
+        // Paso 2: getComputedStyle fuerza al browser a commitear dashoffset=0
+        //         como estado "from" para la transición que viene
+        els.forEach(function(el) {
+          void window.getComputedStyle(el).strokeDashoffset;
+        });
+
+        // Paso 3: activar transición y animar hasta oculto
+        els.forEach(function(el) {
+          var L = pathLen(el);
+          el.style.transition = 'stroke-dashoffset ' + dur + 's ease-in';
+          el.style.strokeDashoffset = String(L + 12);
+        });
+
+        setTimeout(function() {
+          els.forEach(function(el) { el.style.transition = 'none'; });
+          res();
+        }, UNDRAW_MS + 200);
       });
     }
 
@@ -2415,13 +2434,27 @@
       return String(v).split(/[\n,]+/).map(function(x) { return x.trim(); }).filter(Boolean);
     }
 
+    // Periodo del precio (solo alquileres): texto libre cargado en el admin; vacio -> 'mes'.
+    function periodoTxt(prop) {
+      var esAlq = prop.tipo && prop.tipo.toLowerCase().includes('alquiler');
+      if (!esAlq) return '';
+      var raw = (prop.periodo == null ? '' : String(prop.periodo)).trim()
+                  .replace(/^\/+\s*/, '').replace(/^por\s+/i, '').trim();
+      if (!raw) raw = 'mes';
+      if (window.SOLAR_LANG === 'en') {
+        var map = { 'mes':'month','meses':'months','noche':'night','noches':'nights',
+                    'dia':'day','día':'day','dias':'days','días':'days','semana':'week','semanas':'weeks',
+                    'quincena':'fortnight','año':'year','anio':'year','temporada':'season','fin de semana':'weekend' };
+        raw = map[raw.toLowerCase()] || raw;
+      }
+      return raw;
+    }
     function fmtPrecio(prop) {
       var n = Number(prop.precio);
       if (isNaN(n)) return prop.precio || '';
       var formatted = n.toLocaleString('es-AR');
-      var esAlq = prop.tipo && prop.tipo.toLowerCase().includes('alquiler');
       var prefix = prop.moneda === 'ARS' ? '$ ' : 'U$S ';
-      return prefix + formatted + (esAlq ? ' / mes' : '');
+      var per = periodoTxt(prop); return prefix + formatted + (per ? ' / ' + per : '');
     }
 
     // Características principales para las cards: cada una en su píldora (sin #)

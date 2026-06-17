@@ -254,11 +254,15 @@
     if (!window.CMS || !window.h || !window.createClass) return;
     var h = window.h, createClass = window.createClass;
 
-    function fmtPrecio(precio, moneda, tipo) {
+    function fmtPrecio(precio, moneda, tipo, periodo) {
       var n = Number(precio);
       if (isNaN(n)) return precio || '';
       var esAlq = tipo && String(tipo).toLowerCase().indexOf('alquiler') !== -1;
-      return (moneda === 'ARS' ? '$ ' : 'U$S ') + n.toLocaleString('es-AR') + (esAlq ? ' / mes' : '');
+      var per = '';
+      if (esAlq) {
+        per = String(periodo || '').trim().replace(/^\/+\s*/, '').replace(/^por\s+/i, '').trim() || 'mes';
+      }
+      return (moneda === 'ARS' ? '$ ' : 'U$S ') + n.toLocaleString('es-AR') + (per ? ' / ' + per : '');
     }
 
     // Render simple de la descripción: viñetas para "- " y párrafos para el resto
@@ -321,7 +325,7 @@
           ]),
           h('h1', { className: 'sp-titulo' }, get('titulo') || 'Título de la propiedad'),
           ubic ? h('div', { className: 'sp-ubicline' }, '📍 ' + ubic) : null,
-          h('div', { className: 'sp-precio' }, fmtPrecio(get('precio'), get('moneda'), tipo)),
+          h('div', { className: 'sp-precio' }, fmtPrecio(get('precio'), get('moneda'), tipo, get('periodo'))),
           stats.length ? h('div', { className: 'sp-stats' }, stats.map(function (s) { return h('span', { className: 'sp-stat' }, s); })) : null,
           chipGroup('Servicios', data.get('servicios')),
           chipGroup('Ambientes', data.get('ambientes_detalle')),

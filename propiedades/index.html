@@ -1224,11 +1224,29 @@
     if (img.parentNode) img.parentNode.replaceChild(ph, img);
   }
 
+  // Devuelve el período del precio (solo alquileres): 'mes', 'noche', etc. ya traducido.
+  // Texto libre cargado por Antonella; si está vacío en un alquiler → 'mes' (como antes).
+  // Devuelve '' si no es alquiler (no se muestra período en ventas).
+  function periodoTxt(p) {
+    var esAlq = p.tipo && p.tipo.toLowerCase().includes('alquiler');
+    if (!esAlq) return '';
+    var raw = (p.periodo == null ? '' : String(p.periodo)).trim()
+                .replace(/^\/+\s*/, '').replace(/^por\s+/i, '').trim();  // limpia "/ " y "por " inicial
+    if (!raw) raw = 'mes';
+    if (window.SOLAR_LANG === 'en') {
+      var map = { 'mes':'month','meses':'months','noche':'night','noches':'nights',
+                  'dia':'day','día':'day','dias':'days','días':'days','semana':'week','semanas':'weeks',
+                  'quincena':'fortnight','año':'year','anio':'year','temporada':'season','fin de semana':'weekend' };
+      raw = map[raw.toLowerCase()] || raw;
+    }
+    return raw;
+  }
+
   function fmtPrecio(p) {
     var n = Number(p.precio);
     if (isNaN(n)) return p.precio || '';
-    var esAlq = p.tipo && p.tipo.toLowerCase().includes('alquiler');
-    return (p.moneda === 'ARS' ? '$ ' : 'U$S ') + n.toLocaleString('es-AR') + (esAlq ? ' / mes' : '');
+    var per = periodoTxt(p);
+    return (p.moneda === 'ARS' ? '$ ' : 'U$S ') + n.toLocaleString('es-AR') + (per ? ' / ' + per : '');
   }
 
   // Normaliza texto para buscar/comparar: minúsculas + sin acentos (así "crédito" = "credito")
@@ -1800,8 +1818,8 @@
 
       // Precio sidebar
       document.getElementById('sidebarPrecio').textContent = fmtPrecio(p);
-      var esAlq = p.tipo && p.tipo.toLowerCase().includes('alquiler');
-      document.getElementById('sidebarPrecioSub').textContent = esAlq ? T('por mes', 'per month') : (p.moneda === 'ARS' ? T('pesos argentinos', 'argentine pesos') : T('dólares estadounidenses', 'US dollars'));
+      var per = periodoTxt(p);
+      document.getElementById('sidebarPrecioSub').textContent = per ? (T('por ', 'per ') + per) : (p.moneda === 'ARS' ? T('pesos argentinos', 'argentine pesos') : T('dólares estadounidenses', 'US dollars'));
 
       // Ubicación (Zona · Localidad) debajo del título.
       // Usa los campos separados; si solo hay 'ubicacion' (datos viejos),
