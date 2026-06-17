@@ -176,3 +176,27 @@ collections:
         widget: boolean
         default: false
         hint: "Activar para que aparezca en el home"
+
+  # ── Configuración general del sitio (un solo archivo editable) ──
+  - name: configuracion
+    label: "Configuración General"
+    files:
+      - name: general
+        label: "Valores del sitio"
+        file: content/config/general.json
+        fields:
+          - label: "Valor del dólar (en pesos)"
+            name: valor_dolar
+            widget: number
+            value_type: float
+            required: true
+            min: 0
+            hint: "Cuántos pesos vale 1 dólar (ej: 1350). Se usa para convertir precios entre USD y ARS en las búsquedas."
+
+          - label: "Última actualización"
+            name: fecha_actualizacion
+            widget: datetime
+            date_format: "DD/MM/YYYY"
+            time_format: false
+            required: false
+            hint: "Para que sepas cuándo actualizaste el valor por última vez."

@@ -1102,6 +1102,37 @@
 (function() {
   var REPO    = 'Maticornara/CODIGO_VS';
   var API_DIR = 'https://api.github.com/repos/' + REPO + '/contents/content/propiedades?ref=main';
+  var CONFIG_URL = 'https://api.github.com/repos/' + REPO + '/contents/content/config/general.json?ref=main';
+
+  // Valor del dólar (en pesos) que Antonella carga desde el admin. Se lee EN VIVO
+  // desde GitHub (igual que las propiedades) → si lo actualiza, se refleja al toque.
+  // Si todavía no cargó o falla, queda null y el filtro vuelve a comparar por moneda.
+  var VALOR_DOLAR = null;
+  function cargarValorDolar() {
+    return fetch(CONFIG_URL)
+      .then(function(r) { return r.json(); })
+      .then(function(meta) { return fetch(meta.download_url); })
+      .then(function(r) { return r.json(); })
+      .then(function(cfg) {
+        var v = Number(cfg && cfg.valor_dolar);
+        if (v > 0) VALOR_DOLAR = v;
+      })
+      .catch(function() { /* sin cotización: el filtro compara por moneda como antes */ });
+  }
+
+  // Convierte un precio a la moneda objetivo usando VALOR_DOLAR.
+  // Devuelve null si no se puede convertir (sin cotización y monedas distintas).
+  function precioEnMoneda(precio, monedaProp, monedaObjetivo) {
+    var v = Number(precio);
+    if (!isFinite(v)) return null;
+    monedaProp = (monedaProp || 'USD').toUpperCase();
+    monedaObjetivo = (monedaObjetivo || 'USD').toUpperCase();
+    if (monedaProp === monedaObjetivo) return v;
+    if (!VALOR_DOLAR) return null;                       // sin cotización → no se puede convertir
+    if (monedaProp === 'USD' && monedaObjetivo === 'ARS') return v * VALOR_DOLAR;
+    if (monedaProp === 'ARS' && monedaObjetivo === 'USD') return v / VALOR_DOLAR;
+    return v;
+  }
 
   function parseYAML(text) {
     var match = text.match(/^---\r?\n([\s\S]*?)\r?\n---/);
@@ -1478,8 +1509,11 @@
         if (tipoVal && !(p.tipo || '').toLowerCase().includes(tipoVal)) return false;
         if (ubic && normTxt((p.titulo || '') + ' ' + (p.zona || '') + ' ' + (p.localidad || '') + ' ' + (p.ubicacion || '')).indexOf(ubic) === -1) return false;
         if (precioOn) {
-          if ((p.moneda || 'USD') !== curActual) return false;
-          var v = Number(p.precio);
+          // Convierte el precio de la propiedad a la moneda elegida (usando el valor
+          // del dólar). Así una propiedad en USD aparece aunque busques en pesos, y viceversa.
+          var v = precioEnMoneda(p.precio, p.moneda, curActual);
+          // Si no se pudo convertir (sin cotización y monedas distintas), se descarta como antes.
+          if (v == null) return false;
           if (pMin != null && !(v >= pMin)) return false;
           if (pMax != null && !(v <= pMax)) return false;
         }
@@ -1539,6 +1573,8 @@
       cont.querySelectorAll('.tag-chip').forEach(function(chip) { chip.addEventListener('click', function() { chip.classList.toggle('active'); }); });
       if (groupId) document.getElementById(groupId).style.display = 'block';
     }
+
+    cargarValorDolar();   // carga el valor del dólar en paralelo (para convertir precios en el filtro)
 
     fetch(API_DIR)
       .then(function(r) { return r.json(); })

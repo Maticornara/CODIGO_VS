@@ -13,7 +13,7 @@ Hablame y comentá el código en **español** (argentino).
 
 ## URLs
 - **Sitio público:** codigo-vs.vercel.app (Vercel, sin límite de deploys)
-- **Admin / CMS:** sunny-blancmange-47869e.netlify.app/admin/ (Netlify)
+- **Admin / CMS:** unique-kitsune-f448c7.netlify.app/admin/ (Netlify — site nuevo, cuenta de la facultad con créditos renovados). ⚠️ URL vieja (ya NO usar): sunny-blancmange-47869e.netlify.app.
 - **Repo:** github.com/Maticornara/CODIGO_VS (rama de trabajo y producción: `main`)
 
 ## Deploy ⚠️ IMPORTANTE
@@ -197,9 +197,11 @@ Orden: **1)** Hero (breadcrumb + badge + título + ubicación 📍) **2)** Galer
 
 # Sesión — Admin simplificado, favicon, listas como texto, y presupuesto de deploys
 
-## ⚠️ PRESUPUESTO DE DEPLOYS DE NETLIFY (importante)
-- Cuenta **nueva** de Netlify con **POCOS deploys disponibles** (quedan ~2). **Batchear** todos los cambios de `admin/` y avisar al usuario para que haga UN solo "Trigger deploy".
-- **Las ediciones de propiedades de Antonella NO gastan deploys de Netlify** (commitean a GitHub → publica Vercel). Netlify solo se gasta cuando cambia código de `admin/` (config o index) y se hace deploy manual. Netlify queda **pausado** a propósito.
+## ⚠️ DEPLOYS DE NETLIFY (actualizado)
+- **Site nuevo:** `unique-kitsune-f448c7.netlify.app` (cuenta de la facultad, **créditos renovados** → ya NO hay escasez de deploys como antes). El site viejo (`sunny-blancmange-47869e`) quedó obsoleto.
+- **Builds PAUSADOS a propósito** igual (el usuario los dejó así: "Netlify está re loco"). Netlify se usa SOLO como Identity + Git Gateway del CMS; el sitio público lo sirve Vercel. ⇒ Cuando se toca código de `admin/` (config.yml o index.html) **hay que hacer deploy manual de Netlify** ("Trigger deploy"). NO reactivar los builds salvo que el usuario lo pida.
+- **Las ediciones de propiedades de Antonella NO gastan ni dependen de Netlify** (commitean a GitHub → publica Vercel; el sitio lee los datos en vivo desde la GitHub API).
+- Ya no hace falta batchear con tanto cuidado por escasez, pero igual conviene avisar al usuario para que haga el deploy manual cuando cambie el `admin/`.
 
 ## Favicon
 - `LOGO.PNG` como favicon en `index.html`, `propiedades/index.html` y `admin/index.html` (ruta absoluta `/fotos/LOGO.PNG`).
@@ -315,3 +317,30 @@ Orden: **1)** Hero (breadcrumb + badge + título + ubicación 📍) **2)** Galer
 
 ## Cómo prueba el usuario
 - En el celu real → **codigo-vs.vercel.app** (por eso pide pushear; ahora **push directo** — ver memoria `feedback-push-directo`). **Trabaja con capturas**: mostrar, esperar OK visual, seguir. Itera mucho en posiciones/tamaños (px finos).
+
+---
+
+# Sesión — Valor del dólar configurable + conversión de monedas en el filtro
+
+## Qué se agregó
+- **Nueva colección en el admin "Configuración General"** (file collection, un solo archivo): `admin/config.yml` → colección `configuracion` con el archivo `content/config/general.json`. Campos:
+  - `valor_dolar` (number/float, **obligatorio**) — cuántos pesos vale 1 dólar.
+  - `fecha_actualizacion` (datetime, opcional, `DD/MM/YYYY`) — para que Antonella sepa cuándo lo actualizó.
+- **Archivo inicial:** `content/config/general.json` (default `valor_dolar: 1350`).
+
+## Cómo lo usa el sitio (`propiedades/index.html`)
+- Se lee **EN VIVO desde la GitHub API** (`CONFIG_URL` → `content/config/general.json`), igual que las propiedades → si Antonella cambia el dólar, **se actualiza al toque sin esperar build de Vercel**.
+- `var VALOR_DOLAR` + `cargarValorDolar()` (se llama al cargar el listado, en paralelo a las propiedades).
+- `precioEnMoneda(precio, monedaProp, monedaObjetivo)` convierte: `USD→ARS = ×valor_dolar`, `ARS→USD = ÷valor_dolar`. Devuelve `null` si no se puede (sin cotización y monedas distintas).
+- **Filtro de precio (`filtrarListing`):** antes **excluía** las propiedades cuya `moneda` ≠ la elegida. Ahora **convierte y compara** (una propiedad en USD aparece aunque busques en pesos, y viceversa). Esto es el "doble entrada para precio en cada moneda" que pidió el usuario.
+- **Red de seguridad:** si `VALOR_DOLAR` no cargó o falla, `precioEnMoneda` devuelve `null` para monedas distintas → el filtro vuelve al comportamiento viejo (compara por moneda). Nada se rompe.
+- Los precios que se **muestran** en cards/ficha quedan en su moneda original (NO se muestra el precio convertido; el usuario eligió "convertir y comparar" solo en el filtro).
+
+## Botón "+ Propiedad" en naranja
+- En `admin/index.html` el matcher de "Nueva Propiedad" se amplió para agarrar también **"+ Propiedad"** / "Propiedad" / "+ Property" y pintarlo de `#EE7A13` (Decap cambió el botón y el `data-testid="new-button"` ya no alcanzaba).
+
+## Videos
+- Se decidió **NO tocar** (queda el campo único "Link Reel / Video" actual).
+
+## ⚠️ Deploy de esta sesión
+- `admin/config.yml` + `admin/index.html` → necesitan **deploy manual de Netlify** (un solo "Trigger deploy"; quedan POCOS). `content/config/general.json` y `propiedades/index.html` → **Vercel** (push a `main`).

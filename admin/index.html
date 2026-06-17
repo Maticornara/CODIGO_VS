@@ -133,9 +133,11 @@
         }
       });
 
-      /* Botón "Nueva Propiedad": corrige texto Y lo pinta de NARANJA (robusto por texto) */
+      /* Botón "Nueva Propiedad" / "+ Propiedad": corrige texto Y lo pinta de NARANJA (robusto por texto) */
       Array.from(document.querySelectorAll('button, a, [role="button"]')).forEach(function(el) {
-        if (!/Nuev[oa] Propiedad/.test(el.textContent || '')) return;
+        var _t = (el.textContent || '').trim();
+        // Agarra "Nueva/Nuevo Propiedad", "+ Propiedad", "Propiedad", "New/+ Property" — pero NO títulos largos
+        if (!/Nuev[oa] Propiedad/.test(_t) && !/^\+?\s*Propiedad$/.test(_t) && !/^\+?\s*(New\s+)?Property$/i.test(_t)) return;
         var w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null), tn;
         while (tn = w.nextNode()) {
           if (tn.nodeValue && tn.nodeValue.indexOf('Nuevo') !== -1) tn.nodeValue = tn.nodeValue.replace(/Nuevo/g, 'Nueva');
