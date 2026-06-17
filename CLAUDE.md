@@ -264,49 +264,54 @@ Orden: **1)** Hero (breadcrumb + badge + título + ubicación 📍) **2)** Galer
 
 ---
 
-# Sesión — VERSIÓN MOBILE (en progreso) ⚠️ RETOMAR ACÁ
+# Sesión — VERSIÓN MOBILE (prácticamente COMPLETA) ✅
 
-> El sitio estaba pensado **solo para desktop**. Se está haciendo el pasaje a **mobile** (`@media (max-width: 768px)`). Esta sección documenta el plan completo, lo ya hecho y lo que falta, para continuar en otra conversación.
+> El sitio estaba pensado **solo para desktop**. Se hizo el pasaje a **mobile** (`@media (max-width: 768px)` en el home; `600px` en `propiedades/`). Quedó funcionando entero en celular. Esta sección documenta cómo está armado y lo poco que falta.
 
 ## Concepto central (decisión del usuario)
-- En mobile **NO existe el `:hover`**, así que cada efecto hover de desktop se traduce a un **trigger por Intersection Observer**: se aplica una clase `.is-visible` cuando el elemento entra al viewport (`threshold: 0.5` salvo que se indique otro) y **se remueve al salir** (para que se repita si el usuario vuelve a scrollear).
-- Implementación: los estilos que en desktop están en `:hover`, en mobile van **dentro del `@media (max-width:768px)`** con el selector duplicado `.elemento.is-visible { ... }` (el `&.is-visible` de SCSS NO existe en CSS puro).
+- En mobile **NO existe el `:hover`**, así que cada efecto hover de desktop se traduce a un **trigger por Intersection Observer**: clase `.is-visible` cuando el elemento entra al viewport, y **se remueve al salir** (se repite al volver a scrollear).
+- Implementación: los estilos que en desktop están en `:hover`, en mobile van **dentro del media query** con el selector duplicado `.elemento.is-visible { ... }` (el `&.is-visible` de SCSS NO existe en CSS puro).
 - Los **observers se activan solo en mobile** (con `window.matchMedia('(max-width:768px)')`) para no ensuciar desktop.
-- **REGLA DURA:** no tocar ni romper desktop. TODO el CSS mobile va dentro de `@media (max-width:768px)`.
+- **REGLA DURA:** no romper desktop. TODO el CSS mobile va dentro del media query.
 
-## Decisiones tomadas con el usuario
-1. **Ilustraciones del hero en mobile: SÍ** (mostrar las 4 rotando como en desktop). Es la tarea **más frágil** (los SVG tienen transforms finos para la columna de desktop) → va a necesitar **iteración con capturas**. Se dejó para la última tanda (D). Hoy están ocultas: `.hero-illus-wrap { display:none }`.
-2. **Submenús del menú hamburguesa: ACORDEÓN** (Propiedades→Destacadas/Ver todas; Contacto→WhatsApp/Email/Instagram se tocan para desplegar).
-3. **Trabajar POR TANDAS**, validando con capturas del usuario (trabaja muy visual). Orden A→D.
+## ✅ Lo que se hizo (todo pusheado a `main` → Vercel)
 
-## Plan por tandas
-- **Tanda A — Hamburguesa + hero base.** ✅ HECHO Y PUSHEADO.
-- **Tanda B — Hover→scroll (bajo riesgo):** Servicios + Valores + FAQ + Sobre mí. ⏳ PENDIENTE (es lo próximo).
-- **Tanda C — Destacadas:** carrusel horizontal deslizable (swipe, scroll-snap), 1 card visible; la card centrada/visible (`threshold: 0.6`) recibe `.is-visible` (elevación + sombra); botón "Ver todas" al final. ⏳ PENDIENTE.
-- **Tanda D — Ilustraciones del hero en mobile** (la fina, con iteración). ⏳ PENDIENTE.
+### Splash (carga)
+- Vertical en mobile (pin arriba + wordmark abajo): `#splash { flex-direction:column }`. Posición/tamaño afinados con el usuario (`#splash-logo { height:148px; left:6px }`, `#splash-wordmark { height:62px }`). El `transform:translateX` del grupo terminó en `none` (centrado).
 
-## ✅ Tanda A — HECHO (commits `45cbc26` + `9d50297`)
-Solo en `index.html`, todo dentro de `@media (max-width:768px)`:
-- **Menú hamburguesa:** botón `#navHamb` (`.nav-hamb`, 3 `<span>`) visible solo en mobile (en desktop `.nav-hamb { display:none }` fuera del media query). Las `.nav-links` siguen ocultas en mobile.
-- **Overlay `#mobileMenu`** (`.mobile-menu`): a pantalla completa, fondo `#1E2E17`, fade in con `.open` (opacity + pointer-events), logo pin centrado arriba (`LOGO.PNG`), botón **X** `#mobileMenuClose` arriba-der, links grandes en Archivo Black centrados.
-  - **Acordeones** (`.mm-acc` / `.mm-acc-head` / `.mm-acc-body`): Propiedades y Contacto; flechita `▾`/`▴` vía `::after`; se abre con `.mm-acc.open`.
-  - **Botón idioma `#mobileLang`** (`.mm-lang`) DENTRO del menú (clave: el `#langToggle` del nav está en `.nav-links`, oculto en mobile → sin esto no se podía cambiar idioma en celu). `solarApplyLang()` ahora actualiza el texto de AMBOS (`#langToggle` y `#mobileLang`).
-- **JS** (IIFE al final del `<script>` principal): abrir/cerrar (`abrir`/`cerrar`), cierra al tocar cualquier `<a>`, con la X o con Escape; bloquea el scroll del body (`overflow:hidden`); oculta la hamburguesa al abrir (`visibility:hidden`) para que no pise la X.
-- **Nav siempre sólida y fija en mobile:** se forzó `nav, nav.over-dark { background: crema + blur + box-shadow }`, hamburguesa verde y logo a color SIEMPRE (antes era transparente sobre el hero y se volvía crema al scrollear → el usuario lo veía "subir y bajar"). El hero (título/sub) ya escalaba con `clamp()`, no desbordaba.
-  - ⚠️ Nota: el otro "movimiento" que el usuario notaba es la **barra de URL del propio Chrome del celu** (se auto-esconde al scrollear) → eso es del navegador, NO se controla desde el código.
+### Nav + menú hamburguesa
+- **Home:** nav vuelve al comportamiento de desktop (transparente sobre el hero, sólida crema al scrollear). Logo+isologo **centrados** en la barra (`.nav-logo { position:absolute; left:50%; transform:translate(-50%,-50%) }`), hamburguesa a la derecha, isologo visible (28px). El override viejo de "nav siempre sólida" se **eliminó**.
+- **Menú overlay `#mobileMenu`:** fondo con el **degradé animado del hero** (se reusa `.hero-pattern` con clase extra `.mm-bg`; sus blobs `blobA/blobB` ya existen). Tipografía liviana (`font-body 20-21px/500`, NO Archivo Black). **Fade-in escalonado** de los items al abrir (`.mobile-menu.open .mobile-menu-links > *:nth-child(n)` con `transition-delay`).
+- **Acordeones** (`.mm-acc`): Propiedades y Contacto despliegan **suave** (max-height + opacity, no `display:none`) con flecha naranja `▾` que rota. JS de abrir/cerrar + acordeón en el IIFE final.
+- **`propiedades/index.html` (listado + ficha) AHORA TAMBIÉN tiene hamburguesa** (se replicó todo: `.hero-pattern/.mm-bg`, blobs, `.mobile-menu`, `.nav-hamb`, JS). En mobile el nav queda: **flecha "volver" a la izquierda + logo centrado + hamburguesa a la derecha**; el botón EN se mueve adentro del menú. Los links del menú apuntan a las secciones del home (`/#servicios`, etc.) + `/propiedades`.
 
-## Estado actual del responsive (lo que YA existía, a revisar/afinar en cada tanda)
-- **Home (`index.html`):** breakpoints en `@media (max-width:1024px)` y `@media (max-width:768px)` (hay 2 bloques de 1024px, líneas ~930 y ~968, el 2º solo redefine padding de `.valores-section` — redundante, se puede unificar). Hero pasa a columna y oculta ilustraciones; búsqueda en columna; grids a 1 col; footer apilado.
-- **Listado/Ficha (`propiedades/index.html`):** breakpoints dispares (`720`, `600`, `860`, `480`). Galería de la ficha pasa a columna a 720px; cards a 1 col a 600px; búsqueda apilada. El nav de `propiedades/` es distinto (logo + "volver" + botón EN) y NO se oculta en mobile → **no necesita hamburguesa**. Su botón idioma (`#langToggle`) ya se ve.
-- ⚠️ Los breakpoints están dispares entre páginas; si se quiere, unificar criterio (el usuario lo dejó a consideración).
+### Hero (home)
+- Las **4 ilustraciones SÍ se muestran** en mobile (ya no `display:none`), **intercaladas entre el typewriter y el subtítulo** (truco `display:contents` en `.hero-content` + `order`). El typewriter/SVG anima igual (no hay corte mobile en el JS).
+- Tamaños/posiciones afinados por card: `#illus-0` (casa) 250×240 + más a la izq, `#illus-1` (edificio) 262×285, `#illus-2` (terreno) 245×235. **Trazo más fino**: `.illus-svg { stroke-width:3 }` (el stroke es non-scaling → 4.5 se veía grueso al achicar).
+- **Fix llave que se trababa:** el recoil de `handIn()` usaba `translateX(-50px)` fijo y saltaba contra la base mobile. Ahora usa **`composite:'add'`** (delta relativo) → anda igual en desktop y mobile.
 
-## Hover de desktop a traducir en cada tanda (referencia de selectores)
-En `index.html`:
-- **Servicios** (`.servicio-card`): hover → `background:#fffef5; transform:translateY(-8px); box-shadow:...` + `::after { transform: scaleX(1) }` (línea naranja inferior) + `.servicio-num { color:#EE7A13 }`. (líneas ~723-730)
-- **Cards destacadas** (`.prop-card`): hover → `transform:translateY(-5px); box-shadow:0 16px 48px...` + `.prop-card-img img { scale(1.05) }` + `.prop-card-ver { letter-spacing }`. (líneas ~631-694, ~748)
-- **FAQ** (`.faq-item`): el borde naranja es un `::before` que aparece por opacidad en `.faq-item:not(.open) .faq-q:hover .faq-q-text::before` (líneas ~870-877). En mobile: mostrarlo con `.faq-item.open .faq-q-text::before { opacity:1 }`. El click/abrir ya funciona (IIFE FAQ ~2746).
-- **Sobre mí:** secuencia ya por IntersectionObserver (`ioSobre`, ~2605); en mobile solo ajustar a 1 columna manteniendo la animación.
-- **Valores:** animación ya por IntersectionObserver (`ioValores`, ~2507); en mobile cada `.valor-item` debe disparar individual (threshold 0.5) con delay escalonado 0.4s.
+### Hover→scroll-trigger (lo que pedía el plan)
+- **Servicios** (`.servicio-card.is-visible`): fondo + línea naranja + número naranja + `scale(1.03)`. El observer usa `rootMargin: '-25% 0px -55% 0px'` → se activa la card que cruza la **franja alta-central** (no todas juntas).
+- **Esencia/Valores:** en mobile el observer arranca antes (threshold `0.25`, pausa `150ms` vs `0.7`/`500ms` en desktop) y el escalonado entre columnas es más rápido.
+- **Sobre mí:** orden mobile **eyebrow → título → foto → bio → badges** (`display:contents` + `order`). La foto fadea **junto con el título** (no antes); el resto de la secuencia (typewriter, badges) intacta. Branch por `matchMedia`.
+
+### WhatsApp flotante (home)
+- En mobile: más chico (50px), **sin pulso**, y **aparece recién al scrollear** ~50% del hero (clase `.wa-show` que toggea `updateNav` con `scrollY > innerHeight*0.5`).
+
+### Buscador (home + listado)
+- Causa del look "raro": en columna heredaba `align-items:center` → filtros centrados y achicados. Fix: **`align-items:stretch`** (full-width, estilo formulario) + **separadores `.search-sep` horizontales full-width**.
+- **Dropdowns abren para ABAJO** (antes para arriba, pisaban el hero) y ocupan el ancho del filtro sin desbordar (`left:0; right:0; min-width:0`; `rng-dropdown` sin `min-width:300`). Mismos arreglos en `propiedades/` (su breakpoint es 600px) para que queden idénticos.
+
+### Carrusel destacadas (home) + swipe galería (ficha)
+- **Destacadas:** `.propiedades-grid` en mobile pasa a **flex + scroll-snap horizontal** (card `flex:0 0 82%`, se asoma la siguiente). La card centrada recibe `.is-visible` (elevación) vía IntersectionObserver con `rootMargin:'0px -38% 0px -38%'`. Se engancha en `setupCardCarousel(grid)` dentro de `renderGrid`.
+- **Ficha:** **swipe en la foto principal** (`mainEl` touchstart/touchend; distingue swipe de tap con `swMoved` para no abrir el lightbox). **Swipe también en el lightbox** (`#lightboxImg`). Los thumbnails ya eran scroll horizontal en mobile.
+
+### Varios
+- **`overflow-x:hidden` en `html`** (faltaba; `body` ya lo tenía) → mata el scroll lateral.
+- **`<meta name="theme-color" content="#1e2e17">`** → tiñe la barra del navegador del celu con el verde de marca. ⚠️ La **barra de navegación del SISTEMA** (botones atrás/home de Android) NO se controla desde la web.
+
+## Lo único que queda pendiente (menor)
+- **FAQ:** mostrar el borde naranja del `:hover` cuando el item está `.open` en mobile (`.faq-item.open .faq-q-text::before { opacity:1 }`). El click/abrir ya funciona. Es lo último del plan original.
 
 ## Cómo prueba el usuario
-- En el celu real → **codigo-vs.vercel.app** (por eso pidió pushear cada tanda). También DevTools (F12 → modo celular). **Trabaja con capturas**: mostrarle, esperar OK visual, seguir.
+- En el celu real → **codigo-vs.vercel.app** (por eso pide pushear; ahora **push directo** — ver memoria `feedback-push-directo`). **Trabaja con capturas**: mostrar, esperar OK visual, seguir. Itera mucho en posiciones/tamaños (px finos).
