@@ -36,11 +36,11 @@ collections:
         name: tipo
         widget: select
         options:
-          - Lote
-          - Casa
-          - Departamento
-          - "Alquiler permanente"
-          - "Alquiler turístico"
+          - { label: "Lotes", value: "Lote" }
+          - { label: "Casas", value: "Casa" }
+          - { label: "Departamentos", value: "Departamento" }
+          - { label: "Alquileres permanentes", value: "Alquiler permanente" }
+          - { label: "Alquileres turísticos", value: "Alquiler turístico" }
         required: true
 
       - label: "Precio"
