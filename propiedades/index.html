@@ -444,7 +444,17 @@
     /* Propiedades similares: ranking de 3, la más parecida a la izquierda */
     .prop-similares-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
     @media (max-width: 860px) { .prop-similares-grid { grid-template-columns: 1fr 1fr; } }
-    @media (max-width: 560px) { .prop-similares-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 560px) {
+      /* Similares → carrusel horizontal deslizable, cards más chicas (máx 3) */
+      .prop-similares-grid {
+        display: flex; grid-template-columns: none;
+        overflow-x: auto; scroll-snap-type: x mandatory;
+        gap: 12px; padding-bottom: 6px; margin: 0 -20px; padding-left: 20px; padding-right: 20px;
+        -webkit-overflow-scrolling: touch; scrollbar-width: none;
+      }
+      .prop-similares-grid::-webkit-scrollbar { display: none; }
+      .prop-similares-grid > .prop-card { flex: 0 0 66%; scroll-snap-align: center; }
+    }
 
     /* Responsive ficha */
     @media (max-width: 720px) {
