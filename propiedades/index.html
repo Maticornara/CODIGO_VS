@@ -146,7 +146,8 @@
       #navBackLabel { display: none; }      /* volver = solo la flecha */
       .nav-back { margin-left: 0; gap: 0; }
       .nav-back svg { width: 24px; height: 24px; }
-      .nav-logo { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); gap: 9px; }
+      /* Corrido un toque a la izquierda (centrado óptico, no por bounding-box) */
+      .nav-logo { position: absolute; left: 50%; top: 50%; transform: translate(calc(-50% - 16px), -50%); gap: 9px; }
       .nav-logo-img { height: 34px; }
       .nav-isologo-img { height: 26px; }
       .nav-hamb {
