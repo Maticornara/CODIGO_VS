@@ -745,6 +745,11 @@
       font-size: 17px; font-weight: 700; color: var(--negro);
       margin-top: auto; padding-top: 10px;
     }
+    /* Precio aproximado en la otra moneda (≈), línea secundaria más chica */
+    .prop-card-precio-conv {
+      font-size: 13px; font-weight: 500; color: var(--gris-texto);
+      margin-top: 2px;
+    }
     .prop-card-footer {
       display: flex; align-items: center; justify-content: space-between;
       margin-top: 14px; padding-top: 14px;
@@ -1261,6 +1266,22 @@
     return (p.moneda === 'ARS' ? '$ ' : 'U$S ') + n.toLocaleString('es-AR') + (per ? ' / ' + per : '');
   }
 
+  // Precio aproximado en la OTRA moneda (≈). Antonella lo puede apagar por propiedad
+  // (campo "mostrar_precio_convertido"; por defecto se muestra). Devuelve '' si no corresponde.
+  function fmtPrecioConv(p) {
+    if (p.mostrar_precio_convertido === false) return '';   // apagado por Antonella
+    var n = Number(p.precio);
+    if (isNaN(n)) return '';
+    var origen  = (p.moneda || 'USD').toUpperCase();
+    var destino = origen === 'ARS' ? 'USD' : 'ARS';
+    var conv = precioEnMoneda(n, origen, destino);
+    if (conv == null) return '';   // sin cotización cargada → no se muestra
+    // Redondeo lindo: pesos al millar, dólares a la centena
+    conv = destino === 'ARS' ? Math.round(conv / 1000) * 1000 : Math.round(conv / 100) * 100;
+    var per = periodoTxt(p);
+    return '≈ ' + (destino === 'ARS' ? '$ ' : 'U$S ') + conv.toLocaleString('es-AR') + (per ? ' / ' + per : '');
+  }
+
   // Normaliza texto para buscar/comparar: minúsculas + sin acentos (así "crédito" = "credito")
   function normTxt(s) {
     return String(s == null ? '' : s).toLowerCase()
@@ -1320,6 +1341,7 @@
         (ubic ? '<div class="prop-card-ubic">' + ubic + '</div>' : '') +
         (statsStr ? '<div class="prop-card-stats">' + statsStr + '</div>' : '') +
         '<p class="prop-card-precio">' + fmtPrecio(p) + '</p>' +
+        (fmtPrecioConv(p) ? '<p class="prop-card-precio-conv">' + fmtPrecioConv(p) + '</p>' : '') +
         '<div class="prop-card-footer">' +
           '<span class="prop-card-codigo">' + (p.codigo || '') + '</span>' +
           '<span class="prop-card-ver">' + T('VER PROPIEDAD →', 'VIEW PROPERTY →') + '</span>' +

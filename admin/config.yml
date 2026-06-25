@@ -63,6 +63,12 @@ collections:
         required: false
         hint: "Solo para alquileres: cada cuánto es el precio. Escribilo libre. Ej: mes, noche, día, semana, quincena, temporada. Si lo dejás vacío en un alquiler, se muestra 'por mes'."
 
+      - label: "Mostrar también el precio convertido"
+        name: mostrar_precio_convertido
+        widget: boolean
+        default: true
+        hint: "Si está activado, en el listado se muestra el precio que cargaste y abajo el equivalente aproximado en la otra moneda (según el valor del dólar). Desactivalo si querés mostrar SOLO la moneda que cargaste (ej: alquileres en pesos)."
+
       - label: "Superficie total (m²)"
         name: metros_cuadrados
         widget: number

@@ -334,7 +334,13 @@ Orden: **1)** Hero (breadcrumb + badge + título + ubicación 📍) **2)** Galer
 - `precioEnMoneda(precio, monedaProp, monedaObjetivo)` convierte: `USD→ARS = ×valor_dolar`, `ARS→USD = ÷valor_dolar`. Devuelve `null` si no se puede (sin cotización y monedas distintas).
 - **Filtro de precio (`filtrarListing`):** antes **excluía** las propiedades cuya `moneda` ≠ la elegida. Ahora **convierte y compara** (una propiedad en USD aparece aunque busques en pesos, y viceversa). Esto es el "doble entrada para precio en cada moneda" que pidió el usuario.
 - **Red de seguridad:** si `VALOR_DOLAR` no cargó o falla, `precioEnMoneda` devuelve `null` para monedas distintas → el filtro vuelve al comportamiento viejo (compara por moneda). Nada se rompe.
-- Los precios que se **muestran** en cards/ficha quedan en su moneda original (NO se muestra el precio convertido; el usuario eligió "convertir y comparar" solo en el filtro).
+- En el **filtro** se convierte para comparar. En la **ficha** el precio queda en su moneda original.
+
+## Precio convertido visible en las cards del listado
+- En las **cards del listado** (`propiedades/index.html`, `renderCard`) se muestra el precio original y **debajo el equivalente aproximado en la otra moneda** con `≈` (línea `.prop-card-precio-conv`, más chica/gris). Helper `fmtPrecioConv(p)`.
+- **Antonella decide por propiedad:** campo nuevo en el admin **`mostrar_precio_convertido`** (`widget: boolean`, **default `true`**). Si lo apaga → solo el precio original (ej: alquileres en pesos). Como las propiedades viejas no tienen el campo, `undefined !== false` → se muestra igual (default ON).
+- La conversión usa `precioEnMoneda` + `VALOR_DOLAR`. Si no hay cotización → no muestra la línea ≈ (no rompe). Redondeo lindo: pesos al millar, dólares a la centena. Respeta el período de alquiler.
+- Va **solo en las cards del listado** (no en la ficha por ahora, ni en el home).
 
 ## Botón "+ Propiedad" en naranja
 - En `admin/index.html` el matcher de "Nueva Propiedad" se amplió para agarrar también **"+ Propiedad"** / "Propiedad" / "+ Property" y pintarlo de `#EE7A13` (Decap cambió el botón y el `data-testid="new-button"` ya no alcanzaba).
