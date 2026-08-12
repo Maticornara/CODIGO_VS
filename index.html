@@ -1978,26 +1978,27 @@
     */
     var DASH = 9000;
 
-    /* Margen de cobertura del dash: getScreenCTM a veces subestima un poco el
-       largo real del trazo (getTotalLength aproxima curvas + redondeos), así que
-       el dash quedaba corto y el trazo NO llegaba a dibujarse al 100% (y ese
-       pedacito faltante aparecía durante el undraw). Con este factor el dash tapa
-       de sobra todo el trazo; el offset escala igual, así el desdibujado sigue
-       proporcional (solo termina de dibujar un pelín antes). Tunable. */
-    var COVER = 1.25;
+    /* Margen de cobertura del dash. El dash quedaba MÁS corto que el trazo real →
+       el trazo no se dibujaba al 100% (y ese pedacito aparecía durante el undraw).
+       La causa es la DENSIDAD de pantalla (devicePixelRatio): con non-scaling-stroke
+       el guion se mide distinto según los px físicos, y en celu (DPR 2-3×) el dash
+       quedaba muy corto. Por eso el margen se ESCALA con el DPR del dispositivo,
+       con un piso de 1.25 (lo que ya funcionaba en desktop). El offset escala igual,
+       así el desdibujado sigue proporcional. */
+    var COVER_MIN = 1.25;   // piso (desktop a ~100-125%)
+    var COVER_DPR = 1.1;    // margen sobre el device pixel ratio (clave en celu)
 
-    /* Longitud real de cada trazo (× COVER) → dibujado/desdibujado progresivo y parejo.
-       (Con un DASH fijo gigante, el trazo quedaba visible casi todo el tiempo
-       y solo desaparecía al final: ese era el bug del timing.) */
+    /* Longitud del trazo (en px de pantalla × cobertura) → dibujado/desdibujado parejo. */
     function pathLen(el) {
+      var cover = Math.max(COVER_MIN, COVER_DPR * (window.devicePixelRatio || 1));
       var L = 1000;
       if (el.getTotalLength) { try { var v = el.getTotalLength(); if (v) L = v; } catch (e) {} }
       // con non-scaling-stroke el guion se mide en px de pantalla → escalar por el CTM
       try {
         var m = el.getScreenCTM();
-        if (m) { var s = Math.hypot(m.a, m.b); if (s) return L * s * COVER; }
+        if (m) { var s = Math.hypot(m.a, m.b); if (s) return L * s * cover; }
       } catch (e) {}
-      return L * COVER;
+      return L * cover;
     }
 
     /* Contornos = grupo .ill-stroke ; caras = grupo .ill-fill ; crecen = .ill-grow */
