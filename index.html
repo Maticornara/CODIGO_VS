@@ -1978,7 +1978,15 @@
     */
     var DASH = 9000;
 
-    /* Longitud real de cada trazo → dibujado/desdibujado progresivo y parejo.
+    /* Margen de cobertura del dash: getScreenCTM a veces subestima un poco el
+       largo real del trazo (getTotalLength aproxima curvas + redondeos), así que
+       el dash quedaba corto y el trazo NO llegaba a dibujarse al 100% (y ese
+       pedacito faltante aparecía durante el undraw). Con este factor el dash tapa
+       de sobra todo el trazo; el offset escala igual, así el desdibujado sigue
+       proporcional (solo termina de dibujar un pelín antes). Tunable. */
+    var COVER = 1.25;
+
+    /* Longitud real de cada trazo (× COVER) → dibujado/desdibujado progresivo y parejo.
        (Con un DASH fijo gigante, el trazo quedaba visible casi todo el tiempo
        y solo desaparecía al final: ese era el bug del timing.) */
     function pathLen(el) {
@@ -1987,9 +1995,9 @@
       // con non-scaling-stroke el guion se mide en px de pantalla → escalar por el CTM
       try {
         var m = el.getScreenCTM();
-        if (m) { var s = Math.hypot(m.a, m.b); if (s) return L * s; }
+        if (m) { var s = Math.hypot(m.a, m.b); if (s) return L * s * COVER; }
       } catch (e) {}
-      return L;
+      return L * COVER;
     }
 
     /* Contornos = grupo .ill-stroke ; caras = grupo .ill-fill ; crecen = .ill-grow */
