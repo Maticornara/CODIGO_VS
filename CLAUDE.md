@@ -131,7 +131,7 @@ Es HTML puro, sin build. Servidor local: `python -m http.server 3000` (o `npx se
 ## Contacto
 - **Formulario → WhatsApp:** al enviar, abre WhatsApp con los datos (nombre, tel, email, consulta). (Se probó mailto y no es confiable en desktop sin cliente de correo; por eso WhatsApp.)
 - Además, visibles como otros medios: **Email** y **Instagram** (`@solar_propiedades` → https://www.instagram.com/solar_propiedades/).
-- **Email temporal de prueba: `matyy.cornara@gmail.com`** (reemplazar por el de la inmobiliaria; aparece en el form del home, en `var DEST`, y en la ficha 2 veces).
+- **Email de contacto: `inmobiliaria@solarprop.com.ar`** (email real de la inmobiliaria; reemplazó al de prueba `matyy.cornara@gmail.com`). Aparece en el form del home, los mailto del nav/contacto/menú mobile, y en la ficha.
 - Los mensajes (WhatsApp y mail) dicen explícito **"desde la Página web de Solar Propiedades"**. En la ficha, el mensaje sigue el ejemplo de Antonella: *"¡Hola! Estoy interesado en la propiedad que vi en su web: (TÍTULO) - (CÓDIGO). ¿Me podrían brindar más información? Aquí está el enlace del inmueble: (LINK)"*.
 
 ## Admin (Decap CMS)
@@ -144,7 +144,7 @@ Es HTML puro, sin build. Servidor local: `python -m http.server 3000` (o `npx se
 ## Pendientes (cuando se retome)
 - **Mobile:** menú hamburguesa (hoy en celular NO hay menú) + repaso mobile completo (home, listado, ficha).
 - **Servicios** (sección nunca revisada), footer.
-- Reemplazar email de prueba por el real.
+- ~~Reemplazar email de prueba por el real.~~ ✅ Hecho: `inmobiliaria@solarprop.com.ar`.
 - Open Graph / SEO para compartir lindo por WhatsApp/redes.
 - Opcional: características estructuradas (dormitorios, baños) como datos, no como tags.
 
