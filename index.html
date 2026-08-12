@@ -1048,6 +1048,10 @@
       #splash-logo { height: 148px; left: 6px; }
       #splash-wordmark { height: 62px; max-width: 88vw; }
 
+      /* El fondo del hero cubre TODO el alto visible aunque la barra del navegador
+         del celu aparezca/desaparezca: usamos dvh (viewport dinámico) y dejamos que
+         el hero crezca con el contenido, así nunca asoma la sección de abajo. */
+      .hero { height: auto; min-height: 100vh; min-height: 100dvh; }
       .hero-layout { flex-direction: column; align-items: stretch; padding: calc(var(--nav-h) + 16px) 20px 80px; gap: 0; }
       /* display:contents → los hijos del hero-content pasan a ser items del flex,
          así puedo intercalar la ilustración entre el typewriter y el subtítulo. */
@@ -1060,7 +1064,7 @@
       .hero-sub { order: 5; margin-top: 26px; }
       /* Trazo más fino en mobile: el stroke es non-scaling (px fijos), al achicar
          la ilustración 4.5 se ve grueso (sobre todo el edificio). Bajado a 3. */
-      .illus-svg { max-width: 210px; max-height: 200px; stroke-width: 3.3; }
+      .illus-svg { max-width: 210px; max-height: 200px; stroke-width: 4; }
       #illus-0 { max-width: 250px; max-height: 240px; transform: translate(-22px, -6px); } /* casa más grande + más a la izq */
       #illus-1 { max-width: 262px; max-height: 285px; } /* edificio más grande */
       #illus-2 { max-width: 245px; max-height: 235px; } /* terreno más grande */
