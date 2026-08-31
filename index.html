@@ -815,34 +815,30 @@
     /* SOBRE MÍ */
     .sobre-outer { padding: 120px 56px; }
     .sobre-section { max-width: var(--max-w); margin: 0 auto; }
-    .sobre-head { margin-bottom: 46px; }
-    .sobre-head .section-eyebrow { margin-bottom: 14px; }
-    .sobre-head .section-title { font-size: 28px; line-height: 1.15; margin: 0; max-width: 22ch; }
-    .sobre-body { display: grid; grid-template-columns: 340px 1fr; gap: 60px; align-items: start; }
-    .sobre-media { display: flex; flex-direction: column; gap: 26px; }
+
+    /* Cuerpo: 3 zonas → foto (izq) · mensaje+título (centro) · cita (der) */
+    .sobre-body { display: grid; grid-template-columns: 330px minmax(0,1fr) 320px; gap: 54px; align-items: start; }
     .sobre-img-wrap { position: relative; width: 100%; max-width: 100%; }
-    .sobre-img {
-      width: 100%; aspect-ratio: 3/4; object-fit: cover;
-      border-radius: var(--radius); display: block;
-    }
-    .sobre-p { font-size: 16px; font-weight: 300; line-height: 1.85; color: var(--gris-texto); margin: 0 0 18px; max-width: 58ch; }
+    .sobre-img { width: 100%; aspect-ratio: 3/4; object-fit: cover; object-position: 50% 18%; border-radius: var(--radius); display: block; }
+
+    /* Centro: eyebrow + título + párrafos */
+    .sobre-text .section-eyebrow { margin-bottom: 14px; }
+    .sobre-text .section-title { font-size: 28px; line-height: 1.15; margin: 0 0 22px; max-width: none; }
+    .sobre-p { font-size: 16px; font-weight: 300; line-height: 1.85; color: var(--gris-texto); margin: 0 0 18px; }
     .sobre-p strong { font-weight: 700; color: var(--verde); }
 
-    /* Cita de la Dirección Técnica y Profesional */
-    .sobre-quote { margin: 30px 0; padding: 4px 0 4px 22px; border-left: 3px solid var(--acento); max-width: 58ch; }
+    /* Derecha: cita de la Dirección Técnica y Profesional */
+    .sobre-aside { align-self: start; }
+    .sobre-quote { margin: 0; padding: 4px 0 4px 20px; border-left: 3px solid var(--acento); }
     .sobre-quote-label { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--acento); margin: 0 0 12px; }
-    .sobre-quote blockquote { margin: 0; font-size: 18px; font-weight: 400; font-style: italic; line-height: 1.6; color: var(--verde); }
-    .sobre-quote-author { margin: 12px 0 0; font-size: 13px; font-weight: 700; letter-spacing: 0.02em; color: var(--gris-texto); }
+    .sobre-quote blockquote { margin: 0; font-size: 17px; font-weight: 400; font-style: italic; line-height: 1.6; color: var(--verde); }
+    .sobre-quote-author { margin: 14px 0 0; font-size: 13px; font-weight: 700; letter-spacing: 0.02em; color: var(--gris-texto); }
 
-    .sobre-badges { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
-    .badge { display: flex; align-items: center; gap: 8px; padding: 10px 16px; border: 1.5px solid var(--gris-suave); border-radius: 2px; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--verde); }
-    .badge-dot { width: 6px; height: 6px; background: var(--acento); border-radius: 50%; flex-shrink: 0; }
-
-    /* CTA final → baja a Contacto */
-    .sobre-cta { padding-top: 30px; border-top: 1px solid var(--gris-suave); }
-    .sobre-cta-title { font-family: var(--font-display); font-size: 23px; font-weight: 900; letter-spacing: -0.01em; color: var(--verde); margin: 0 0 10px; }
-    .sobre-cta-text { font-size: 16px; font-weight: 300; line-height: 1.7; color: var(--gris-texto); margin: 0 0 22px; max-width: 52ch; }
-    .sobre-cta-btn { display: inline-block; background: var(--acento); color: var(--crema); font-weight: 700; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; padding: 14px 30px; border-radius: var(--radius); text-decoration: none; transition: background 0.2s, transform 0.15s, box-shadow 0.2s; box-shadow: 0 4px 14px rgba(238,122,19,0.3); }
+    /* CTA de cierre (banda centrada) → baja a Contacto */
+    .sobre-cta { margin-top: 54px; padding-top: 40px; border-top: 1px solid var(--gris-suave); text-align: center; }
+    .sobre-cta-title { font-family: var(--font-display); font-size: 24px; font-weight: 900; letter-spacing: -0.01em; color: var(--verde); margin: 0 0 10px; }
+    .sobre-cta-text { font-size: 16px; font-weight: 300; line-height: 1.7; color: var(--gris-texto); margin: 0 auto 24px; max-width: 54ch; }
+    .sobre-cta-btn { display: inline-block; background: var(--acento); color: var(--crema); font-weight: 700; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; padding: 14px 32px; border-radius: var(--radius); text-decoration: none; transition: background 0.2s, transform 0.15s, box-shadow 0.2s; box-shadow: 0 4px 14px rgba(238,122,19,0.3); }
     .sobre-cta-btn:hover { background: var(--acento-dark); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(238,122,19,0.4); }
 
     /* Animación CONÓCENOS: cada bloque entra con fade + slide escalonado
@@ -1115,15 +1111,15 @@
       .props-section, .faq-section, .contacto-section, .sobre-outer { padding: 72px 20px; }
       /* Conócenos: el TÍTULO va primero, después la foto, después el texto.
          (Regla: los títulos siempre antes de cualquier info.) */
-      .sobre-section { display: flex; flex-direction: column; gap: 26px; }
-      .sobre-head, .sobre-body, .sobre-media, .sobre-text { display: contents; }
-      .sobre-head .section-eyebrow { order: 1; }
-      .sobre-head .section-title { order: 2; max-width: none; }
+      .sobre-section { display: flex; flex-direction: column; gap: 24px; }
+      .sobre-body, .sobre-media, .sobre-text, .sobre-aside { display: contents; }
+      .sobre-text .section-eyebrow { order: 1; }
+      .sobre-text .section-title { order: 2; }
       .sobre-media .sobre-img-wrap { order: 3; }
       .sobre-text .sobre-p { order: 4; margin-bottom: 0; }
-      .sobre-text .sobre-quote { order: 5; margin: 0; }
-      .sobre-media .sobre-badges { order: 6; }
-      .sobre-text .sobre-cta { order: 7; }
+      .sobre-aside .sobre-quote { order: 5; }
+      .sobre-cta { order: 6; margin-top: 0; text-align: left; }
+      .sobre-cta .sobre-cta-text { margin-left: 0; }
       .valores-section { padding: 72px 0; }
       .valores-inner { padding: 0 20px; }
       /* Escalonado un poco más rápido en mobile (menos espera entre columnas) */
@@ -1764,38 +1760,33 @@
 <div class="sobre-outer" id="sobre">
   <div class="sobre-section">
 
-    <div class="sobre-head">
-      <p class="section-eyebrow sobre-rev" data-en="Get to know us">Conócenos</p>
-      <h2 class="section-title sobre-rev" data-en="More than properties, we accompany life projects">Más que propiedades, acompañamos proyectos de vida</h2>
-    </div>
-
     <div class="sobre-body">
       <div class="sobre-media">
         <div class="sobre-img-wrap">
           <img class="sobre-img" src="fotos/foto_antonella.jpeg" alt="Antonella Gutiérrez — Solar Propiedades" loading="lazy"/>
         </div>
-        <div class="sobre-badges">
-          <div class="badge sobre-rev" data-en="<span class='badge-dot'></span>Council of Economic Sciences"><span class="badge-dot"></span>Consejo de Ciencias Económicas</div>
-          <div class="badge sobre-rev" data-en="<span class='badge-dot'></span>Board of Real Estate Brokers — Neuquén"><span class="badge-dot"></span>Colegio de Martilleros — Neuquén</div>
-        </div>
       </div>
 
       <div class="sobre-text">
+        <p class="section-eyebrow sobre-rev" data-en="Get to know us">Conócenos</p>
+        <h2 class="section-title sobre-rev" data-en="More than properties, we accompany life projects">Más que propiedades, acompañamos proyectos de vida</h2>
         <p class="sobre-p sobre-rev" data-en="Behind every rental, sale or investment there is a dream, an important decision and a new beginning. At <strong>Solar Propiedades</strong>, we understand that real estate is not just about square meters or contracts, but about the people who live in those spaces.">Detrás de cada alquiler, venta o inversión hay un sueño, una decisión importante y un nuevo comienzo. En <strong>Solar Propiedades</strong>, entendemos que el mercado inmobiliario no se trata solo de metros cuadrados o contratos, sino de las personas que habitan esos espacios.</p>
         <p class="sobre-p sobre-rev" data-en="We combine cutting-edge technology to speed up your search with the most important value of all: a human, transparent approach, present at every step of the way.">Combinamos tecnología de vanguardia para agilizar tus búsquedas con el valor más importante de todos: un trato humano, transparente y presente en cada etapa del camino.</p>
+      </div>
 
-        <figure class="sobre-quote sobre-rev">
+      <aside class="sobre-aside sobre-rev">
+        <figure class="sobre-quote">
           <p class="sobre-quote-label" data-en="Technical &amp; Professional Direction">La Dirección Técnica y Profesional</p>
           <blockquote data-en="“For us, advising is not about closing a deal quickly, but about guaranteeing you the peace of mind and legal security you deserve in one of the most important decisions of your life.”">“Para nosotros, asesorar no es cerrar una operación rápido, sino garantizarte la tranquilidad y seguridad jurídica que merecés en una de las decisiones más importantes de tu vida.”</blockquote>
           <figcaption class="sobre-quote-author" data-en="— Antonella Gutiérrez, Real Estate Broker">— Martillera Antonella Gutiérrez</figcaption>
         </figure>
+      </aside>
+    </div>
 
-        <div class="sobre-cta sobre-rev">
-          <h3 class="sobre-cta-title" data-en="Shall we talk about your next step?">¿Hablamos de tu próximo paso?</h3>
-          <p class="sobre-cta-text" data-en="Whether you want to sell, rent, invest or simply find out what your property is worth today, we are here to help you.">Ya sea que busques vender, alquilar, invertir o simplemente saber cuánto vale hoy tu propiedad, estamos acá para ayudarte.</p>
-          <a href="#contacto" class="sobre-cta-btn" data-en="Book a consultation">Agendar una consulta</a>
-        </div>
-      </div>
+    <div class="sobre-cta sobre-rev">
+      <h3 class="sobre-cta-title" data-en="Shall we talk about your next step?">¿Hablamos de tu próximo paso?</h3>
+      <p class="sobre-cta-text" data-en="Whether you want to sell, rent, invest or simply find out what your property is worth today, we are here to help you.">Ya sea que busques vender, alquilar, invertir o simplemente saber cuánto vale hoy tu propiedad, estamos acá para ayudarte.</p>
+      <a href="#contacto" class="sobre-cta-btn" data-en="Book a consultation">Agendar una consulta</a>
     </div>
 
   </div>
