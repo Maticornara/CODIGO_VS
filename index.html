@@ -834,12 +834,12 @@
     .sobre-quote blockquote { margin: 0; font-size: 17px; font-weight: 400; font-style: italic; line-height: 1.6; color: var(--verde); }
     .sobre-quote-author { margin: 14px 0 0; font-size: 13px; font-weight: 700; letter-spacing: 0.02em; color: var(--gris-texto); }
 
-    /* CTA de cierre (banda centrada) → baja a Contacto */
-    .sobre-cta { margin-top: 54px; padding-top: 40px; border-top: 1px solid var(--gris-suave); text-align: center; }
-    .sobre-cta-title { font-family: var(--font-display); font-size: 24px; font-weight: 900; letter-spacing: -0.01em; color: var(--verde); margin: 0 0 10px; }
-    .sobre-cta-text { font-size: 16px; font-weight: 300; line-height: 1.7; color: var(--gris-texto); margin: 0 auto 24px; max-width: 54ch; }
-    .sobre-cta-btn { display: inline-block; background: var(--acento); color: var(--crema); font-weight: 700; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; padding: 14px 32px; border-radius: var(--radius); text-decoration: none; transition: background 0.2s, transform 0.15s, box-shadow 0.2s; box-shadow: 0 4px 14px rgba(238,122,19,0.3); }
-    .sobre-cta-btn:hover { background: var(--acento-dark); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(238,122,19,0.4); }
+    /* CTA discreto, en la columna derecha debajo de la cita → baja a Contacto */
+    .sobre-cta { margin-top: 32px; }
+    .sobre-cta-title { font-size: 17px; font-weight: 800; letter-spacing: -0.005em; color: var(--verde); margin: 0 0 7px; }
+    .sobre-cta-text { font-size: 14.5px; font-weight: 300; line-height: 1.65; color: var(--gris-texto); margin: 0 0 16px; }
+    .sobre-cta-btn { display: inline-block; background: var(--acento); color: var(--crema); font-weight: 700; font-size: 12px; letter-spacing: 0.07em; text-transform: uppercase; padding: 11px 22px; border-radius: var(--radius); text-decoration: none; transition: background 0.2s, transform 0.15s, box-shadow 0.2s; box-shadow: 0 3px 10px rgba(238,122,19,0.28); }
+    .sobre-cta-btn:hover { background: var(--acento-dark); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(238,122,19,0.38); }
 
     /* Animación CONÓCENOS: cada bloque entra con fade + slide escalonado
        (disparado al scroll, vía IntersectionObserver). La foto entra con fade. */
@@ -1780,13 +1780,13 @@
           <blockquote data-en="“For us, advising is not about closing a deal quickly, but about guaranteeing you the peace of mind and legal security you deserve in one of the most important decisions of your life.”">“Para nosotros, asesorar no es cerrar una operación rápido, sino garantizarte la tranquilidad y seguridad jurídica que merecés en una de las decisiones más importantes de tu vida.”</blockquote>
           <figcaption class="sobre-quote-author" data-en="— Antonella Gutiérrez, Real Estate Broker">— Martillera Antonella Gutiérrez</figcaption>
         </figure>
-      </aside>
-    </div>
 
-    <div class="sobre-cta sobre-rev">
-      <h3 class="sobre-cta-title" data-en="Shall we talk about your next step?">¿Hablamos de tu próximo paso?</h3>
-      <p class="sobre-cta-text" data-en="Whether you want to sell, rent, invest or simply find out what your property is worth today, we are here to help you.">Ya sea que busques vender, alquilar, invertir o simplemente saber cuánto vale hoy tu propiedad, estamos acá para ayudarte.</p>
-      <a href="#contacto" class="sobre-cta-btn" data-en="Book a consultation">Agendar una consulta</a>
+        <div class="sobre-cta">
+          <h3 class="sobre-cta-title" data-en="Shall we talk about your next step?">¿Hablamos de tu próximo paso?</h3>
+          <p class="sobre-cta-text" data-en="Whether you want to sell, rent, invest or simply find out what your property is worth today, we are here to help you.">Ya sea que busques vender, alquilar, invertir o simplemente saber cuánto vale hoy tu propiedad, estamos acá para ayudarte.</p>
+          <a href="#contacto" class="sobre-cta-btn" data-en="Book a consultation">Agendar una consulta</a>
+        </div>
+      </aside>
     </div>
 
   </div>
