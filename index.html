@@ -820,34 +820,36 @@
       width: 100%; aspect-ratio: 3/4; object-fit: cover;
       border-radius: var(--radius); display: block;
     }
-    .sobre-text .section-title { margin-bottom: 20px; }
-    .sobre-bio { font-size: 16px; font-weight: 300; line-height: 1.8; color: var(--gris-texto); margin-bottom: 40px; max-width: 480px; }
-    .sobre-badges { display: flex; gap: 12px; flex-wrap: wrap; }
+    .sobre-text .section-title { margin-bottom: 22px; max-width: 16ch; }
+    .sobre-p { font-size: 16px; font-weight: 300; line-height: 1.85; color: var(--gris-texto); margin: 0 0 18px; max-width: 56ch; }
+    .sobre-p strong { font-weight: 700; color: var(--verde); }
+
+    /* Cita de la Dirección Técnica y Profesional */
+    .sobre-quote { margin: 34px 0; padding: 2px 0 2px 22px; border-left: 3px solid var(--acento); max-width: 56ch; }
+    .sobre-quote-label { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--acento); margin: 0 0 12px; }
+    .sobre-quote blockquote { margin: 0; font-size: 18px; font-weight: 400; font-style: italic; line-height: 1.6; color: var(--verde); }
+    .sobre-quote-author { margin: 12px 0 0; font-size: 13px; font-weight: 700; letter-spacing: 0.02em; color: var(--gris-texto); }
+
+    .sobre-badges { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 42px; }
     .badge { display: flex; align-items: center; gap: 8px; padding: 10px 16px; border: 1.5px solid var(--gris-suave); border-radius: 2px; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--verde); }
     .badge-dot { width: 6px; height: 6px; background: var(--acento); border-radius: 50%; flex-shrink: 0; }
-    /* Animaciones SOBRE MÍ (se disparan al hacer scroll, vía IntersectionObserver).
-       Todo arranca invisible (opacity 0), incluido el eyebrow. */
-    .sobre-img-wrap { opacity: 0; transition: opacity 0.6s ease; }
+
+    /* CTA final → baja a Contacto */
+    .sobre-cta { padding-top: 30px; border-top: 1px solid var(--gris-suave); }
+    .sobre-cta-title { font-family: var(--font-display); font-size: 23px; font-weight: 900; letter-spacing: -0.01em; color: var(--verde); margin: 0 0 10px; }
+    .sobre-cta-text { font-size: 16px; font-weight: 300; line-height: 1.7; color: var(--gris-texto); margin: 0 0 22px; max-width: 52ch; }
+    .sobre-cta-btn { display: inline-block; background: var(--acento); color: var(--crema); font-weight: 700; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; padding: 14px 30px; border-radius: var(--radius); text-decoration: none; transition: background 0.2s, transform 0.15s, box-shadow 0.2s; box-shadow: 0 4px 14px rgba(238,122,19,0.3); }
+    .sobre-cta-btn:hover { background: var(--acento-dark); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(238,122,19,0.4); }
+
+    /* Animación CONÓCENOS: cada bloque entra con fade + slide escalonado
+       (disparado al scroll, vía IntersectionObserver). La foto entra con fade. */
+    .sobre-img-wrap { opacity: 0; transition: opacity 0.7s ease; }
     .sobre-img-wrap.visible { opacity: 1; }
-    .sobre-text .section-eyebrow { opacity: 0; transition: opacity 0.6s ease; }
-    .sobre-text .section-eyebrow.visible { opacity: 1; }
-    /* Typewriter SIN layout shift: todo el texto ya ocupa su lugar (transparente)
-       y se "revela" letra por letra cambiando color. El espacio nunca cambia. */
-    .sobre-tw .ch, .sobre-bio-tw .ch { color: transparent; position: relative; }
-    .sobre-tw .ch.on, .sobre-bio-tw .ch.on { color: inherit; }
-    .sobre-bio-tw .ch-bold { font-weight: 700; }
-    .ch.caret::after {
-      content: ''; position: absolute; right: -2px; top: 0.12em; bottom: 0.06em;
-      width: 2px; background: var(--acento);
-      animation: caretBlink 0.8s steps(1) infinite;
+    .sobre-rev { opacity: 0; transform: translateY(16px); transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22,1,0.36,1); }
+    .sobre-rev.is-in { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .sobre-img-wrap, .sobre-rev { transition: none; }
     }
-    @keyframes caretBlink { 50% { opacity: 0; } }
-    .sobre-bio { margin-bottom: 40px; }
-    .sobre-bio .bio-line { margin: 0; }
-    .sobre-bio .bio-line + .bio-line { margin-top: 1.4em; }
-    .sobre-bio-tw { margin: 0; }
-    .sobre-badges .badge { opacity: 0; transform: translateY(20px); transition: opacity 0.4s ease, transform 0.4s ease; }
-    .sobre-badges .badge.visible { opacity: 1; transform: translateY(0); }
 
     /* FAQ — click expande la respuesta, pregunta con fondo naranja */
     .faq-section { background: #f5f2e3; padding: 120px 56px; }
@@ -1107,15 +1109,17 @@
       }
       .propiedades-section { padding: 56px 20px 72px; overflow: hidden; }
       .props-section, .faq-section, .contacto-section, .sobre-outer { padding: 72px 20px; }
-      /* Sobre mí: el TÍTULO va primero, después la foto, después la bio.
+      /* Conócenos: el TÍTULO va primero, después la foto, después el texto.
          (Regla: los títulos siempre antes de cualquier info.) */
-      .sobre-section { display: flex; flex-direction: column; gap: 28px; }
+      .sobre-section { display: flex; flex-direction: column; gap: 26px; }
       .sobre-text { display: contents; }
       .sobre-text .section-eyebrow { order: 1; }
-      .sobre-text .section-title { order: 2; }
+      .sobre-text .section-title { order: 2; max-width: none; }
       .sobre-img-wrap { order: 3; }
-      .sobre-bio { order: 4; }
-      .sobre-badges { order: 5; }
+      .sobre-text .sobre-p { order: 4; margin-bottom: 0; }
+      .sobre-text .sobre-quote { order: 5; margin: 0; }
+      .sobre-text .sobre-badges { order: 6; margin-bottom: 0; }
+      .sobre-text .sobre-cta { order: 7; }
       .valores-section { padding: 72px 0; }
       .valores-inner { padding: 0 20px; }
       /* Escalonado un poco más rápido en mobile (menos espera entre columnas) */
@@ -1173,7 +1177,7 @@
     </li>
     <li><a href="#servicios" data-en="Services">Servicios</a></li>
     <li><a href="#valores" data-en="Our essence">Nuestra esencia</a></li>
-    <li><a href="#sobre" data-en="About me">Sobre mí</a></li>
+    <li><a href="#sobre" data-en="About us">Conócenos</a></li>
     <li><a href="#faq" data-en="FAQ">FAQ</a></li>
     <li class="nav-dropdown">
       <a href="#contacto" data-en="Contact &#9660;">Contacto <span class="nav-chevron">▼</span></a>
@@ -1212,7 +1216,7 @@
     </div>
     <a href="#servicios" data-en="Services">Servicios</a>
     <a href="#valores" data-en="Our essence">Nuestra esencia</a>
-    <a href="#sobre" data-en="About me">Sobre mí</a>
+    <a href="#sobre" data-en="About us">Conócenos</a>
     <a href="#faq" data-en="FAQ">FAQ</a>
     <div class="mm-acc">
       <button type="button" class="mm-acc-head" data-en="Contact">Contacto</button>
@@ -1759,15 +1763,27 @@
       <img class="sobre-img" src="fotos/foto_antonella.jpeg" alt="Antonella Gutiérrez — Solar Propiedades" loading="lazy"/>
     </div>
     <div class="sobre-text">
-      <p class="section-eyebrow" data-en="About me">Sobre mí</p>
-      <h2 class="section-title"><span class="sobre-tw" data-text="Hola, soy&#10;Antonella Gutiérrez" data-text-en="Hi, I'm&#10;Antonella Gutiérrez"></span></h2>
-      <div class="sobre-bio">
-        <p class="bio-line" data-en="Combining my two passions —<strong>accounting and real estate brokerage</strong>— is what sets me apart in the market. I understand <strong>the real value of properties</strong> not only by their location, but by their return and legal framework.">Combinar mis dos pasiones —<strong>la contabilidad y el corretaje inmobiliario</strong>— es lo que me permite diferenciarme en el mercado. Entiendo <strong>el valor real de las propiedades</strong> no solo por su ubicación, sino por su rendimiento y su marco legal.</p>
-        <p class="bio-line" data-en="My goal is for you to feel advised by a professional who masters both the <strong>real estate market and current regulations</strong>, ensuring an <strong>efficient, surprise-free</strong> experience.">Mi objetivo es que te sientas asesorado por una profesional que domina tanto el <strong>mercado inmobiliario como la normativa vigente</strong>, garantizando una experiencia <strong>eficiente y sin sorpresas</strong>.</p>
-      </div>
+      <p class="section-eyebrow sobre-rev" data-en="Get to know us">Conócenos</p>
+      <h2 class="section-title sobre-rev" data-en="More than properties, we accompany life projects">Más que propiedades, acompañamos proyectos de vida</h2>
+
+      <p class="sobre-p sobre-rev" data-en="Behind every rental, sale or investment there is a dream, an important decision and a new beginning. At <strong>Solar Propiedades</strong>, we understand that real estate is not just about square meters or contracts, but about the people who live in those spaces.">Detrás de cada alquiler, venta o inversión hay un sueño, una decisión importante y un nuevo comienzo. En <strong>Solar Propiedades</strong>, entendemos que el mercado inmobiliario no se trata solo de metros cuadrados o contratos, sino de las personas que habitan esos espacios.</p>
+      <p class="sobre-p sobre-rev" data-en="We combine cutting-edge technology to speed up your search with the most important value of all: a human, transparent approach, present at every step of the way.">Combinamos tecnología de vanguardia para agilizar tus búsquedas con el valor más importante de todos: un trato humano, transparente y presente en cada etapa del camino.</p>
+
+      <figure class="sobre-quote sobre-rev">
+        <p class="sobre-quote-label" data-en="Technical &amp; Professional Direction">La Dirección Técnica y Profesional</p>
+        <blockquote data-en="“For us, advising is not about closing a deal quickly, but about guaranteeing you the peace of mind and legal security you deserve in one of the most important decisions of your life.”">“Para nosotros, asesorar no es cerrar una operación rápido, sino garantizarte la tranquilidad y seguridad jurídica que merecés en una de las decisiones más importantes de tu vida.”</blockquote>
+        <figcaption class="sobre-quote-author" data-en="— Antonella Gutiérrez, Real Estate Broker">— Martillera Antonella Gutiérrez</figcaption>
+      </figure>
+
       <div class="sobre-badges">
-        <div class="badge" data-en="<span class='badge-dot'></span>Council of Economic Sciences"><span class="badge-dot"></span>Consejo de Ciencias Económicas</div>
-        <div class="badge" data-en="<span class='badge-dot'></span>Board of Real Estate Brokers — Neuquén"><span class="badge-dot"></span>Colegio de Martilleros — Neuquén</div>
+        <div class="badge sobre-rev" data-en="<span class='badge-dot'></span>Council of Economic Sciences"><span class="badge-dot"></span>Consejo de Ciencias Económicas</div>
+        <div class="badge sobre-rev" data-en="<span class='badge-dot'></span>Board of Real Estate Brokers — Neuquén"><span class="badge-dot"></span>Colegio de Martilleros — Neuquén</div>
+      </div>
+
+      <div class="sobre-cta sobre-rev">
+        <h3 class="sobre-cta-title" data-en="Shall we talk about your next step?">¿Hablamos de tu próximo paso?</h3>
+        <p class="sobre-cta-text" data-en="Whether you want to sell, rent, invest or simply find out what your property is worth today, we are here to help you.">Ya sea que busques vender, alquilar, invertir o simplemente saber cuánto vale hoy tu propiedad, estamos acá para ayudarte.</p>
+        <a href="#contacto" class="sobre-cta-btn" data-en="Book a consultation">Agendar una consulta</a>
       </div>
     </div>
   </div>
@@ -1870,7 +1886,7 @@
     <li><a href="#inicio" data-en="Home">Inicio</a></li>
     <li><a href="#propiedades" data-en="Properties">Propiedades</a></li>
     <li><a href="#servicios" data-en="Services">Servicios</a></li>
-    <li><a href="#sobre" data-en="About me">Sobre mí</a></li>
+    <li><a href="#sobre" data-en="About us">Conócenos</a></li>
     <li><a href="#contacto" data-en="Contact">Contacto</a></li>
   </ul>
 </footer>
@@ -2870,65 +2886,25 @@
       });
     }
 
-    /* SOBRE MÍ: el texto ya está renderizado (transparente) y se revela letra por letra */
+    /* CONÓCENOS: cada bloque entra con fade + slide escalonado al hacer scroll.
+       El contenido ya está en su lugar; solo se revela (.is-in / la foto con .visible). */
     var sobre = document.getElementById('sobre');
     if (sobre) {
-      // Construir TODO el contenido en su posición final, transparente, desde el inicio
-      var titleEl = sobre.querySelector('.sobre-tw');
-      var bioWrap = sobre.querySelector('.sobre-bio');
-      var titleText = ((window.SOLAR_LANG === 'en' && titleEl.getAttribute('data-text-en')) || titleEl.getAttribute('data-text')) || '';
-      var bioSegs = bioToSegments(bioWrap); // leer antes de reemplazar el HTML del bio
-      bioWrap.innerHTML = '<p class="sobre-bio-tw"></p>';
-
-      var titleSpans = buildChars(titleEl, [{ text: titleText, bold: false }]);
-      var bioSpans   = buildChars(bioWrap.querySelector('.sobre-bio-tw'), bioSegs);
-
+      var imgWrap = sobre.querySelector('.sobre-img-wrap');
+      var revEls  = sobre.querySelectorAll('.sobre-rev');
       var ioSobre = new IntersectionObserver(function(entries) {
         entries.forEach(function(e) {
-          if (e.isIntersecting) {
-            ioSobre.unobserve(sobre);
-            runSobre(titleSpans, bioSpans);
-          }
-        });
-      }, { threshold: 0.4 });
-      ioSobre.observe(sobre);
-    }
-
-    function runSobre(titleSpans, bioSpans) {
-      var img      = sobre.querySelector('.sobre-img-wrap');
-      var eyebrow  = sobre.querySelector('.section-eyebrow');
-      var badgeEls = sobre.querySelectorAll('.sobre-badges .badge');
-      // En mobile el orden visual es: eyebrow → título → foto → bio → badges.
-      // Por eso la foto aparece JUNTO con el título (no antes, con el eyebrow).
-      var sobreMobile = window.matchMedia('(max-width: 768px)').matches;
-
-      // 0–1s: espera. Todo invisible. Da tiempo a que el usuario vea la sección vacía.
-      var START_DELAY = 1000;
-      var FADE_MS  = 600;   // foto + eyebrow fade in (1.0s → 1.6s)
-      var TYPE_GAP = 500;   // respiro tras la foto (1.6s → 2.1s)
-      // Typewriter: dura 3s en total (título + pausa + bio)
-      var TOTAL = 3000, PAUSE = 200, TITLE_DUR = 900;
-      var BIO_DUR = TOTAL - PAUSE - TITLE_DUR;
-
-      setTimeout(function() {
-        // 1.0s: aparece el eyebrow "SOBRE MÍ" con fade. En desktop la foto aparece
-        // acá también; en mobile se posterga para que entre con el título.
-        if (eyebrow) eyebrow.classList.add('visible');
-        if (img && !sobreMobile) img.classList.add('visible');
-
-        // 2.1s: arranca el typewriter (título → bio) → 5.1s: badges con fade
-        setTimeout(function() {
-          if (img && sobreMobile) img.classList.add('visible'); // mobile: foto con el título
-          reveal(titleSpans, TITLE_DUR)
-            .then(function() { return pause(PAUSE); })
-            .then(function() { return reveal(bioSpans, BIO_DUR); })
-            .then(function() {
-              badgeEls.forEach(function(b, idx) {
-                setTimeout(function() { b.classList.add('visible'); }, idx * 300);
-              });
+          if (!e.isIntersecting) return;
+          ioSobre.unobserve(sobre);
+          setTimeout(function() {
+            if (imgWrap) imgWrap.classList.add('visible');
+            revEls.forEach(function(el, i) {
+              setTimeout(function() { el.classList.add('is-in'); }, 120 + i * 110);
             });
-        }, FADE_MS + TYPE_GAP);
-      }, START_DELAY);
+          }, 150);
+        });
+      }, { threshold: 0.2 });
+      ioSobre.observe(sobre);
     }
   })();
 
