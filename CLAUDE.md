@@ -357,3 +357,71 @@ Orden: **1)** Hero (breadcrumb + badge + título + ubicación 📍) **2)** Galer
 
 ## ⚠️ Deploy de esta sesión
 - `admin/config.yml` + `admin/index.html` → necesitan **deploy manual de Netlify** (un solo "Trigger deploy"; quedan POCOS). `content/config/general.json` y `propiedades/index.html` → **Vercel** (push a `main`).
+
+---
+
+# Sesion — Traspaso a Antonella (01/09/2026): correcciones + precio convertido en todo el sitio
+
+## ⚠️ CORRECCION de datos de este archivo — leer ANTES que las secciones de arriba
+- **NO existe ninguna "cuenta de la facultad".** El site de Netlify (`unique-kitsune-f448c7`) esta en la
+  **cuenta personal de Mati**. Las menciones de mas arriba a *"cuenta de la facultad con creditos renovados"*
+  quedaron por historia y son **incorrectas**. No hay riesgo de que esa cuenta caduque, asi que **no hace
+  falta migrar ni transferir nada** para entregarle el sitio a Antonella.
+- Lo que SI sigue vigente de arriba: los **builds de Netlify estan pausados** a proposito, y por eso todo
+  cambio en `admin/` necesita un **Trigger deploy manual**.
+
+## Estado verificado el 01/09/2026 (comparando lo publicado contra el local)
+- **Vercel (sitio publico): AL DIA.** `index.html` servido == local.
+- **`admin/index.html`: AL DIA.** Las unicas diferencias son 5 lineas de `<meta>` que **Netlify inyecta sola**
+  en el deploy (hosting-provider / netlify-deploy). No son cambios del proyecto.
+- **`admin/config.yml`: DESFASADO.** Le faltaba unicamente el campo `mostrar_precio_convertido`
+  (6 lineas). Se arregla con **un solo Trigger deploy** de Netlify.
+  ⚠️ Importante: el **Manual PDF de Antonella ya documenta ese campo**, asi que hasta que se deploye
+  ella lo busca en el formulario y **no lo encuentra**.
+
+## Netlify: Git Gateway esta DEPRECADO (dato verificado en la doc oficial)
+- Netlify **Identity NO** esta deprecado; **Git Gateway SI**. Textual: *"continua funcionando para los sites
+  que ya lo tienen habilitado, pero no se recomiendan configuraciones nuevas"*, y ya **no arreglan bugs**
+  (solo agujeros de seguridad graves).
+- Consecuencia practica: **nunca recrear el site de Netlify desde cero** (habria que habilitar Git Gateway
+  de nuevo = config nueva = deprecada). Si algun dia hay que cambiarlo de cuenta, **TRANSFERIR el site**,
+  que se lleva Git Gateway con el: `Project configuration > General > Project information > Transfer project`.
+  Requiere ser Team Owner en el origen, Owner/Developer en el destino, y un Owner/Developer compartido.
+- Si alguna vez Git Gateway muere del todo, el plan B es Decap con **backend GitHub + OAuth** (OAuth App +
+  dos funciones serverless `/api/auth` y `/api/callback` en el mismo Vercel). Eso ademas eliminaria Netlify
+  y los deploys manuales. NO se hizo: no hace falta hoy.
+
+## Precio convertido (≈) — ahora en TODO el sitio
+Antes la linea "≈ <precio en la otra moneda>" salia **solo en las cards del listado**. Ahora esta en los
+**tres** lugares. La logica ya era simetrica y no se toco: da igual si Antonella carga en USD o en ARS,
+siempre muestra **la otra** moneda (`destino = origen === 'ARS' ? 'USD' : 'ARS'`), y se apaga por propiedad
+con el interruptor `mostrar_precio_convertido` (default: encendido).
+
+- **Ficha** (`propiedades/index.html`): nuevo `<div id="sidebarPrecioConv">` debajo del precio + CSS
+  `.prop-precio-conv` (con `:empty { display:none }`).
+  ⚠️ **Bug que se arreglo de paso:** `cargarValorDolar()` se llamaba **solo dentro de `if (isListing)`**,
+  asi que en la ficha `VALOR_DOLAR` quedaba `null` y no se podia convertir nada. Ahora la ficha la pide
+  y pinta el ≈ cuando resuelve.
+- **Home** (`index.html`): no tenia **nada** de la maquinaria de cotizacion. Se porto igual que el listado
+  (`CONFIG_URL`, `VALOR_DOLAR`, `cargarValorDolar()`, `precioEnMoneda()`, `fmtPrecioConv()`) + CSS
+  `.prop-card-precio-conv`. La cotizacion arranca **en paralelo** al fetch de propiedades y se espera
+  recien antes de renderizar (`dolarReady`), para que las cards salgan ya con el ≈ y no haya reflow.
+- ⚠️ **OJO al editar precios en `index.html`:** el home usa **espacios no separables (NBSP, U+00A0)**
+  dentro de los strings de precio (`'$ '`, `' / '`). El listado usa espacios normales.
+  Si se hace un search/replace con espacios comunes **no matchea**.
+- Si no hay cotizacion cargada (o falla el fetch), `fmtPrecioConv` devuelve `''` y simplemente no se
+  muestra la linea. Nada se rompe.
+
+## Manual PDF de Antonella (ya hecho por Mati)
+- Cubre: entrar al panel, cargar/editar/eliminar propiedades, valor del dolar, coordenadas de Google Maps,
+  demoras de publicacion y errores. Usuario: `inmobiliaria@solarprop.com.ar`.
+- **Pendiente sugerido:** el PDF trae la contrasena en texto plano. Conviene que diga *"contrasena
+  provisoria — cambiala al primer ingreso"* en vez del valor fijo.
+- El PDF imprime la URL del admin (`unique-kitsune-f448c7.netlify.app/admin/`). Si alguna vez se transfiere
+  el site, **verificar que el subdominio siga igual antes de reimprimir** el manual.
+
+## Pendiente concreto para cerrar la entrega
+1. **Trigger deploy de Netlify** → para que aparezca `mostrar_precio_convertido` en el panel.
+2. Push a `main` → Vercel publica el ≈ en home y ficha.
+3. Decidir que hacer con la propiedad de prueba (`content/propiedades/lo-615.md`, "Casa Chica Barrio Norte",
+   codigo `000101`). **No se borro** por pedido de Mati.

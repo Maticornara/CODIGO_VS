@@ -354,6 +354,9 @@
       color: var(--negro); line-height: 1;
     }
     .prop-precio-sub { font-size: 13px; color: var(--gris-texto); margin-top: 7px; }
+    /* Precio aproximado en la otra moneda (≈). Se oculta solo si no hay cotizacion. */
+    .prop-precio-conv { font-size: 14px; font-weight: 500; color: var(--gris-texto); margin-top: 4px; }
+    .prop-precio-conv:empty { display: none; }
     /* Grid de stats con íconos */
     .prop-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 30px; }
     .prop-stats-grid:empty { display: none; }
@@ -1047,6 +1050,7 @@
         <div class="prop-pricebar-codigo" id="sidebarCodigo"></div>
         <div class="prop-precio" id="sidebarPrecio"></div>
         <div class="prop-precio-sub" id="sidebarPrecioSub"></div>
+        <div class="prop-precio-conv" id="sidebarPrecioConv"></div>
       </div>
       <div class="prop-stats-grid" id="propStats"></div>
     </div>
@@ -1854,6 +1858,13 @@
       document.getElementById('sidebarPrecio').textContent = fmtPrecio(p);
       var per = periodoTxt(p);
       document.getElementById('sidebarPrecioSub').textContent = per ? (T('por ', 'per ') + per) : (p.moneda === 'ARS' ? T('pesos argentinos', 'argentine pesos') : T('dólares estadounidenses', 'US dollars'));
+
+      // Precio aproximado en la otra moneda (≈). En modo ficha la cotizacion no
+      // estaba cargada (cargarValorDolar() solo corria en el listado), asi que se
+      // pide aca y se pinta cuando resuelve. Si falla, fmtPrecioConv devuelve ''.
+      cargarValorDolar().then(function() {
+        document.getElementById('sidebarPrecioConv').textContent = fmtPrecioConv(p);
+      });
 
       // Ubicación (Zona · Localidad) debajo del título.
       // Usa los campos separados; si solo hay 'ubicacion' (datos viejos),
