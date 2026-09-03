@@ -425,3 +425,23 @@ con el interruptor `mostrar_precio_convertido` (default: encendido).
 2. Push a `main` → Vercel publica el ≈ en home y ficha.
 3. Decidir que hacer con la propiedad de prueba (`content/propiedades/lo-615.md`, "Casa Chica Barrio Norte",
    codigo `000101`). **No se borro** por pedido de Mati.
+
+## ⚠️ CUENTAS DE NETLIFY — dato clave (03/09/2026)
+Hay **DOS sites de Netlify**, los dos conectados a `Maticornara/CODIGO_VS` y los dos con Identity +
+Git Gateway funcionando:
+- **`unique-kitsune-f448c7`** ← **ESTE es el del manual de Antonella. El que se usa.**
+- **`sunny-blancmange-47869e`** ← el "viejo". NO esta muerto: tambien funciona y quedo al dia.
+
+**La cuenta de Netlify que administra los sites es `archivoscornara@gmail.com` (Matias Cornara).**
+Se perdio un rato el acceso por no recordar con que cuenta se habia creado `unique-kitsune`.
+NO es "cuenta de la facultad" (ese dato del archivo es erroneo).
+
+- El 03/09/2026 se deployo `unique-kitsune` y quedo **al dia** (config.yml = 6376 bytes, con
+  `mostrar_precio_convertido`). Verificado contra GitHub.
+- Sintoma a reconocer: si se deploya y el contenido publicado no cambia, chequear que se este
+  deployando **el site correcto** (son parecidos y apuntan al mismo repo).
+
+## ⚠️ PENDIENTE DE SEGURIDAD — registro abierto
+Los **dos** sites tienen `"disable_signup": false`, o sea **cualquiera que conozca la URL del panel
+puede registrarse solo** y, via Git Gateway, editar las propiedades. La URL esta impresa en el manual.
+**Cerrar en AMBOS:** Identity > Settings and usage > Registration preferences > **Invite only**.
