@@ -3,6 +3,63 @@
 Sitio web inmobiliario de **Solar Propiedades** (Antonella Gutiérrez · Neuquén, Patagonia Argentina).
 La idea es entregárselo terminado a Antonella, que NO es técnica: ella administra propiedades desde un panel sin tocar código.
 
+# ⚡ ESTADO ACTUAL (04/09/2026) — LEER ESTO PRIMERO
+
+**El traspaso a Antonella ya se hizo.** Todo lo que sigue mas abajo en este archivo es **historico**
+y tiene datos viejos (menciona `Maticornara/CODIGO_VS`, `codigo-vs.vercel.app` y una "cuenta de la
+facultad" que nunca existio). **Cuando algo contradiga a esta seccion, gana esta seccion.**
+
+## URLs vigentes
+| Que | Donde |
+|---|---|
+| **Sitio publico** | **https://www.solarprop.com.ar** (el apex redirige 308 al www) |
+| **Panel / CMS** | https://unique-kitsune-f448c7.netlify.app/admin/ |
+| **Repo** | **https://github.com/solarpropiedades/CODIGO_VS** (rama `main`) |
+| Link para compartir una propiedad | `www.solarprop.com.ar/p/<slug>` |
+
+`codigo-vs.vercel.app` quedo en el proyecto viejo de Vercel (cuenta de Mati), sin dominio. Se puede borrar.
+
+## Quien es dueno de que
+- ✅ **GitHub `solarpropiedades`** — el repo con TODAS las propiedades y fotos. **Es de Antonella.**
+  `Maticornara` quedo como **colaborador Admin** (por eso Mati puede pushear).
+- ✅ **Vercel `solarpropiedades-5496`** — proyecto `codigo-vs` + el dominio. **Es de Antonella.**
+- ⚠️ **Netlify `archivoscornara@gmail.com`** — el panel. **Sigue siendo de Mati**: Netlify pide plan
+  pago para transferir sites. Antonella entra igual con su usuario de Identity; lo que no puede es
+  administrar el site. Ver "Como completar la transferencia de Netlify" al final del archivo.
+
+## Cuentas
+- **Servicios (GitHub / Vercel / Netlify nueva):** `solarpropiedades@outlook.com.ar`, misma contrasena
+  para las tres. La casilla la tienen **Mati y Antonella**. A proposito NO depende del dominio propio,
+  que es la pieza mas fragil.
+- **Panel (Decap/Identity):** `inmobiliaria@solarprop.com.ar` — **solo sirve para el panel**, no abre
+  GitHub ni Vercel ni Netlify. Ese mail SI recibe correo (Microsoft 365).
+- **Netlify que administra el panel:** `archivoscornara@gmail.com`.
+
+## Como publica Antonella (el circuito, verificado end-to-end)
+Panel → Git Gateway → commit a `solarpropiedades/CODIGO_VS` → Vercel republica **y** el sitio lee los
+`.md` en vivo desde la GitHub API. Verificado el 04/09/2026: creo y borro una propiedad ella misma.
+
+## ⚠️ Cosas que NO hay que hacer
+- **NO recrear el site de Netlify desde cero.** Git Gateway esta **deprecado**: habilitarlo de nuevo
+  es una config nueva de algo que Netlify ya no arregla.
+- **NO poner el repo en privado.** El sitio lee los datos con la API publica de GitHub, sin token.
+- **NO borrar la cuenta de Netlify `solarpropiedades@outlook.com.ar`** (esta vacia a proposito: es el
+  destino si algun dia se transfiere el site).
+- **NO usar URLs absolutas con `codigo-vs.vercel.app`.** El canonico es `www.solarprop.com.ar`.
+- En Vercel, **no desactivar** el redirect 308 del apex al www ni tocar los TXT `_vercel` del DNS.
+
+## Respaldos (Escritorio\SOLAR PROPIEDADES)
+- `CODIGO_VS-backup.git` — clon completo del repo antes de transferirlo.
+- `DNS-BACKUP-solarprop.txt` — registros del correo (MX / SPF / autodiscover) por si hay que recrearlos.
+
+## Pendientes menores
+- Borrar el proyecto viejo de Vercel (cuenta de Mati, ya sin dominio).
+- Que Antonella active 2FA en Netlify (figura como "No 2FA").
+- Imagen Open Graph propia de 1200x630 (hoy usa `fotos/ISOLOGO.PNG` como parche).
+- La propiedad `lo-615.md` ("Casa Chica Barrio Norte") sigue siendo la de prueba; la reemplaza ella.
+
+---
+
 ## Idioma
 Hablame y comentá el código en **español** (argentino).
 
