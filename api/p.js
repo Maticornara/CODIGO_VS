@@ -13,7 +13,7 @@
 // RED DE SEGURIDAD: si cualquier cosa falla (GitHub caido, propiedad inexistente,
 // .md raro), se devuelve la pagina tal cual esta hoy. Nunca se rompe la ficha.
 
-const REPO = 'Maticornara/CODIGO_VS';
+const REPO = 'solarpropiedades/CODIGO_VS';
 const RAW = `https://raw.githubusercontent.com/${REPO}/main`;
 // Dominio publico (el que va en og:url y en las imagenes). El sitio tambien responde
 // en codigo-vs.vercel.app, pero el canonico es este: si no, Google ve el contenido

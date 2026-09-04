@@ -81,7 +81,7 @@
       if (propCache[slug]) { cb(propCache[slug]); return; }
       if (propFetching[slug]) return;
       propFetching[slug] = true;
-      var base = location.hostname === 'localhost' ? location.origin : 'https://raw.githubusercontent.com/Maticornara/CODIGO_VS/main';
+      var base = location.hostname === 'localhost' ? location.origin : 'https://raw.githubusercontent.com/solarpropiedades/CODIGO_VS/main';
       fetch(base + '/content/propiedades/' + slug + '.md')
         .then(function(r) { return r.ok ? r.text() : Promise.reject(); })
         .then(function(txt) {
