@@ -570,3 +570,17 @@ Al transferir el repo, el panel dejo de publicar: **"API_ERROR: Requires authent
 - Si algun dia se quiere cerrar del todo: cambiar el mail de la cuenta de Netlify de Mati a
   `solarpropiedades@outlook.com.ar` (hay que liberar antes ese mail borrando la cuenta de Netlify
   vacia), o migrar Decap a **backend GitHub + OAuth** y sacar Netlify del proyecto.
+
+## Como completar la transferencia de Netlify el dia de manana
+La cuenta de Netlify `solarpropiedades@outlook.com.ar` **se deja creada y vacia a proposito**: es el
+destino si alguna vez se transfiere el site. NO borrarla.
+
+Netlify solo permite transferir sites entre cuentas si se pueden agregar miembros al team, y eso
+requiere plan pago. Camino barato para cerrarlo:
+1. Pagar **un mes** de Netlify Pro (~19 USD) en cualquiera de las dos cuentas.
+2. Invitar al otro como **Owner** del team.
+3. Transferir el site (`Project configuration > General > Transfer project`).
+4. Cancelar el plan y volver a gratis. El site ya queda del otro lado.
+
+⚠️ Ojo: al transferir hay que **rehacer Git Gateway** del mismo modo que el 04/09/2026
+(relinkear repo > Disable > Enable > pausar builds). Ver esa seccion.
