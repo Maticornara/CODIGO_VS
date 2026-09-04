@@ -445,3 +445,65 @@ NO es "cuenta de la facultad" (ese dato del archivo es erroneo).
 Los **dos** sites tienen `"disable_signup": false`, o sea **cualquiera que conozca la URL del panel
 puede registrarse solo** y, via Git Gateway, editar las propiedades. La URL esta impresa en el manual.
 **Cerrar en AMBOS:** Identity > Settings and usage > Registration preferences > **Invite only**.
+
+---
+
+# Sesion — Open Graph (compartir por WhatsApp) + footer unificado + fixes
+
+## Open Graph: /p/<slug> (PRIMERA pieza de backend del proyecto)
+**El problema:** WhatsApp/Instagram/Facebook **no ejecutan JS**. Como las fichas se arman en el
+navegador leyendo GitHub, el robot veia una pagina vacia y mostraba el link pelado, sin foto.
+
+**La solucion:** ruta nueva **`/p/<slug>`** servida por **`api/p.js`** (funcion serverless de Vercel,
+la unica del proyecto). Lee el `.md` de la propiedad de `raw.githubusercontent.com` y devuelve el
+**mismo HTML de siempre** con `<title>`, `description`, `og:*` y `twitter:*` ya escritos.
+
+- **`vercel.json`:** `{"source":"/p/:slug","destination":"/api/p?slug=:slug"}` **antes** del rewrite
+  de `/propiedades/`. ⚠️ **No se puede interceptar `/propiedades/`**: los rewrites de Vercel se
+  aplican DESPUES del filesystem, y ese path ya resuelve a un archivo real. Por eso la ruta aparte.
+- **El navegador recibe el HTML normal** y el JS del cliente arma la ficha solo, porque `pathSlug`
+  ya sabia leer el slug del path (`/p/casa-x` -> `casa-x`). No hubo que tocar esa logica.
+- **`history.replaceState`** en la ficha cambia la barra a `/p/<slug>`, asi lo que Antonella copia
+  del navegador (y el link del mensaje de WhatsApp, que usa `location.href`) ya es el compartible.
+- **Cache:** `s-maxage=300, stale-while-revalidate=86400`. Importante: **no usar la GitHub API**
+  desde el servidor (60 req/hora por IP, y las IPs de Vercel son compartidas). Por eso `raw.`.
+- **RED DE SEGURIDAD:** si GitHub falla, la propiedad no existe o el `.md` viene raro, devuelve la
+  pagina tal cual. Si ni siquiera consigue el HTML base, redirige 302 a `/propiedades/?p=<slug>`.
+  La ficha nunca se rompe.
+- El parser de frontmatter esta **duplicado** en `api/p.js` (no hay build step ni modulos
+  compartidos). Si cambia el formato del `.md`, hay que tocarlo en los dos lados.
+
+## Open Graph estatico (home y listado)
+`index.html` y `propiedades/index.html` tienen `description` + `og:*` + `twitter:*` fijos.
+Imagen: **`fotos/ISOLOGO.PNG` (1465x585)** — es un parche. **Lo ideal es una imagen 1200x630**
+disenada; si se agrega, guardarla como `fotos/og-image.png` y cambiar la constante en los 3 lugares
+(los dos HTML y el `IMG_FALLBACK` de `api/p.js`).
+
+## Footer unificado + ano dinamico
+- El footer de `/propiedades` ahora es **igual al del home** (copy izquierda + links derecha). Los
+  links apuntan al home (`/#servicios`, etc.) porque es otra pagina.
+- **El ano ya no esta hardcodeado** (decia 2025 en 2026): `<span class="footer-year">` que llena
+  `new Date().getFullYear()` en las dos paginas.
+
+## Otros fixes
+- **FAQ mobile:** el reborde naranja ahora se ve cuando el item esta `.open` (en mobile no hay
+  hover). Era el ultimo pendiente del plan mobile.
+- **Boton de WhatsApp:** ya no tapa el footer. IntersectionObserver sobre `footer`; cuando entra,
+  el JS sube el `bottom` del boton y despues lo devuelve. Transicion suave por CSS.
+- **Propiedades similares:** NO habia nada que arreglar. `renderSimilares` ya ordena por parecido
+  y muestra las 3 primeras **sin exigir un minimo**. Hoy no aparecen porque hay **una sola**
+  propiedad cargada; con dos o mas salen solas.
+- **Seccion Servicios:** revisada, esta completa y traducida (01 Venta de Casas, 02 Venta de Lotes,
+  03 Alquileres, 04 Tasaciones). El "nunca revisada" de las notas viejas ya no aplica.
+
+## Estado de la entrega a Antonella (cerrada)
+- Sitio (Vercel) y panel (`unique-kitsune`) **al dia y verificados**.
+- **Registro cerrado (Invite only) en los DOS sites de Netlify.** Ya no hay riesgo de que un
+  desconocido se anote.
+- **`inmobiliaria@solarprop.com.ar` YA RECIBE MAILS** (estaba a medio configurar en Microsoft 365).
+- Cuentas nuevas creadas para el traspaso, todas con **`solarpropiedades@outlook.com.ar`**
+  (a proposito: NO depende del dominio, que es la pieza mas fragil). GitHub: **`solarpropiedades`**.
+  La casilla de Outlook la tienen **Mati y Antonella**.
+- ⚠️ **La transferencia NO se hizo todavia**, y se decidio dejarla para despues de la entrega:
+  transferir el repo obliga a **reconectar Git Gateway**, que es lo deprecado. No hacerlo el dia
+  antes de mostrarle el sitio.
