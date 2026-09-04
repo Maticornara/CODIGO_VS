@@ -15,7 +15,10 @@
 
 const REPO = 'Maticornara/CODIGO_VS';
 const RAW = `https://raw.githubusercontent.com/${REPO}/main`;
-const SITE = 'https://codigo-vs.vercel.app';
+// Dominio publico (el que va en og:url y en las imagenes). El sitio tambien responde
+// en codigo-vs.vercel.app, pero el canonico es este: si no, Google ve el contenido
+// duplicado en dos dominios.
+const SITE = 'https://www.solarprop.com.ar';
 const IMG_FALLBACK = `${SITE}/fotos/ISOLOGO.PNG`;
 
 // Escapa para meter texto dentro de un atributo HTML
@@ -135,7 +138,10 @@ export default async function handler(req, res) {
   // ese path es un archivo real, asi que lo sirve el filesystem y no vuelve aca.
   let html;
   try {
-    const base = await fetch(`${SITE}/propiedades/index.html`);
+    // Para el HTML base se usa el host real de la request: asi funciona igual en el
+    // dominio propio, en el .vercel.app y en los deploys de preview.
+    const self = `https://${req.headers['x-forwarded-host'] || req.headers.host}`;
+    const base = await fetch(`${self}/propiedades/index.html`);
     if (!base.ok) throw new Error('base ' + base.status);
     html = await base.text();
   } catch (e) {
