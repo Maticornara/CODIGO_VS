@@ -520,3 +520,53 @@ disenada; si se agrega, guardarla como `fotos/og-image.png` y cambiar la constan
   asi funciona igual en el dominio propio, en el .vercel.app y en los previews.
 - ⚠️ Si se agrega una URL absoluta nueva en algun lado, usar **www.solarprop.com.ar**.
 - El **manual de Antonella** deberia decir el dominio propio, no la URL de Vercel.
+
+---
+
+# Sesion — TRASPASO EJECUTADO (04/09/2026)
+
+## Estado final: quien es dueno de que
+- **GitHub `solarpropiedades/CODIGO_VS`** ← el repo se TRANSFIRIO. Aca viven las propiedades y las
+  fotos. `Maticornara` quedo como **colaborador Admin**. La URL vieja redirige, pero solo para
+  LECTURA: las escrituras al nombre viejo fallan (asi se rompio Git Gateway).
+- **Vercel `solarpropiedades-5496`** ← proyecto `codigo-vs` + dominio `solarprop.com.ar`.
+- **Netlify `archivoscornara@gmail.com`** ← ⚠️ **NO se pudo transferir**: Netlify (y Vercel) piden
+  **plan pago** para agregar miembros a un team, y sin eso no dejan transferir. El panel sigue en la
+  cuenta de Mati. Antonella entra igual con su usuario de Identity; lo que no puede es administrar
+  el site.
+- Cuentas nuevas: mail `solarpropiedades@outlook.com.ar` (lo tienen Mati y Antonella).
+
+## Como se hizo Vercel (no se puede transferir el proyecto entre cuentas Hobby)
+1. Crear el proyecto NUEVO importando el repo desde la cuenta destino.
+2. ⚠️ **Desactivar "Vercel Authentication"** (Deployment Protection): viene ENCENDIDA en proyectos
+   nuevos y hace que el sitio pida login a los visitantes.
+3. Mover el dominio: Domains > ⋯ > **Move** > escribir el **slug** a mano (`solarpropiedades-5496`).
+   El buscador dice "No results" porque solo lista teams propios — **igual hay que darle Continue**.
+4. Quitar el dominio del proyecto viejo y conectarlo al nuevo.
+5. ⚠️ Al conectarlo pide **verificar la propiedad**: hay que agregar registros TXT `_vercel`
+   (uno para el apex y otro para el `www`, con valores distintos). Se agregan en DNS Records.
+6. Dejar `www` como Production y el apex redirigiendo a www con **308**.
+
+## Como se arreglo Git Gateway (esto es lo importante)
+Al transferir el repo, el panel dejo de publicar: **"API_ERROR: Requires authentication"**.
+- Cambiar el token NO alcanza: el campo `Repository` de Git Gateway **no es editable** y seguia
+  apuntando al repo viejo.
+- La secuencia que SI funciono:
+  1. Netlify > el site > **relinkear el repo** al nuevo (`solarpropiedades/CODIGO_VS`),
+     instalando la app de Netlify en la cuenta de GitHub `solarpropiedades`.
+  2. Identity > Services > **Disable Git Gateway** y volver a **habilitarlo**. Recien ahi toma el
+     repo nuevo (no se actualiza solo).
+  3. Volver a **pausar los builds** de Netlify.
+- Verificado: el commit `Create Propiedad "54"` lo hizo `inmobiliaria@solarprop.com.ar`.
+
+## Respaldos que quedaron en el Escritorio
+- `CODIGO_VS-backup.git` — clon completo del repo antes de transferir.
+- `DNS-BACKUP-solarprop.txt` — los registros del correo (MX/SPF/autodiscover). **Sobrevivieron
+  al Move**, pero conviene tenerlos.
+
+## Pendientes
+- **Borrar la propiedad de prueba "54"** que quedo de la verificacion.
+- El proyecto viejo de Vercel (cuenta de Mati) quedo sin dominio; se puede borrar.
+- Si algun dia se quiere cerrar del todo: cambiar el mail de la cuenta de Netlify de Mati a
+  `solarpropiedades@outlook.com.ar` (hay que liberar antes ese mail borrando la cuenta de Netlify
+  vacia), o migrar Decap a **backend GitHub + OAuth** y sacar Netlify del proyecto.
