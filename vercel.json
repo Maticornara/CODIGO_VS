@@ -1,5 +1,6 @@
 {
   "rewrites": [
+    { "source": "/p/:slug", "destination": "/api/p?slug=:slug" },
     { "source": "/propiedades/:path*", "destination": "/propiedades/index.html" }
   ]
 }
