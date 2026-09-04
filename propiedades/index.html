@@ -1891,6 +1891,17 @@
       window.solarTr.el(document.getElementById('propTitulo'));
       document.getElementById('sidebarCodigo').textContent = p.codigo || '';
 
+      // La barra del navegador pasa a mostrar el link corto /p/<slug>. Es el que,
+      // al pegarlo en WhatsApp, trae la foto y los datos de la propiedad (lo resuelve
+      // api/p.js en el servidor). Asi lo que se copia de la barra ya es el bueno, y el
+      // mensaje de WhatsApp de mas abajo (window.location.href) tambien lo usa.
+      // Es solo cosmetico: la pagina ya esta armada y el slug no se vuelve a leer.
+      try {
+        if (slug && window.history && history.replaceState) {
+          history.replaceState(null, '', '/p/' + encodeURIComponent(slug));
+        }
+      } catch (e) { /* si el navegador no deja, se queda la URL larga: funciona igual */ }
+
       // Precio sidebar
       document.getElementById('sidebarPrecio').textContent = fmtPrecio(p);
       var per = periodoTxt(p);
