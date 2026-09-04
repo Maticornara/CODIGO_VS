@@ -2494,15 +2494,15 @@
   (function() {
     var REPO    = 'solarpropiedades/CODIGO_VS';
     var API_DIR = 'https://api.github.com/repos/' + REPO + '/contents/content/propiedades?ref=main';
-    var CONFIG_URL = 'https://api.github.com/repos/' + REPO + '/contents/content/config/general.json?ref=main';
+    // raw.githubusercontent es un CDN y NO gasta la cuota de la API de GitHub
+    var RAW = 'https://raw.githubusercontent.com/' + REPO + '/main';
+    var CONFIG_URL = RAW + '/content/config/general.json';
 
     // Cotizacion del dolar que carga Antonella desde el panel (Configuracion General).
     // Se usa para mostrar el precio aproximado en la otra moneda en las cards.
     var VALOR_DOLAR = null;
     function cargarValorDolar() {
       return fetch(CONFIG_URL)
-        .then(function(r) { return r.json(); })
-        .then(function(meta) { return fetch(meta.download_url); })
         .then(function(r) { return r.json(); })
         .then(function(cfg) {
           var v = Number(cfg && cfg.valor_dolar);
@@ -2836,25 +2836,55 @@
       inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') window.irABusqueda(); });
     });
 
+
+    // Pide el catalogo al intermediario de Vercel: UNA consulta con cache, en vez de
+    // que cada visitante interrogue a la API de GitHub (que da 60 por hora por IP y
+    // se agota si uno recarga seguido). Si el intermediario no responde, se vuelve al
+    // camino de siempre, asi el sitio nunca depende de que exista.
+    function cargarCatalogo() {
+      return fetch('/api/propiedades')
+        .then(function(r) { if (!r.ok) throw new Error('api ' + r.status); return r.json(); })
+        .then(function(d) {
+          if (!d || !Array.isArray(d.propiedades)) throw new Error('formato');
+          return d;
+        })
+        .catch(function() {
+          // Camino viejo: directo a GitHub
+          return fetch(API_DIR)
+            .then(function(r) { return r.json(); })
+            .then(function(files) {
+              var mds = files.filter(function(f) { return f.name && f.name.endsWith('.md'); });
+              return Promise.all(mds.map(function(f) {
+                return fetch(f.download_url).then(function(r) { return r.text(); })
+                  .then(function(t) { return { slug: f.name.replace(/\.md$/, ''), raw: t }; });
+              }));
+            })
+            .then(function(props) { return { propiedades: props, config: null }; });
+        });
+    }
+
+    // Convierte lo que devuelve cargarCatalogo() en las propiedades que usa el sitio
+    function catalogoAProps(d) {
+      return d.propiedades.map(function(x) {
+        var p = parseYAML(x.raw);
+        p._slug = x.slug;   // el nombre del archivo es el slug de la URL
+        return p;
+      });
+    }
+
     // Cargar propiedades al iniciar. La cotizacion arranca en paralelo (no serializa)
     // y se espera recien antes de renderizar, para que las cards ya salgan con el ≈.
     var dolarReady = cargarValorDolar();
 
-    fetch(API_DIR)
-      .then(function(r) { return r.json(); })
-      .then(function(files) {
-        var mds = files.filter(function(f) { return f.name.endsWith('.md'); });
-        return Promise.all(mds.map(function(f) {
-          var slug = f.name.replace(/\.md$/, '');
-          return fetch(f.download_url).then(function(r) { return r.text(); }).then(function(text) {
-            var p = parseYAML(text);
-            p._slug = slug; // guardar nombre de archivo para la URL
-            return p;
-          });
-        }));
-      })
-      .then(function(props) {
-        return dolarReady.then(function() { return props; });
+    cargarCatalogo()
+      .then(function(d) {
+        // El intermediario manda el valor del dolar en la misma respuesta; si vino por
+        // ahi nos ahorramos la consulta aparte, y si no, esperamos la de siempre.
+        if (d.config && Number(d.config.valor_dolar) > 0) {
+          VALOR_DOLAR = Number(d.config.valor_dolar);
+          return catalogoAProps(d);
+        }
+        return dolarReady.then(function() { return catalogoAProps(d); });
       })
       .then(function(props) {
         document.getElementById('propiedades-loading').style.display = 'none';

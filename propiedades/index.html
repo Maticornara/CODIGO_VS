@@ -1162,7 +1162,9 @@
 (function() {
   var REPO    = 'solarpropiedades/CODIGO_VS';
   var API_DIR = 'https://api.github.com/repos/' + REPO + '/contents/content/propiedades?ref=main';
-  var CONFIG_URL = 'https://api.github.com/repos/' + REPO + '/contents/content/config/general.json?ref=main';
+  // raw.githubusercontent es un CDN y NO gasta la cuota de la API de GitHub
+  var RAW = 'https://raw.githubusercontent.com/' + REPO + '/main';
+  var CONFIG_URL = RAW + '/content/config/general.json';
 
   // Valor del dólar (en pesos) que Antonella carga desde el admin. Se lee EN VIVO
   // desde GitHub (igual que las propiedades) → si lo actualiza, se refleja al toque.
@@ -1170,8 +1172,6 @@
   var VALOR_DOLAR = null;
   function cargarValorDolar() {
     return fetch(CONFIG_URL)
-      .then(function(r) { return r.json(); })
-      .then(function(meta) { return fetch(meta.download_url); })
       .then(function(r) { return r.json(); })
       .then(function(cfg) {
         var v = Number(cfg && cfg.valor_dolar);
@@ -1192,6 +1192,39 @@
     if (monedaProp === 'USD' && monedaObjetivo === 'ARS') return v * VALOR_DOLAR;
     if (monedaProp === 'ARS' && monedaObjetivo === 'USD') return v / VALOR_DOLAR;
     return v;
+  }
+
+
+  // Pide el catalogo al intermediario de Vercel: UNA consulta con cache, en vez de que
+  // cada visitante interrogue a la API de GitHub (60 por hora por IP). Si no responde,
+  // se vuelve al camino de siempre.
+  function cargarCatalogo() {
+    return fetch('/api/propiedades')
+      .then(function(r) { if (!r.ok) throw new Error('api ' + r.status); return r.json(); })
+      .then(function(d) {
+        if (!d || !Array.isArray(d.propiedades)) throw new Error('formato');
+        return d;
+      })
+      .catch(function() {
+        return fetch(API_DIR)
+          .then(function(r) { return r.json(); })
+          .then(function(files) {
+            var mds = files.filter(function(f) { return f.name && f.name.endsWith('.md'); });
+            return Promise.all(mds.map(function(f) {
+              return fetch(f.download_url).then(function(r) { return r.text(); })
+                .then(function(t) { return { slug: f.name.replace(/\.md$/, ''), raw: t }; });
+            }));
+          })
+          .then(function(props) { return { propiedades: props, config: null }; });
+      });
+  }
+
+  function catalogoAProps(d) {
+    return d.propiedades.map(function(x) {
+      var p = parseYAML(x.raw);
+      p._slug = x.slug;
+      return p;
+    });
   }
 
   function parseYAML(text) {
@@ -1397,17 +1430,8 @@
   // Criterio: mismo TIPO pesa fuerte, después precio parecido (misma moneda) y
   // características compartidas. La más parecida queda a la izquierda.
   function renderSimilares(current) {
-    fetch(API_DIR)
-      .then(function(r) { return r.json(); })
-      .then(function(files) {
-        var mds = files.filter(function(f) { return f.name.endsWith('.md'); });
-        return Promise.all(mds.map(function(f) {
-          var slug = f.name.replace(/\.md$/, '');
-          return fetch(f.download_url).then(function(r) { return r.text(); }).then(function(text) {
-            var pp = parseYAML(text); pp._slug = slug; return pp;
-          });
-        }));
-      })
+    cargarCatalogo()
+      .then(catalogoAProps)
       .then(function(props) {
         var curCod = (current.codigo || '').toLowerCase();
         function score(a) {
@@ -1671,16 +1695,10 @@
 
     cargarValorDolar();   // carga el valor del dólar en paralelo (para convertir precios en el filtro)
 
-    fetch(API_DIR)
-      .then(function(r) { return r.json(); })
-      .then(function(files) {
-        var mds = files.filter(function(f) { return f.name.endsWith('.md'); });
-        return Promise.all(mds.map(function(f) {
-          var slug = f.name.replace(/\.md$/, '');
-          return fetch(f.download_url).then(function(r) { return r.text(); }).then(function(text) {
-            var p = parseYAML(text); p._slug = slug; return p;
-          });
-        }));
+    cargarCatalogo()
+      .then(function(d) {
+        if (d.config && Number(d.config.valor_dolar) > 0) VALOR_DOLAR = Number(d.config.valor_dolar);
+        return catalogoAProps(d);
       })
       .then(function(props) {
         document.getElementById('lstLoading').style.display = 'none';
@@ -1736,15 +1754,14 @@
     document.getElementById('navBackLabel').textContent = T('Todas las propiedades', 'All properties');
 
     var codigo = slug;
-    var url = 'https://api.github.com/repos/' + REPO + '/contents/content/propiedades/' + codigo + '.md?ref=main';
+    var url = RAW + '/content/propiedades/' + encodeURIComponent(codigo) + '.md';
 
   fetch(url)
     .then(function(r) {
       if (!r.ok) throw new Error('not found');
-      return r.json();
+      return r.text();   // raw devuelve el .md tal cual, sin base64
     })
-    .then(function(data) {
-      var text = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ''))));
+    .then(function(text) {
       return parseYAML(text);
     })
     .then(function(p) {
