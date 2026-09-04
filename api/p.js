@@ -168,6 +168,10 @@ export default async function handler(req, res) {
           html = setMeta(html, 'property', 'og:image', img);
           html = setMeta(html, 'property', 'og:image:alt', p.titulo);
           html = setMeta(html, 'property', 'og:url', url);
+          // El canonical viene del html base apuntando a /propiedades: cada ficha tiene
+          // que apuntarse a si misma, si no Google no las indexa por separado.
+          html = html.replace(/<link rel="canonical" href="[^"]*"\s*\/>/i,
+                              `<link rel="canonical" href="${esc(url)}" />`);
           html = setMeta(html, 'property', 'og:type', 'article');
           html = setMeta(html, 'name', 'twitter:title', titulo);
           html = setMeta(html, 'name', 'twitter:description', desc);

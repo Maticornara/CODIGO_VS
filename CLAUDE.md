@@ -507,3 +507,16 @@ disenada; si se agrega, guardarla como `fotos/og-image.png` y cambiar la constan
 - ⚠️ **La transferencia NO se hizo todavia**, y se decidio dejarla para despues de la entrega:
   transferir el repo obliga a **reconectar Git Gateway**, que es lo deprecado. No hacerlo el dia
   antes de mostrarle el sitio.
+
+## ⚠️ DOMINIO PROPIO — el sitio vive en www.solarprop.com.ar
+- **`https://www.solarprop.com.ar`** es el dominio **canonico y publico**. `solarprop.com.ar` (sin
+  www) redirige 308 al www. `codigo-vs.vercel.app` **sigue respondiendo** y sirve lo mismo.
+- Como los dos dominios sirven el mismo contenido, hay que ser prolijo con el canonico o Google lo
+  toma como contenido duplicado. Por eso: `og:url`, `og:image`, `twitter:image` y un
+  **`<link rel="canonical">`** en las dos paginas, todos al dominio propio.
+- **`api/p.js` sobreescribe el canonical por ficha** (`/p/<slug>`), porque el html base trae el de
+  `/propiedades` y si no todas las fichas se pisarian entre si.
+- Para el fetch del html base, `api/p.js` usa el **host real de la request**, no el dominio fijo:
+  asi funciona igual en el dominio propio, en el .vercel.app y en los previews.
+- ⚠️ Si se agrega una URL absoluta nueva en algun lado, usar **www.solarprop.com.ar**.
+- El **manual de Antonella** deberia decir el dominio propio, no la URL de Vercel.
